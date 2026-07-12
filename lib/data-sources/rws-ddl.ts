@@ -130,6 +130,57 @@ export interface LatestWaterTemp {
  */
 const MAX_READING_AGE_MS = 72 * 60 * 60 * 1000;
 
+/**
+ * Latest surface-water temperature for many stations at once, keyed by
+ * station code. Same endpoint and freshness/sentinel guards as the
+ * single-station variant, batched 60 stations per request like
+ * `filterLiveStations`. Stations without a recent reading are absent.
+ */
+export async function fetchLatestWaterTemps(
+  stationCodes: string[]
+): Promise<Map<string, LatestWaterTemp>> {
+  const BATCH = 60;
+  const byStation = new Map<string, LatestWaterTemp>();
+  for (let i = 0; i < stationCodes.length; i += BATCH) {
+    const batch = stationCodes.slice(i, i + BATCH);
+    const res = await fetch(
+      `${BASE}/ONLINEWAARNEMINGENSERVICES/OphalenLaatsteWaarnemingen`,
+      {
+        method: "POST",
+        headers: HEADERS,
+        body: JSON.stringify({
+          AquoPlusWaarnemingMetadataLijst: [
+            { AquoMetadata: { Grootheid: { Code: "T" }, Compartiment: { Code: "OW" } } },
+          ],
+          LocatieLijst: batch.map((code) => ({ Code: code })),
+        }),
+        next: { revalidate: 1800 },
+      } as RequestInit
+    );
+    if (!res.ok) continue;
+    const json = (await res.json()) as LaatsteWaarnemingenResponse;
+    if (!json.Succesvol) continue;
+    for (const w of json.WaarnemingenLijst ?? []) {
+      if (w.AquoMetadata.Grootheid?.Code !== "T") continue;
+      for (const m of w.MetingenLijst ?? []) {
+        const value = m.Meetwaarde?.Waarde_Numeriek;
+        if (value == null || value > 100 || value < -10) continue;
+        if (Date.now() - new Date(m.Tijdstip).getTime() > MAX_READING_AGE_MS) continue;
+        const cur = byStation.get(w.Locatie.Code);
+        if (!cur || m.Tijdstip > cur.measuredAt) {
+          byStation.set(w.Locatie.Code, {
+            stationId: w.Locatie.Code,
+            stationName: w.Locatie.Naam ?? null,
+            temperatureC: value,
+            measuredAt: m.Tijdstip,
+          });
+        }
+      }
+    }
+  }
+  return byStation;
+}
+
 /** Latest surface-water temperature reading at a station, or null when it has none. */
 export async function fetchLatestWaterTemp(
   stationCode: string

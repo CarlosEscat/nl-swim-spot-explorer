@@ -147,6 +147,7 @@ async function main() {
       nude_recreation: seed.nude_recreation,
       lounging_area: seed.lounging_area,
       access_notes: seed.access_notes,
+      facilities_source: "manual",
     });
   }
   await store.upsertDetails(details);

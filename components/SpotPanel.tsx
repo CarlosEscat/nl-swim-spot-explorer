@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { SpotLiveData, SpotWithData } from "@/lib/types";
+import { aerialImageUrl } from "@/lib/aerial";
 import { qualityStyle } from "@/lib/quality";
 import { describeWeatherCode } from "@/lib/data-sources/open-meteo";
 
@@ -62,6 +64,22 @@ export default function SpotPanel({
 
   return (
     <aside className="pointer-events-auto flex h-full w-full flex-col overflow-y-auto bg-white shadow-2xl sm:max-w-md sm:rounded-l-2xl">
+      <div className="relative">
+        <Image
+          src={aerialImageUrl(spot.lat, spot.lng, {
+            width: 448,
+            height: 180,
+            spanM: 350,
+          })}
+          alt={`Aerial photo of ${spot.name}`}
+          width={448}
+          height={180}
+          className="h-[180px] w-full object-cover sm:rounded-tl-2xl"
+        />
+        <span className="absolute bottom-1 right-2 rounded bg-black/40 px-1.5 py-0.5 text-[10px] text-white/90">
+          PDOK Luchtfoto CC-BY
+        </span>
+      </div>
       <div className="flex items-start justify-between gap-3 border-b border-gray-100 p-5">
         <div>
           <h2 className="text-xl font-bold text-gray-900">{spot.name}</h2>
@@ -186,14 +204,22 @@ export default function SpotPanel({
             Facilities
           </h3>
           {d ? (
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              <FacilityChip label="Restrooms" value={d.has_restrooms} />
-              <FacilityChip label="Food & drinks" value={d.has_catering} />
-              <FacilityChip label="Lifeguard" value={d.has_lifeguard} />
-              <FacilityChip label="Boat ramp" value={d.has_boat_ramp} />
-              <FacilityChip label="Lounging area" value={d.lounging_area} />
-              <FacilityChip label="Nude recreation" value={d.nude_recreation} />
-            </div>
+            <>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <FacilityChip label="Restrooms" value={d.has_restrooms} />
+                <FacilityChip label="Food & drinks" value={d.has_catering} />
+                <FacilityChip label="Parking" value={d.has_parking} />
+                <FacilityChip label="Lifeguard" value={d.has_lifeguard} />
+                <FacilityChip label="Boat ramp" value={d.has_boat_ramp} />
+                <FacilityChip label="Lounging area" value={d.lounging_area} />
+                <FacilityChip label="Nude recreation" value={d.nude_recreation} />
+              </div>
+              {d.facilities_source === "osm" && (
+                <p className="mt-1.5 text-[11px] text-gray-400">
+                  Facilities auto-detected from OpenStreetMap (within ~300 m).
+                </p>
+              )}
+            </>
           ) : (
             <p className="mt-1.5 text-sm text-gray-400">
               Facilities not curated for this spot yet.

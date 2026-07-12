@@ -30,9 +30,12 @@ export interface SwimSpotDetails {
   has_catering: boolean | null;
   has_lifeguard: boolean | null;
   has_boat_ramp: boolean | null;
+  has_parking?: boolean | null;
   nude_recreation: boolean | null;
   lounging_area: boolean | null;
   access_notes: string | null;
+  /** Provenance: 'manual' (hand-curated, authoritative) or 'osm' (auto-detected). */
+  facilities_source?: string | null;
   updated_at?: string;
 }
 
@@ -80,4 +83,20 @@ export interface LiveWaterTemp {
 export interface SpotLiveData {
   weather: LiveWeather | null;
   water: LiveWaterTemp | null;
+}
+
+/** Compact per-spot live snapshot returned by GET /api/live (all spots at once). */
+export interface LiveSpotSummary {
+  id: string;
+  water_temp_c: number | null;
+  /** Distance from the spot to its water-temperature station, km. */
+  water_station_distance_km: number | null;
+  air_temp_c: number | null;
+  weather_code: number | null;
+  wind_kmh: number | null;
+}
+
+export interface LiveSummaryResponse {
+  generated_at: string;
+  spots: LiveSpotSummary[];
 }

@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { aerialImageUrl } from "@/lib/aerial";
 import { getStore } from "@/lib/db/store";
 import { qualityStyle } from "@/lib/quality";
 
@@ -29,9 +30,47 @@ export default async function OgImage({
           background: "linear-gradient(135deg, #0ea5e9 0%, #0369a1 60%, #082f49 100%)",
           color: "white",
           fontFamily: "sans-serif",
+          position: "relative",
         }}
       >
-        <div style={{ display: "flex", fontSize: 34, opacity: 0.9 }}>
+        {spot && (
+          <img
+            src={aerialImageUrl(spot.lat, spot.lng, {
+              width: 1200,
+              height: 630,
+              spanM: 700,
+            })}
+            alt=""
+            width={1200}
+            height={630}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        )}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background:
+              "linear-gradient(180deg, rgba(8,47,73,0.15) 30%, rgba(8,47,73,0.85) 100%)",
+          }}
+        />
+        <div
+          style={{
+            display: "flex",
+            fontSize: 34,
+            opacity: 0.95,
+          }}
+        >
           🏊 NL Swim Spot Explorer
         </div>
         <div
@@ -64,7 +103,7 @@ export default async function OgImage({
             }}
           />
           <div style={{ display: "flex" }}>{style.label}</div>
-          <div style={{ display: "flex", opacity: 0.7 }}>
+          <div style={{ display: "flex", opacity: 0.8 }}>
             · {[spot?.municipality, spot?.province].filter(Boolean).join(", ")}
           </div>
         </div>

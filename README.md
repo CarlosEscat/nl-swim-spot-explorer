@@ -2,10 +2,17 @@
 
 Interactive map of all ~744 **official Dutch outdoor swimming locations**, with:
 
+- **"Best right now" ranking** — scores every spot on live water temp, weather,
+  quality and (client-side) distance to you; powered by `GET /api/live`, one
+  CDN-cacheable batch snapshot for all spots
 - **Water quality** — official status from zwemwater.nl advisories (+ last-measured date)
 - **Water temperature** — latest reading from the nearest *live* Rijkswaterstaat sensor
 - **Weather** — current conditions per exact coordinates (Open-Meteo)
-- **Facilities & access hours** — hand-curated for the featured Amsterdam-area spots
+- **Aerial photos** — PDOK Luchtfoto (25 cm orthophoto) hero/thumbnail/OG image
+  per spot, generated deterministically from coordinates (`lib/aerial.ts`)
+- **Facilities** — toilets/food/parking auto-detected from OpenStreetMap for all
+  spots (`ingest:facilities`), hand-curated data for the featured Amsterdam-area
+  spots always wins
 - **SEO pages** — one static page per spot (`/spots/[slug]`), sitemap, OG images
 
 Built with Next.js (App Router) + TypeScript, Tailwind, Leaflet/OpenStreetMap, Supabase, Vercel Cron.
@@ -44,18 +51,150 @@ which runs, in order:
 | `seed:stations` | Pulls the RWS WaterWebservices catalog (~1080 stations measuring surface-water temp), probes them in batches and keeps only the ~116 with a reading in the last 7 days, then links every spot to its nearest live station (≤ 25 km) |
 | `ingest:quality` | Downloads the monthly zwemwater.nl advisory XLSX, maps active advisories (warning / negative advice / ban) onto spots by normalized name, snapshots a status per spot into `water_quality_readings` |
 | `seed:amsterdam` | Hand-curated facilities/hours for the 15 featured Amsterdam-area spots (Gaasperplas, IJburg, Nieuwe Meer, Diemerpark, Marineterrein, Het Twiske) |
+| `ingest:facilities` | Downloads toilets/parking/food/lifeguard POIs for all of NL from OSM Overpass (one country-wide dump per category — spatially-scoped queries time out at 744 spots), matches them to spots via a grid index (300–400 m radius), fills only fields the curated seeds left null |
 
 ## Scheduled refresh (Vercel Cron)
 
-`vercel.json` defines two jobs (both authorized via the `CRON_SECRET` bearer
+`vercel.json` defines three jobs (all authorized via the `CRON_SECRET` bearer
 token Vercel sends automatically):
 
 - `/api/cron/refresh-quality` — monthly (2nd, 06:00 UTC): re-ingests the advisory XLSX
 - `/api/cron/refresh-locations` — weekly (Mon, 05:00 UTC): re-pulls PDOK **and**
   re-probes live stations / re-links nearest stations
+- `/api/cron/refresh-facilities` — monthly (3rd, 06:00 UTC): re-runs the OSM
+  facilities backfill
 
 Live data (weather + water temp) is deliberately **not** cron-ingested: the
-`/api/spot/[slug]/live` route fetches it on request with a 30-minute cache.
+`/api/spot/[slug]/live` route fetches it on request with a 30-minute cache, and
+`/api/live` returns a batch snapshot for all spots at once (RWS stations
+batched 60/request; weather fetched per ~11 km grid cell to stay inside
+Open-Meteo's burst limits) behind the same 30-minute CDN cache.
+
+## Architecture
+
+Two views: how data gets **into** the store, and how it flows **out** to the
+browser at runtime.
+
+### Ingestion pipeline (CLI scripts + Vercel Cron)
+
+Every ingest lives in `lib/ingest/` and is shared by a thin CLI wrapper in
+`scripts/` and (where scheduled) a cron route in `app/api/cron/`. All writes go
+through the `DataStore` interface, which picks Supabase or local JSON at
+runtime based on env vars.
+
+```mermaid
+flowchart LR
+  subgraph ext["External sources"]
+    SRC1["PDOK Zwemwaterlocaties GML<br/>+ Locatieserver geocoding"]
+    SRC2["zwemwater.nl<br/>advisory XLSX"]
+    SRC3["Rijkswaterstaat<br/>WaterWebservices 2.0"]
+    SRC4["OSM Overpass<br/>(country-wide POI dumps)"]
+  end
+
+  subgraph ds["lib/data-sources/"]
+    A1["pdok.ts"]
+    A2["zwemwater.ts"]
+    A3["rws-ddl.ts"]
+    A4["overpass.ts"]
+  end
+
+  subgraph ing["lib/ingest/  (scripts/*.ts CLI = app/api/cron/* routes)"]
+    I1["locations.ts"]
+    I2["quality.ts"]
+    I3["stations.ts<br/>+ nearest-station links"]
+    I4["facilities.ts<br/>(grid-index matching)"]
+    I5["seed-amsterdam-details.ts<br/>(hand-curated, always wins)"]
+  end
+
+  STORE["lib/db/store.ts<br/>DataStore interface"]
+  LOCAL["local-store.ts<br/>data/local/*.json"]
+  SUPA["supabase-store.ts<br/>Supabase (Postgres)"]
+
+  SRC1 --> A1 --> I1
+  SRC2 --> A2 --> I2
+  SRC3 --> A3 --> I3
+  SRC4 --> A4 --> I4
+  I1 --> STORE
+  I2 --> STORE
+  I3 --> STORE
+  I4 --> STORE
+  I5 --> STORE
+  STORE --> LOCAL
+  STORE --> SUPA
+```
+
+### Runtime request flow
+
+Live data (water temp, weather) is never stored — it's fetched on request with
+a 30-minute cache. Aerial imagery is never stored either: `lib/aerial.ts`
+builds a deterministic PDOK WMS URL from each spot's coordinates.
+
+```mermaid
+flowchart LR
+  subgraph pages["Server-rendered pages"]
+    HOME["app/page.tsx<br/>(map, hourly ISR)"]
+    SPOT["app/spots/(slug)/page.tsx<br/>(744 static pages)"]
+    OG["opengraph-image.tsx"]
+  end
+
+  subgraph client["Client components"]
+    EXP["Explorer.tsx"]
+    MAP["SwimMap.tsx<br/>(Leaflet + clustering)"]
+    RANK["RankedList.tsx<br/>lib/score.ts + geolocation"]
+    PANEL["SpotPanel.tsx"]
+    LIVEC["SpotLiveClient.tsx"]
+  end
+
+  subgraph api["API routes"]
+    LIVEALL["GET /api/live<br/>batch snapshot, all spots"]
+    LIVEONE["GET /api/spot/(id)/live<br/>one spot"]
+  end
+
+  STORE["DataStore"]
+  RWS["rws-ddl.ts → RWS<br/>(stations batched 60/req)"]
+  METEO["open-meteo.ts → Open-Meteo<br/>(one call per ~11 km grid cell)"]
+  FOTO["lib/aerial.ts → PDOK Luchtfoto WMS"]
+
+  STORE --> HOME --> EXP
+  EXP --> MAP
+  EXP --> RANK
+  EXP --> PANEL
+  STORE --> SPOT --> LIVEC
+  STORE --> OG
+  RANK -- "fetch" --> LIVEALL
+  PANEL -- "fetch" --> LIVEONE
+  LIVEC -- "fetch" --> LIVEONE
+  LIVEALL --> RWS
+  LIVEALL --> METEO
+  LIVEALL --> STORE
+  LIVEONE --> RWS
+  LIVEONE --> METEO
+  FOTO --> SPOT
+  FOTO --> PANEL
+  FOTO --> OG
+```
+
+### Directory map
+
+```text
+app/
+  page.tsx                  # map home (ISR 1h) → Explorer
+  spots/[slug]/page.tsx     # static page per spot + opengraph-image.tsx
+  api/live/route.ts         # batch live snapshot (CDN-cached 30 min)
+  api/spot/[id]/live/       # per-spot live data
+  api/cron/refresh-*        # quality / locations / facilities (CRON_SECRET-guarded)
+components/
+  Explorer.tsx              # client state hub: map + ranked list + panel
+  SwimMap.tsx  RankedList.tsx  SpotPanel.tsx  SpotLiveClient.tsx
+lib/
+  db/store.ts               # DataStore interface → supabase-store | local-store
+  data-sources/             # one adapter per external API
+  ingest/                   # write pipelines (shared by scripts/ and cron)
+  aerial.ts  score.ts  geo.ts  quality.ts  slug.ts  types.ts  cron-auth.ts
+scripts/                    # CLI wrappers: ingest:*, seed:* (npm run)
+data/local/                 # pre-ingested JSON snapshot (no-DB quick start)
+supabase/migrations/        # schema (0001 init, 0002 facilities)
+```
 
 ## Data sources & credits
 
@@ -66,11 +205,15 @@ Live data (weather + water temp) is deliberately **not** cron-ingested: the
 | Water quality | [zwemwater.nl](https://www.zwemwater.nl/data-en-api) monthly published-measures XLSX |
 | Water temperature | [Rijkswaterstaat WaterWebservices 2.0](https://rijkswaterstaatdata.nl/waterdata/) (`ddapi20-waterwebservices.rijkswaterstaat.nl`) |
 | Weather | [Open-Meteo](https://open-meteo.com/) (no key) |
+| Aerial photos | [PDOK — Luchtfoto Actueel Ortho 25cm](https://www.pdok.nl/introductie/-/article/luchtfoto-pdok) (Beeldmateriaal Nederland, CC-BY 4.0) |
 | Map tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright) |
 
-Facilities for non-featured spots are shown as "not curated yet" rather than
-guessed. `webcam_url` exists in the schema but is null everywhere — no genuine
-public webcams exist at Dutch swim spots today.
+Facilities for non-featured spots are auto-detected from OpenStreetMap
+(`ingest:facilities`) and labeled as such in the UI; toilets/food/parking are
+well-mapped in NL so "not found nearby" is shown as "No", while lifeguard
+presence stays "Unknown" without positive evidence. `webcam_url` exists in the
+schema but is null everywhere — no genuine public webcams exist at Dutch swim
+spots today.
 
 ## Notes & follow-ups (from the build plan)
 

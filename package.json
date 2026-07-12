@@ -9,10 +9,11 @@
     "lint": "eslint",
     "ingest:locations": "tsx scripts/ingest-locations.ts",
     "ingest:quality": "tsx scripts/ingest-quality.ts",
+    "ingest:facilities": "tsx scripts/ingest-facilities.ts",
     "seed:stations": "tsx scripts/seed-rws-stations.ts",
     "seed:amsterdam": "tsx scripts/seed-amsterdam-details.ts",
     "compute:nearest": "tsx scripts/compute-nearest-station.ts",
-    "ingest:all": "npm run ingest:locations && npm run seed:stations && npm run ingest:quality && npm run seed:amsterdam"
+    "ingest:all": "npm run ingest:locations && npm run seed:stations && npm run ingest:quality && npm run seed:amsterdam && npm run ingest:facilities"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",
