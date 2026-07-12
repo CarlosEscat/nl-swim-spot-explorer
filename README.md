@@ -1,6 +1,8 @@
 # NL Swim Spot Explorer
 
-Interactive map of all ~744 **official Dutch outdoor swimming locations**, with:
+Interactive map of all ~744 **official Dutch outdoor swimming locations** —
+plus a hand-curated set of **widely-used unofficial spots**, clearly flagged —
+with:
 
 - **"Best right now" ranking** — scores every spot on live water temp, weather,
   quality and (client-side) distance to you; powered by `GET /api/live`, one
@@ -13,6 +15,11 @@ Interactive map of all ~744 **official Dutch outdoor swimming locations**, with:
 - **Facilities** — toilets/food/parking auto-detected from OpenStreetMap for all
   spots (`ingest:facilities`), hand-curated data for the featured Amsterdam-area
   spots always wins
+- **Unofficial spots** — hand-curated, widely-known swim spots that aren't
+  officially designated (`seed:unofficial`, list in
+  `lib/ingest/unofficial-spots.ts`); flagged everywhere with an amber pin ring,
+  an "Unofficial spot" badge and a swim-at-your-own-risk note, and excluded
+  from the zwemwater.nl all-clear (they show "No data / not monitored")
 - **SEO pages** — one static page per spot (`/spots/[slug]`), sitemap, OG images
 
 Built with Next.js (App Router) + TypeScript, Tailwind, MapLibre GL JS + MapTiler vector tiles (3D-capable map), Supabase, Vercel Cron.
@@ -51,6 +58,7 @@ which runs, in order:
 | Script | What it does |
 |---|---|
 | `ingest:locations` | Pulls the PDOK *Zwemwaterlocaties* INSPIRE dataset (GML), converts polygon centroids EPSG:3035 → WGS84, reverse-geocodes province/municipality via PDOK Locatieserver, upserts `swim_spots` |
+| `seed:unofficial` | Hand-curated, widely-used **unofficial** swim spots (`official_status: "unofficial"`) with access notes; not quality-monitored, flagged as swim-at-your-own-risk in the UI. Add new ones in `lib/ingest/unofficial-spots.ts` |
 | `seed:stations` | Pulls the RWS WaterWebservices catalog (~1080 stations measuring surface-water temp), probes them in batches and keeps only the ~116 with a reading in the last 7 days, then links every spot to its nearest live station (≤ 25 km) |
 | `ingest:quality` | Downloads the monthly zwemwater.nl advisory XLSX, maps active advisories (warning / negative advice / ban) onto spots by normalized name, snapshots a status per spot into `water_quality_readings` |
 | `seed:amsterdam` | Hand-curated facilities/hours for the 15 featured Amsterdam-area spots (Gaasperplas, IJburg, Nieuwe Meer, Diemerpark, Marineterrein, Het Twiske) |

@@ -16,6 +16,7 @@ const NL_CENTER: LngLatLike = [5.3, 52.2];
 const NL_ZOOM = 7;
 const SPOTS_SOURCE = "swim-spots";
 const FEATURED_COLOR = "#4f46e5";
+const UNOFFICIAL_COLOR = "#d97706";
 
 // The MapTiler key must be spelled out literally so Next.js can inline it.
 const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
@@ -30,6 +31,7 @@ function toGeoJSON(spots: SpotWithData[]): FeatureCollection<Point> {
         id: spot.id,
         pinColor: qualityStyle(spot.latest_quality?.status).pin,
         featured: spot.is_featured,
+        unofficial: spot.official_status === "unofficial",
       },
     })),
   };
@@ -38,8 +40,21 @@ function toGeoJSON(spots: SpotWithData[]): FeatureCollection<Point> {
 // Circle radii matching the old 13px/18px divIcon pins and their 1.35x hover scale.
 const PIN_RADIUS: ExpressionSpecification = ["case", ["get", "featured"], 9, 6.5];
 const PIN_RADIUS_HOVER: ExpressionSpecification = ["case", ["get", "featured"], 12, 9];
-const PIN_STROKE_COLOR: ExpressionSpecification = ["case", ["get", "featured"], FEATURED_COLOR, "#ffffff"];
-const PIN_STROKE_WIDTH: ExpressionSpecification = ["case", ["get", "featured"], 3, 2];
+// Ring color doubles as a status flag: indigo = featured, amber = unofficial.
+const PIN_STROKE_COLOR: ExpressionSpecification = [
+  "case",
+  ["get", "featured"],
+  FEATURED_COLOR,
+  ["get", "unofficial"],
+  UNOFFICIAL_COLOR,
+  "#ffffff",
+];
+const PIN_STROKE_WIDTH: ExpressionSpecification = [
+  "case",
+  ["any", ["get", "featured"], ["get", "unofficial"]],
+  3,
+  2,
+];
 const NO_MATCH_FILTER: ExpressionSpecification = ["==", ["get", "id"], "__none__"];
 
 export default function SwimMap({

@@ -90,6 +90,11 @@ export default function SpotPanel({
                 Featured
               </span>
             )}
+            {spot.official_status === "unofficial" && (
+              <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                Unofficial spot
+              </span>
+            )}
           </p>
         </div>
         <button
@@ -123,11 +128,20 @@ export default function SpotPanel({
             <span className="text-xs text-gray-500">
               {q
                 ? `as of ${new Date(q.measured_at).toLocaleDateString("en-NL", { day: "numeric", month: "short", year: "numeric" })}`
-                : "no reading yet"}
+                : spot.official_status === "unofficial"
+                  ? "not monitored"
+                  : "no reading yet"}
             </span>
           </div>
           {q?.raw_notes && (
             <p className="mt-1.5 text-xs text-gray-500">{q.raw_notes}</p>
+          )}
+          {spot.official_status === "unofficial" && (
+            <p className="mt-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              This is not an officially designated swimming location. Water
+              quality is not tested by zwemwater.nl and there is no supervision
+              — swim at your own risk.
+            </p>
           )}
         </section>
 

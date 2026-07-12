@@ -16,10 +16,12 @@ export interface IngestQualityResult {
 }
 
 /**
- * Monthly snapshot: for every known spot, record its current official status.
+ * Monthly snapshot: for every official spot, record its current status.
  * Spots with an active advisory get that advisory's status (worst wins);
  * everything else is 'good' — zwemwater.nl only publishes measures, so
- * "no active measure" is the all-clear.
+ * "no active measure" is the all-clear. Unofficial/delisted spots are not
+ * monitored, so they get no reading (the UI shows "No data") rather than a
+ * misleading all-clear.
  * Shared by the CLI script and the monthly cron route.
  */
 export async function ingestQuality(
@@ -66,7 +68,8 @@ export async function ingestQuality(
     }
   }
 
-  const readings = spots.map<WaterQualityReading>((spot) => {
+  const monitored = spots.filter((s) => s.official_status === "official");
+  const readings = monitored.map<WaterQualityReading>((spot) => {
     const advisory = worstBySpotId.get(spot.id);
     return {
       spot_id: spot.id,
@@ -80,7 +83,9 @@ export async function ingestQuality(
   const inserted = await store.insertQualityReadings(readings);
   log(
     `Snapshot: ${worstBySpotId.size} spots with active advisories, ` +
-      `${spots.length - worstBySpotId.size} all-clear. Inserted ${inserted} new readings.`
+      `${monitored.length - worstBySpotId.size} all-clear ` +
+      `(${spots.length - monitored.length} unofficial/delisted spots skipped). ` +
+      `Inserted ${inserted} new readings.`
   );
   if (unmatched.size > 0) {
     log(
@@ -91,7 +96,7 @@ export async function ingestQuality(
   return {
     advisoryRows: advisories.length,
     activeAdvisories: worstBySpotId.size,
-    allClear: spots.length - worstBySpotId.size,
+    allClear: monitored.length - worstBySpotId.size,
     inserted,
     unmatched: [...unmatched],
   };

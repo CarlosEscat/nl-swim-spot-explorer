@@ -165,6 +165,11 @@ export default function RankedList({
                         <span className="truncate text-sm font-semibold text-gray-900">
                           {entry.spot.name}
                         </span>
+                        {entry.spot.official_status === "unofficial" && (
+                          <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-px text-[10px] font-semibold text-amber-700">
+                            unofficial
+                          </span>
+                        )}
                       </span>
                       <span className="block truncate text-xs text-gray-500">
                         {parts.join(" · ") || "no live data"}

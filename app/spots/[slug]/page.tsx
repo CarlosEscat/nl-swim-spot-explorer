@@ -27,10 +27,14 @@ export async function generateMetadata({
   const spot = await store.getSpotBySlug(slug);
   if (!spot) return {};
   const title = `Swimming at ${spot.name} (${spot.province})`;
+  const place = [spot.municipality, spot.province].filter(Boolean).join(", ");
   const description =
-    `${spot.name} is an official outdoor swimming location in ` +
-    `${[spot.municipality, spot.province].filter(Boolean).join(", ")}. ` +
-    `Check live water temperature, weather, official water quality status and facilities.`;
+    spot.official_status === "unofficial"
+      ? `${spot.name} is a well-known but unofficial swim spot in ${place} — ` +
+        `not a designated bathing location, water quality not monitored. ` +
+        `Check live water temperature and weather before you go.`
+      : `${spot.name} is an official outdoor swimming location in ${place}. ` +
+        `Check live water temperature, weather, official water quality status and facilities.`;
   return {
     title,
     description,
@@ -105,11 +109,18 @@ export default async function SpotPage({
             {spot.name}
           </h1>
           <p className="mt-1 text-gray-500">
-            Official outdoor swimming location in{" "}
+            {spot.official_status === "unofficial"
+              ? "Unofficial swim spot in "
+              : "Official outdoor swimming location in "}
             {[spot.municipality, spot.province].filter(Boolean).join(", ")}
             {spot.is_featured && (
               <span className="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
                 Featured
+              </span>
+            )}
+            {spot.official_status === "unofficial" && (
+              <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                Unofficial spot
               </span>
             )}
           </p>
@@ -128,11 +139,20 @@ export default async function SpotPage({
             <span className="text-sm text-gray-500">
               {q
                 ? `as of ${new Date(q.measured_at).toLocaleDateString("en-NL", { day: "numeric", month: "long", year: "numeric" })} · source: ${q.source}`
-                : "no reading yet"}
+                : spot.official_status === "unofficial"
+                  ? "not monitored"
+                  : "no reading yet"}
             </span>
           </div>
           {q?.raw_notes && (
             <p className="mt-2 text-sm text-gray-500">{q.raw_notes}</p>
+          )}
+          {spot.official_status === "unofficial" && (
+            <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              This is a well-known swim spot, but not an officially designated
+              bathing location: water quality is not tested by zwemwater.nl and
+              there is no supervision. Swim at your own risk.
+            </p>
           )}
         </section>
 

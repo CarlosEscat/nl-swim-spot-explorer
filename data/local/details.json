@@ -9670,5 +9670,53 @@
     "access_notes": null,
     "facilities_source": "osm",
     "updated_at": "2026-07-12T10:34:50.326Z"
+  },
+  {
+    "spot_id": "c86631e4-7105-4b14-b865-f494ae836a63",
+    "has_restrooms": false,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Small city 'beach' on the east bank of the Amstel between the Ruyschstraat and the Berlagebrug, hugely popular on hot days. Not an official swimming location: the Amstel is active boating water and quality is not monitored. Stay close to the bank and watch for boat traffic. Cafés along the Weesperzijde.",
+    "facilities_source": "manual",
+    "updated_at": "2026-07-12T14:08:19.992Z"
+  },
+  {
+    "spot_id": "c53e4d58-c9c8-46ee-b4f4-f539528c0477",
+    "has_restrooms": false,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": false,
+    "access_notes": "Quays and jetties along the Borneokade (Entrepothaven) in the Eastern Docklands, a local favourite for a quick plunge. Not an official swimming location — no quality monitoring. Keep clear of moored and passing boats, and check for a ladder or steps before jumping in: exits are scarce.",
+    "facilities_source": "manual",
+    "updated_at": "2026-07-12T14:08:19.992Z"
+  },
+  {
+    "spot_id": "49f447a6-b7f5-41b2-899b-e9fb5f6a921a",
+    "has_restrooms": false,
+    "has_catering": false,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": null,
+    "lounging_area": true,
+    "access_notes": "Quiet lake between Amsterdam-Noord and Zaandam, used for wild swimming from the natural banks. Not an official swimming location: unsupervised deep water, no facilities, no quality monitoring. In warm spells check for blue-green algae before getting in.",
+    "facilities_source": "manual",
+    "updated_at": "2026-07-12T14:08:19.992Z"
+  },
+  {
+    "spot_id": "46479acf-7f52-4512-bd88-dbba1a5cf1fe",
+    "has_restrooms": false,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Canal swimming off the quays around the Muntbrug and Muntsluis, a well-known Utrecht summer hangout. Not an official swimming location — the canal is boating water and quality is untested. Mind boat traffic and use the quay steps or ladders to get out.",
+    "facilities_source": "manual",
+    "updated_at": "2026-07-12T14:08:19.992Z"
   }
 ]

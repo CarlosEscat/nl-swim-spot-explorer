@@ -18,11 +18,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
   ),
   title: {
-    default: "NL Swim Spot Explorer — official outdoor swimming spots",
+    default: "NL Swim Spot Explorer — outdoor swimming spots",
     template: "%s · NL Swim Spot Explorer",
   },
   description:
-    "Interactive map of all ~700 official Dutch outdoor swimming locations with live water temperature, weather, water quality status and facilities.",
+    "Interactive map of all ~700 official Dutch outdoor swimming locations — plus well-known unofficial spots, clearly flagged — with live water temperature, weather, water quality status and facilities.",
 };
 
 export default function RootLayout({
@@ -44,7 +44,7 @@ export default function RootLayout({
             </span>
           </Link>
           <span className="hidden text-xs text-gray-400 sm:block">
-            Official Dutch swim spots · live water &amp; weather
+            Dutch swim spots · live water &amp; weather
           </span>
         </header>
         <main className="min-h-0 flex-1">{children}</main>
