@@ -1,0 +1,167 @@
+[
+  {
+    "spot_id": "aa751e30-b625-40bc-9bc9-9e3976679d72",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Open access, free. Beach and lawns on the north shore of the Gaasperplas; horeca near the Gaasperplas metro entrance. No water supervision. Water quality monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.774Z"
+  },
+  {
+    "spot_id": "55a61e5d-2f5d-4b03-9700-aec3219c22d9",
+    "has_restrooms": true,
+    "has_catering": true,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Open access, free. South-shore beach with a toilet building (~50 m) and horeca. Designated nude beach elsewhere on the lake (park side; closed for renovation until 12 June 2026 — temporary alternative on the southwest bank). No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "1d51b32f-099d-4982-86d4-eaf8d486e9a2",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Strand IJburg (Blijburg). Open access, free, man-made sandy beach; popular with windsurfers and paddlers. The former Blijburg beach pavilion closed — food/toilet availability varies by season. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "6cf99bd0-cfbf-418d-a06f-66e3a7f8aa2d",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Open access, free. North shore by the Amsterdamse Bos, includes the official swim dock (steiger). No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "4ea3225c-2cf1-476d-ab8e-9f6f4b99b150",
+    "has_restrooms": null,
+    "has_catering": false,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": true,
+    "lounging_area": true,
+    "access_notes": "De Oeverlanden, west bank of the Nieuwe Meer. Open access, free. Long-established naturist recreation area; natural banks, no facilities on the shore. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "e805b8fe-ce3c-476b-aadf-7f4bb033714a",
+    "has_restrooms": false,
+    "has_catering": false,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Small quiet beach in the Diemerpark on the IJmeer, east of IJburg. Open access, free, no facilities — bring what you need. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "5233d494-d623-434f-9d0e-41864b66fd9d",
+    "has_restrooms": null,
+    "has_catering": true,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Binnenhaven at the Marineterrein — the first official swim spot in central Amsterdam (designated 2025). Quay access via steps/ladders; deep water, not suitable for small children. Cafés on the grounds. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "ed441ee3-9870-4e25-8f83-d28286de9370",
+    "has_restrooms": true,
+    "has_catering": false,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": true,
+    "lounging_area": true,
+    "access_notes": "Naturist beach on a peninsula in Het Twiske, reached via a small bridge. Public toilet, volleyball and jeu-de-boules; no horeca — bring your own. Gently sloping beach, shallow zone marked by buoys. No BBQ, no dogs. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "92316a05-0d58-409d-bb4c-15cb279480f6",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Beach in recreation area Het Twiske (open access; parking is paid). Facilities vary per beach — toilets and horeca available centrally in the park. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "6a3b362e-dae6-46af-99c1-d7a4dd3aa5ff",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Beach in recreation area Het Twiske (open access; parking is paid). Facilities vary per beach — toilets and horeca available centrally in the park. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "0fa555b0-ffcb-4b3e-a684-5d5c6e4d3bc4",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Beach in recreation area Het Twiske (open access; parking is paid). Facilities vary per beach — toilets and horeca available centrally in the park. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "f3fc9835-63a1-457f-bb5f-b4c5052ba716",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Beach in recreation area Het Twiske (open access; parking is paid). Facilities vary per beach — toilets and horeca available centrally in the park. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "6378de76-6c0d-4d62-b653-4b7a2440b6bc",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Beach in recreation area Het Twiske (open access; parking is paid). Facilities vary per beach — toilets and horeca available centrally in the park. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "5e96d0e1-b492-4d8e-a1d9-b64dd5b84b6a",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Beach in recreation area Het Twiske (open access; parking is paid). Facilities vary per beach — toilets and horeca available centrally in the park. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  },
+  {
+    "spot_id": "4c802f88-5734-45f7-b5ea-c2099318c1c7",
+    "has_restrooms": null,
+    "has_catering": null,
+    "has_lifeguard": false,
+    "has_boat_ramp": false,
+    "nude_recreation": false,
+    "lounging_area": true,
+    "access_notes": "Beach in recreation area Het Twiske (open access; parking is paid). Facilities vary per beach — toilets and horeca available centrally in the park. No water supervision. Monitored 1 May – 1 Oct.",
+    "updated_at": "2026-07-11T13:31:06.775Z"
+  }
+]

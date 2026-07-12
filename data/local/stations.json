@@ -1,0 +1,698 @@
+[
+  {
+    "id": "ameland.nes",
+    "name": "Ameland, Nes",
+    "lat": 53.429766,
+    "lng": 5.759448
+  },
+  {
+    "id": "amerongen.boven",
+    "name": "Amerongen, boven",
+    "lat": 51.9753,
+    "lng": 5.4125
+  },
+  {
+    "id": "amsterdam.schellingwouderbrug",
+    "name": "Amsterdam, Schellingwouderbrug",
+    "lat": 52.378673,
+    "lng": 4.967545
+  },
+  {
+    "id": "andijk",
+    "name": "Andijk",
+    "lat": 52.7503,
+    "lng": 5.265049
+  },
+  {
+    "id": "arnemuiden.oranjeplaat",
+    "name": "Arnemuiden Oranjeplaat",
+    "lat": 51.51661,
+    "lng": 3.70014
+  },
+  {
+    "id": "belfeld.boven",
+    "name": "Belfeld, boven",
+    "lat": 51.3189,
+    "lng": 6.1123
+  },
+  {
+    "id": "bommenede",
+    "name": "Bommenede",
+    "lat": 51.738709,
+    "lng": 3.974298
+  },
+  {
+    "id": "borsselealpha",
+    "name": "Borssele Windpark Alpha platform",
+    "lat": 51.699921,
+    "lng": 3.056707
+  },
+  {
+    "id": "brouwersdam.brouwershavensegat.2",
+    "name": "Brouwersdam Brouwershavense Gat 2",
+    "lat": 51.766527,
+    "lng": 3.621747
+  },
+  {
+    "id": "brouwershavensche.gat.08",
+    "name": "Brouwershavensche Gat 08",
+    "lat": 51.75075645,
+    "lng": 3.811483912
+  },
+  {
+    "id": "bruinisse.krammersluis.krammerput",
+    "name": "Bruinisse Krammersluis krammerput",
+    "lat": 51.666489,
+    "lng": 4.186255
+  },
+  {
+    "id": "bruinisse.krammersluis.laagbekken",
+    "name": "Bruinisse Krammersluis laagbekken",
+    "lat": 51.658109,
+    "lng": 4.160037
+  },
+  {
+    "id": "bruinisse.krammersluis.oosterschelde.1",
+    "name": "Bruinisse Krammersluis sluis, Oosterschelde",
+    "lat": 51.661389,
+    "lng": 4.155639
+  },
+  {
+    "id": "bruinisse.krammersluis.volkeraknoord",
+    "name": "Bruinisse Krammersluis Volkerak Noord",
+    "lat": 51.661806,
+    "lng": 4.16253
+  },
+  {
+    "id": "bruinisse.krammersluis.volkerakzuid",
+    "name": "Bruinisse Krammersluis Volkerak Zuid",
+    "lat": 51.661332,
+    "lng": 4.162606
+  },
+  {
+    "id": "buitenbanken.west",
+    "name": "Buitenbanken west",
+    "lat": 51.79502,
+    "lng": 2.97225
+  },
+  {
+    "id": "dantziggat.pietscheveplaat.zuid",
+    "name": "Dantziggat Piet Scheveplaat zuid",
+    "lat": 53.37974,
+    "lng": 5.79487
+  },
+  {
+    "id": "delden.sluis.beneden",
+    "name": "Delden, sluis, beneden",
+    "lat": 52.2457,
+    "lng": 6.6754
+  },
+  {
+    "id": "denhelder.marsdiep",
+    "name": "Den Helder, Marsdiep",
+    "lat": 52.964359,
+    "lng": 4.74499
+  },
+  {
+    "id": "denhoorntexel.waddenzee.gatvandestier",
+    "name": "Den Hoorn Texel Waddenzee Gat van de Stier",
+    "lat": 53,
+    "lng": 4.828333
+  },
+  {
+    "id": "denoever.ijsselmeer.binnenhaven",
+    "name": "Den Oever, IJsselmeer binnenhaven",
+    "lat": 52.930195,
+    "lng": 5.047539
+  },
+  {
+    "id": "denoever.ijsselmeer.vaargeul",
+    "name": "Den Oever IJsselmeer Vaargeul",
+    "lat": 52.90437,
+    "lng": 5.0807
+  },
+  {
+    "id": "denoever.spuisluis.binnen",
+    "name": "Den Oever, spuisluis, binnen",
+    "lat": 52.936311,
+    "lng": 5.052922
+  },
+  {
+    "id": "denoever.waddenzee.voorhaven.kolk",
+    "name": "Den Oever, Waddenzee voorhaven kolk",
+    "lat": 52.931652,
+    "lng": 5.045803
+  },
+  {
+    "id": "diemen",
+    "name": "Diemen",
+    "lat": 52.349384,
+    "lng": 4.983599
+  },
+  {
+    "id": "diemen.muidenbrug",
+    "name": "Diemen Muiden brug",
+    "lat": 52.333141,
+    "lng": 5.015217
+  },
+  {
+    "id": "dinteloord.volkerak",
+    "name": "Dinteloord, Volkerak",
+    "lat": 51.65291,
+    "lng": 4.316483
+  },
+  {
+    "id": "driel.boven",
+    "name": "Driel, boven",
+    "lat": 51.96584,
+    "lng": 5.810635
+  },
+  {
+    "id": "echt.kanaal",
+    "name": "Echt",
+    "lat": 51.106626,
+    "lng": 5.849302
+  },
+  {
+    "id": "eefde.sluis.beneden",
+    "name": "Eefde, sluis, beneden",
+    "lat": 52.159061,
+    "lng": 6.22836
+  },
+  {
+    "id": "eemshaven.waddenzee",
+    "name": "Eemshaven, Waddenzee",
+    "lat": 53.474392,
+    "lng": 6.821731
+  },
+  {
+    "id": "eierlandsegat",
+    "name": "Eierlandse Gat",
+    "lat": 53.2762,
+    "lng": 4.660347
+  },
+  {
+    "id": "eijsden",
+    "name": "Eijsden",
+    "lat": 50.7795,
+    "lng": 5.6987
+  },
+  {
+    "id": "europlatform",
+    "name": "Europlatform",
+    "lat": 51.99781,
+    "lng": 3.275071
+  },
+  {
+    "id": "friesekust.ijsselmeer",
+    "name": "Friesekust IJsselmeer",
+    "lat": 52.822278,
+    "lng": 5.478778
+  },
+  {
+    "id": "goeree.lichteiland",
+    "name": "Goeree, lichteiland",
+    "lat": 51.925034,
+    "lng": 3.668416
+  },
+  {
+    "id": "grave.boven",
+    "name": "Grave, boven",
+    "lat": 51.761,
+    "lng": 5.743
+  },
+  {
+    "id": "hagestein.boven",
+    "name": "Hagestein, boven",
+    "lat": 51.9895,
+    "lng": 5.1352
+  },
+  {
+    "id": "hank.bergschemaas",
+    "name": "Keizersveer",
+    "lat": 51.7191,
+    "lng": 4.894
+  },
+  {
+    "id": "haringvliet.1",
+    "name": "Haringvliet, Kier1",
+    "lat": 51.79685,
+    "lng": 4.12387
+  },
+  {
+    "id": "haringvliet.2",
+    "name": "Haringvliet, Kier2",
+    "lat": 51.819858,
+    "lng": 4.074067
+  },
+  {
+    "id": "haringvliet.3",
+    "name": "Haringvliet, Kier3",
+    "lat": 51.826032,
+    "lng": 4.051158
+  },
+  {
+    "id": "haringvliet.4",
+    "name": "Haringvliet, Kier4",
+    "lat": 51.82039,
+    "lng": 4.07514
+  },
+  {
+    "id": "hato.marinakralendijk",
+    "name": "Hato Marina Kralendijk",
+    "lat": 12.167587,
+    "lng": -68.28753
+  },
+  {
+    "id": "hengelo.oelerbrug",
+    "name": "Hengelo, Oelerbrug",
+    "lat": 52.25037,
+    "lng": 6.76734
+  },
+  {
+    "id": "hengelo.sluis.beneden",
+    "name": "Hengelo, sluis, beneden",
+    "lat": 52.2464,
+    "lng": 6.802
+  },
+  {
+    "id": "hengelo.sluis.boven",
+    "name": "Hengelo, sluis, boven",
+    "lat": 52.2459,
+    "lng": 6.8064
+  },
+  {
+    "id": "hoekvanholland",
+    "name": "Hoek van Holland",
+    "lat": 51.976899,
+    "lng": 4.119827
+  },
+  {
+    "id": "hollandsekust.noord.alpha",
+    "name": "Hollandse Kust Noord Alpha",
+    "lat": 52.69777,
+    "lng": 4.2935
+  },
+  {
+    "id": "hollandsekust.noord.windparknoord",
+    "name": "Hollandse Kust, Noord Windpark Noord",
+    "lat": 52.783,
+    "lng": 4.285
+  },
+  {
+    "id": "hollandsekust.noord.windparkzuid",
+    "name": "Hollandse Kust, Noord Windpark Zuid",
+    "lat": 52.7,
+    "lng": 4.325
+  },
+  {
+    "id": "hollandsekust.zuid.alpha",
+    "name": "Hollandse Kust Zuid platform Alpha",
+    "lat": 52.232547,
+    "lng": 4.19569
+  },
+  {
+    "id": "hollandsekust.zuid.windparknoord",
+    "name": "Hollandse Kust, Zuid Windpark Noord",
+    "lat": 52.393,
+    "lng": 4.056
+  },
+  {
+    "id": "hollandsekust.zuid.windparkzuid",
+    "name": "Hollandse Kust, Zuid Windpark Zuid",
+    "lat": 52.244,
+    "lng": 4.0849
+  },
+  {
+    "id": "holwerd.vaargeul",
+    "name": "Holwerd vaargeul",
+    "lat": 53.39828062,
+    "lng": 5.882389099
+  },
+  {
+    "id": "ijmuiden.buitenhaven",
+    "name": "IJmuiden, buitenhaven",
+    "lat": 52.463,
+    "lng": 4.555
+  },
+  {
+    "id": "ijmuiden.munitiestort.1",
+    "name": "IJmuiden, munitiestort, 1",
+    "lat": 52.549225,
+    "lng": 4.057019
+  },
+  {
+    "id": "k13a.1",
+    "name": "K13a meetboei",
+    "lat": 53.2155,
+    "lng": 3.2217
+  },
+  {
+    "id": "kamperland.schotsman",
+    "name": "Kamperland, Schotsman",
+    "lat": 51.581616,
+    "lng": 3.643279
+  },
+  {
+    "id": "kinderdijk.lek",
+    "name": "Kinderdijk Lek",
+    "lat": 51.8883,
+    "lng": 4.62599
+  },
+  {
+    "id": "kloosterzande.baalhoek",
+    "name": "Kloosterzande, Baalhoek",
+    "lat": 51.366086,
+    "lng": 4.10258
+  },
+  {
+    "id": "kornwerderzand.ijsselmeer.binnenhaven",
+    "name": "Kornwerderzand, IJsselmeer binnenhaven",
+    "lat": 53.06835,
+    "lng": 5.337321
+  },
+  {
+    "id": "kornwerderzand.ijsselmeer.middelgronden",
+    "name": "Kornwerderzand IJsselmeer Middelgronden",
+    "lat": 53.05167,
+    "lng": 5.3103
+  },
+  {
+    "id": "kornwerderzand.ijsselmeer.spui",
+    "name": "Kornwerderzand IJsselmeer spui",
+    "lat": 53.06802,
+    "lng": 5.32872
+  },
+  {
+    "id": "kornwerderzand.ijsselmeer.vaargeul",
+    "name": "Kornwerderzand IJsselmeer vaargeul",
+    "lat": 53.04868,
+    "lng": 5.34483
+  },
+  {
+    "id": "kornwerderzand.waddenzee.voorhaven.kolk",
+    "name": "Kornwerderzand, Waddenzee voorhaven kolk",
+    "lat": 53.069944,
+    "lng": 5.337103
+  },
+  {
+    "id": "krimpenaandeijssel.hollandscheijssel",
+    "name": "Krimpen aan de IJssel, Hollandsche IJssel",
+    "lat": 51.9165,
+    "lng": 4.579
+  },
+  {
+    "id": "leeuwarden.vanharinxmakanaal",
+    "name": "Leeuwarden Van Harinxmakanaal",
+    "lat": 53.18341,
+    "lng": 5.79713
+  },
+  {
+    "id": "linne.stuw.boven",
+    "name": "Linne, stuw, boven",
+    "lat": 51.168812,
+    "lng": 5.922507
+  },
+  {
+    "id": "lith.boven",
+    "name": "Lith, boven",
+    "lat": 51.81,
+    "lng": 5.455
+  },
+  {
+    "id": "lobith.bovenrijn.haven",
+    "name": "Lobith, Bovenrijn, haven",
+    "lat": 51.857505,
+    "lng": 6.083651
+  },
+  {
+    "id": "lobith.ponton",
+    "name": "Lobith, ponton",
+    "lat": 51.854205,
+    "lng": 6.091178
+  },
+  {
+    "id": "maarssen.kanaal",
+    "name": "Maarssen, kanaal",
+    "lat": 52.133807,
+    "lng": 5.039151
+  },
+  {
+    "id": "maastricht.borgharen.maas.boven",
+    "name": "Maastricht, Borgharen, Maas, boven",
+    "lat": 50.868809,
+    "lng": 5.698089
+  },
+  {
+    "id": "makkum.sluis.buiten",
+    "name": "Makkum sluis buiten",
+    "lat": 53.05451,
+    "lng": 5.40223
+  },
+  {
+    "id": "markermeer.midden",
+    "name": "Markermeer, midden",
+    "lat": 52.5317,
+    "lng": 5.23124
+  },
+  {
+    "id": "markermeer.trintelzand",
+    "name": "Markermeer Trintelzand",
+    "lat": 52.62412,
+    "lng": 5.37297
+  },
+  {
+    "id": "marollegat",
+    "name": "Marollegat",
+    "lat": 51.479747,
+    "lng": 4.191958
+  },
+  {
+    "id": "middelharnis.meetboei",
+    "name": "Middelharnis, meetboei",
+    "lat": 51.776524,
+    "lng": 4.192119
+  },
+  {
+    "id": "nieuwegein.lekkanaal",
+    "name": "Nieuwegein, lekkanaal",
+    "lat": 52.022729,
+    "lng": 5.113007
+  },
+  {
+    "id": "nieuwvossemeer",
+    "name": "Nieuw-Vossemeer",
+    "lat": 51.584608,
+    "lng": 4.201577
+  },
+  {
+    "id": "oosterschelde.4",
+    "name": "Oosterschelde, 4",
+    "lat": 51.65514,
+    "lng": 3.69342
+  },
+  {
+    "id": "ossenisse",
+    "name": "Ossenisse",
+    "lat": 51.407884,
+    "lng": 3.966769
+  },
+  {
+    "id": "plaatvanoudetonge.oost",
+    "name": "Plaat van Oude Tonge, oost",
+    "lat": 51.672527,
+    "lng": 4.13955
+  },
+  {
+    "id": "rilland.antwerpskanaalpand",
+    "name": "Rilland, Antwerps kanaalpand",
+    "lat": 51.405709,
+    "lng": 4.237887
+  },
+  {
+    "id": "rilland.bath",
+    "name": "Rilland, Bath",
+    "lat": 51.39878,
+    "lng": 4.21014
+  },
+  {
+    "id": "rilland.bathsebrug",
+    "name": "Rilland, Bathsebrug",
+    "lat": 51.42503,
+    "lng": 4.231181
+  },
+  {
+    "id": "rilland.bathsespuikanaal.inloop",
+    "name": "Rilland, Bathse Spuikanaal, inloop",
+    "lat": 51.46291,
+    "lng": 4.22577
+  },
+  {
+    "id": "roermond.stuw.boven",
+    "name": "Roermond, stuw, boven",
+    "lat": 51.21073,
+    "lng": 5.982902
+  },
+  {
+    "id": "rotterdam.brienenoordbrug",
+    "name": "Rotterdam, Brienenoordbrug",
+    "lat": 51.90525,
+    "lng": 4.542468
+  },
+  {
+    "id": "rotterdam.lekhaven",
+    "name": "Rotterdam, Lekhaven",
+    "lat": 51.904099,
+    "lng": 4.429597
+  },
+  {
+    "id": "rotterdamsehoek.ijsselmeer",
+    "name": "Rotterdamsehoek IJsselmeer",
+    "lat": 52.748722,
+    "lng": 5.552
+  },
+  {
+    "id": "sambeek.boven",
+    "name": "Sambeek, boven",
+    "lat": 51.63225,
+    "lng": 6.0036
+  },
+  {
+    "id": "sasvangent",
+    "name": "Sas van Gent",
+    "lat": 51.230267,
+    "lng": 3.807499
+  },
+  {
+    "id": "schaar.stroomgat",
+    "name": "Schaar Stroomgat",
+    "lat": 51.65163,
+    "lng": 3.09968
+  },
+  {
+    "id": "schiermonnikoog.noord",
+    "name": "Schiermonnikoog, noord",
+    "lat": 53.594837,
+    "lng": 6.165377
+  },
+  {
+    "id": "sintphilipsland.slaak.noord",
+    "name": "Sint Philipsland Slaak noord",
+    "lat": 51.65423,
+    "lng": 4.15386
+  },
+  {
+    "id": "sintphilipsland.slaak.oost",
+    "name": "Sint Philipsland Slaak oost",
+    "lat": 51.6442,
+    "lng": 4.17166
+  },
+  {
+    "id": "sintphilipsland.slaak.zuid",
+    "name": "Sint Philipsland Slaak zuid",
+    "lat": 51.65136,
+    "lng": 4.15109
+  },
+  {
+    "id": "spaarndam.zijkanaalc",
+    "name": "Spaarndam, Zijkanaal C",
+    "lat": 52.420077,
+    "lng": 4.693508
+  },
+  {
+    "id": "spijkenisse.beerenplaat",
+    "name": "Spijkenisse, Beerenplaat",
+    "lat": 51.839573,
+    "lng": 4.420907
+  },
+  {
+    "id": "spijkenisse.oudemaas.brug",
+    "name": "Spijkenisse, Oude Maas, Brug",
+    "lat": 51.859612,
+    "lng": 4.33986
+  },
+  {
+    "id": "stavoren.gemaalhoogland.buiten",
+    "name": "Stavoren gemaal Hoogland buiten",
+    "lat": 52.87793,
+    "lng": 5.36396
+  },
+  {
+    "id": "stellendam.binnen",
+    "name": "Stellendam, binnen",
+    "lat": 51.826694,
+    "lng": 4.050028
+  },
+  {
+    "id": "stellendam.buiten",
+    "name": "Stellendam, buiten",
+    "lat": 51.8317,
+    "lng": 4.042533
+  },
+  {
+    "id": "terneuzen.sluiskilbrug",
+    "name": "Terneuzen, Sluiskilbrug",
+    "lat": 51.294,
+    "lng": 3.8354
+  },
+  {
+    "id": "terneuzen.westsluis.buiten",
+    "name": "Terneuzen, westsluis, buiten",
+    "lat": 51.337472,
+    "lng": 3.812564
+  },
+  {
+    "id": "velsen.velserkom",
+    "name": "Velserkom",
+    "lat": 52.467611,
+    "lng": 4.623665
+  },
+  {
+    "id": "velsenzuid.spaarndammerpolder",
+    "name": "Velsen-Zuid, Spaarndammerpolder",
+    "lat": 52.441489,
+    "lng": 4.69707
+  },
+  {
+    "id": "vlaktevanderaan",
+    "name": "Vlakte van de Raan",
+    "lat": 51.503721,
+    "lng": 3.242164
+  },
+  {
+    "id": "vlissingen",
+    "name": "Vlissingen",
+    "lat": 51.442,
+    "lng": 3.6
+  },
+  {
+    "id": "westereems.west",
+    "name": "Westereems, west",
+    "lat": 53.618056,
+    "lng": 6.366667
+  },
+  {
+    "id": "wieringen.ijsselmeer.oost",
+    "name": "Wieringen IJsselmeer oost",
+    "lat": 52.873472,
+    "lng": 5.118889
+  },
+  {
+    "id": "willemstad.hollandschdiep.volkerakspuisluis",
+    "name": "Willemstad Hollandschdiep Volkerakspuisluis",
+    "lat": 51.694889,
+    "lng": 4.421779
+  },
+  {
+    "id": "zuidland.spui",
+    "name": "Zuidland, Spui",
+    "lat": 51.80555,
+    "lng": 4.282919
+  },
+  {
+    "id": "zwartsluis.zwartewater",
+    "name": "Zwartsluis, Zwarte Water",
+    "lat": 52.6357,
+    "lng": 6.076
+  }
+]

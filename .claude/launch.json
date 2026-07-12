@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "swim-spot-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/carlosescat/Desktop/Dev/nl-swim-spot-explorer",
+      "port": 3000
+    }
+  ]
+}
