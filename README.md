@@ -15,16 +15,17 @@ Interactive map of all ~744 **official Dutch outdoor swimming locations**, with:
   spots always wins
 - **SEO pages** — one static page per spot (`/spots/[slug]`), sitemap, OG images
 
-Built with Next.js (App Router) + TypeScript, Tailwind, Leaflet/OpenStreetMap, Supabase, Vercel Cron.
+Built with Next.js (App Router) + TypeScript, Tailwind, MapLibre GL JS + MapTiler vector tiles (3D-capable map), Supabase, Vercel Cron.
 
 ## Quick start (no database needed)
 
 The repo ships with a pre-ingested snapshot in `data/local/`. When Supabase env
 vars are absent, the app and all scripts transparently read/write those JSON
-files instead:
+files instead. The map does need a (free) [MapTiler API key](https://cloud.maptiler.com/account/keys):
 
 ```bash
 npm install
+echo "NEXT_PUBLIC_MAPTILER_KEY=<your key>" > .env.local
 npm run dev        # → http://localhost:3000, fully working
 ```
 
@@ -37,6 +38,8 @@ npm run dev        # → http://localhost:3000, fully working
    - `SUPABASE_SERVICE_ROLE_KEY` (scripts/cron only — never shipped to the client)
    - `CRON_SECRET` (any random string; set the same value in Vercel env vars)
    - `NEXT_PUBLIC_SITE_URL` (production URL, for sitemap/metadata)
+   - `NEXT_PUBLIC_MAPTILER_KEY` (map tiles; restrict it to your domain in the
+     [MapTiler dashboard](https://cloud.maptiler.com/account/keys) since it ships in the client bundle)
 3. Ingest everything:
 
 ```bash
@@ -139,7 +142,7 @@ flowchart LR
 
   subgraph client["Client components"]
     EXP["Explorer.tsx"]
-    MAP["SwimMap.tsx<br/>(Leaflet + clustering)"]
+    MAP["SwimMap.tsx<br/>(MapLibre GL + clustering + 3D)"]
     RANK["RankedList.tsx<br/>lib/score.ts + geolocation"]
     PANEL["SpotPanel.tsx"]
     LIVEC["SpotLiveClient.tsx"]
@@ -206,7 +209,7 @@ supabase/migrations/        # schema (0001 init, 0002 facilities)
 | Water temperature | [Rijkswaterstaat WaterWebservices 2.0](https://rijkswaterstaatdata.nl/waterdata/) (`ddapi20-waterwebservices.rijkswaterstaat.nl`) |
 | Weather | [Open-Meteo](https://open-meteo.com/) (no key) |
 | Aerial photos | [PDOK — Luchtfoto Actueel Ortho 25cm](https://www.pdok.nl/introductie/-/article/luchtfoto-pdok) (Beeldmateriaal Nederland, CC-BY 4.0) |
-| Map tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright) |
+| Map tiles | [MapTiler](https://www.maptiler.com/copyright/) Outdoor v2 vector style (© MapTiler © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors), rendered with [MapLibre GL JS](https://maplibre.org/) |
 
 Facilities for non-featured spots are auto-detected from OpenStreetMap
 (`ingest:facilities`) and labeled as such in the UI; toilets/food/parking are

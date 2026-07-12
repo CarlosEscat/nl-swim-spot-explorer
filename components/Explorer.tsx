@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import type { SpotWithData } from "@/lib/types";
 import RankedList from "./RankedList";
 import SpotPanel from "./SpotPanel";
 
-// Leaflet touches `window` at import time — client-only.
+// MapLibre touches `window` at import time — client-only.
 const SwimMap = dynamic(() => import("./SwimMap"), {
   ssr: false,
   loading: () => (
@@ -20,6 +20,12 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
   const [selected, setSelected] = useState<SpotWithData | null>(null);
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [showRanked, setShowRanked] = useState(false);
+  const [view3d, setView3d] = useState(false);
+
+  // Flatten the camera again once no spot is selected
+  useEffect(() => {
+    if (!selected) setView3d(false);
+  }, [selected]);
 
   const visibleSpots = useMemo(
     () => (featuredOnly ? spots.filter((s) => s.is_featured) : spots),
@@ -32,6 +38,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
         spots={visibleSpots}
         selectedId={selected?.id ?? null}
         onSelect={setSelected}
+        pitched={view3d}
       />
 
       {/* Controls */}
@@ -46,6 +53,18 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
         >
           🏊 Best right now
         </button>
+        {selected && (
+          <button
+            onClick={() => setView3d((v) => !v)}
+            className={`rounded-full px-4 py-2 text-sm font-semibold shadow-lg backdrop-blur ${
+              view3d
+                ? "bg-sky-600 text-white"
+                : "bg-white/95 text-sky-700 hover:bg-sky-50"
+            }`}
+          >
+            🏙️ 3D view
+          </button>
+        )}
         <label className="flex cursor-pointer items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-gray-700 shadow-lg backdrop-blur">
           <input
             type="checkbox"

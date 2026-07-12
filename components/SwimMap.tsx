@@ -1,92 +1,272 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import L from "leaflet";
-import "leaflet.markercluster";
-import "leaflet/dist/leaflet.css";
-import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import maplibregl, {
+  type ExpressionSpecification,
+  type GeoJSONSource,
+  type LngLatLike,
+} from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import type { FeatureCollection, Point } from "geojson";
 import type { SpotWithData } from "@/lib/types";
 import { qualityStyle } from "@/lib/quality";
 
-const NL_CENTER: L.LatLngTuple = [52.2, 5.3];
-const NL_ZOOM = 8;
+const NL_CENTER: LngLatLike = [5.3, 52.2];
+// MapLibre zoom runs ~1 lower than Leaflet's for the same view (512px tiles).
+const NL_ZOOM = 7;
+const SPOTS_SOURCE = "swim-spots";
+const FEATURED_COLOR = "#4f46e5";
 
-function pinIcon(spot: SpotWithData): L.DivIcon {
-  const color = qualityStyle(spot.latest_quality?.status).pin;
-  const featured = spot.is_featured;
-  const size = featured ? 18 : 13;
-  return L.divIcon({
-    className: "",
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-    html: `<div class="swim-pin${featured ? " swim-pin-featured" : ""}" style="background:${color}"></div>`,
-  });
+// The MapTiler key must be spelled out literally so Next.js can inline it.
+const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
+
+function toGeoJSON(spots: SpotWithData[]): FeatureCollection<Point> {
+  return {
+    type: "FeatureCollection",
+    features: spots.map((spot) => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [spot.lng, spot.lat] },
+      properties: {
+        id: spot.id,
+        pinColor: qualityStyle(spot.latest_quality?.status).pin,
+        featured: spot.is_featured,
+      },
+    })),
+  };
 }
+
+// Circle radii matching the old 13px/18px divIcon pins and their 1.35x hover scale.
+const PIN_RADIUS: ExpressionSpecification = ["case", ["get", "featured"], 9, 6.5];
+const PIN_RADIUS_HOVER: ExpressionSpecification = ["case", ["get", "featured"], 12, 9];
+const PIN_STROKE_COLOR: ExpressionSpecification = ["case", ["get", "featured"], FEATURED_COLOR, "#ffffff"];
+const PIN_STROKE_WIDTH: ExpressionSpecification = ["case", ["get", "featured"], 3, 2];
+const NO_MATCH_FILTER: ExpressionSpecification = ["==", ["get", "id"], "__none__"];
 
 export default function SwimMap({
   spots,
   selectedId,
   onSelect,
+  pitched = false,
 }: {
   spots: SpotWithData[];
   selectedId: string | null;
   onSelect: (spot: SpotWithData) => void;
+  pitched?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<L.Map | null>(null);
-  const clusterRef = useRef<L.MarkerClusterGroup | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
+  const spotsRef = useRef(spots);
+  spotsRef.current = spots;
+  const selectedIdRef = useRef(selectedId);
+  selectedIdRef.current = selectedId;
   const onSelectRef = useRef(onSelect);
   useEffect(() => {
     onSelectRef.current = onSelect;
   }, [onSelect]);
 
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
-    const map = L.map(containerRef.current, {
+    if (!containerRef.current || mapRef.current || !MAPTILER_KEY) return;
+    const map = new maplibregl.Map({
+      container: containerRef.current,
+      style: `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${MAPTILER_KEY}`,
       center: NL_CENTER,
       zoom: NL_ZOOM,
-      zoomControl: false,
+      maxPitch: 70,
     });
-    L.control.zoom({ position: "bottomright" }).addTo(map);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-    }).addTo(map);
+    map.addControl(
+      new maplibregl.NavigationControl({ visualizePitch: true }),
+      "bottom-right"
+    );
+
+    // MapLibre's own ResizeObserver misses the first layout in some embedded
+    // browsers — sync the canvas size explicitly as a fallback.
+    const syncSize = () => map.resize();
+    requestAnimationFrame(syncSize);
+    map.once("load", syncSize);
+    window.addEventListener("resize", syncSize);
+
+    map.on("load", () => {
+      map.addSource(SPOTS_SOURCE, {
+        type: "geojson",
+        data: toGeoJSON(spotsRef.current),
+        cluster: true,
+        clusterRadius: 45,
+        // Declustered from zoom 11 — the old Leaflet map's disableClusteringAtZoom: 12.
+        clusterMaxZoom: 10,
+      });
+
+      map.addLayer({
+        id: "spot-clusters",
+        type: "circle",
+        source: SPOTS_SOURCE,
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-color": "#0284c7",
+          "circle-radius": [
+            "step",
+            ["get", "point_count"],
+            14,
+            10,
+            18,
+            50,
+            24,
+          ],
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-width": 2,
+        },
+      });
+      map.addLayer({
+        id: "spot-cluster-counts",
+        type: "symbol",
+        source: SPOTS_SOURCE,
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": ["get", "point_count_abbreviated"],
+          "text-font": ["Noto Sans Bold"],
+          "text-size": 12,
+        },
+        paint: { "text-color": "#ffffff" },
+      });
+      map.addLayer({
+        id: "spot-pins",
+        type: "circle",
+        source: SPOTS_SOURCE,
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+          "circle-color": ["get", "pinColor"],
+          "circle-radius": PIN_RADIUS,
+          "circle-stroke-color": PIN_STROKE_COLOR,
+          "circle-stroke-width": PIN_STROKE_WIDTH,
+        },
+      });
+      // Enlarged copy of the hovered pin (replaces the old CSS scale(1.35) hover).
+      map.addLayer({
+        id: "spot-pins-hover",
+        type: "circle",
+        source: SPOTS_SOURCE,
+        filter: NO_MATCH_FILTER,
+        paint: {
+          "circle-color": ["get", "pinColor"],
+          "circle-radius": PIN_RADIUS_HOVER,
+          "circle-stroke-color": PIN_STROKE_COLOR,
+          "circle-stroke-width": PIN_STROKE_WIDTH,
+        },
+      });
+
+      const styleLayers = map.getStyle().layers;
+
+      // Hide the outdoor style's hiking/cycling route overlays — the dense
+      // Dutch route networks bury the swim pins in colored lines.
+      for (const layer of styleLayers) {
+        if ("source-layer" in layer && layer["source-layer"] === "trail") {
+          map.setLayoutProperty(layer.id, "visibility", "none");
+        }
+      }
+
+      // 3D buildings when tilted, below the style's labels. The vector source
+      // name varies per MapTiler style, so reuse the style's own building layer's.
+      const buildingLayer = styleLayers.find(
+        (l) => "source-layer" in l && l["source-layer"] === "building"
+      );
+      if (buildingLayer && "source" in buildingLayer) {
+        const firstSymbolId = styleLayers.find((l) => l.type === "symbol")?.id;
+        map.addLayer(
+          {
+            id: "3d-buildings",
+            type: "fill-extrusion",
+            source: buildingLayer.source,
+            "source-layer": "building",
+            minzoom: 15,
+            paint: {
+              "fill-extrusion-color": "#d8d4cc",
+              "fill-extrusion-height": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                15,
+                0,
+                15.6,
+                ["get", "render_height"],
+              ],
+              "fill-extrusion-base": ["get", "render_min_height"],
+              "fill-extrusion-opacity": 0.75,
+            },
+          },
+          firstSymbolId
+        );
+      }
+
+      map.on("click", "spot-pins", (e) => {
+        const id = e.features?.[0]?.properties?.id;
+        const spot = spotsRef.current.find((s) => s.id === id);
+        if (spot) onSelectRef.current(spot);
+      });
+      map.on("click", "spot-clusters", async (e) => {
+        const feature = e.features?.[0];
+        if (!feature) return;
+        const source = map.getSource(SPOTS_SOURCE) as GeoJSONSource;
+        const zoom = await source.getClusterExpansionZoom(
+          feature.properties.cluster_id
+        );
+        map.easeTo({
+          center: (feature.geometry as Point).coordinates as [number, number],
+          zoom,
+        });
+      });
+
+      map.on("mousemove", "spot-pins", (e) => {
+        map.getCanvas().style.cursor = "pointer";
+        const id = e.features?.[0]?.properties?.id;
+        map.setFilter(
+          "spot-pins-hover",
+          id != null ? ["==", ["get", "id"], id] : NO_MATCH_FILTER
+        );
+      });
+      map.on("mouseleave", "spot-pins", () => {
+        map.getCanvas().style.cursor = "";
+        map.setFilter("spot-pins-hover", NO_MATCH_FILTER);
+      });
+      map.on("mouseenter", "spot-clusters", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "spot-clusters", () => {
+        map.getCanvas().style.cursor = "";
+      });
+    });
+
     mapRef.current = map;
     return () => {
+      window.removeEventListener("resize", syncSize);
       map.remove();
       mapRef.current = null;
-      clusterRef.current = null;
     };
   }, []);
 
-  // (Re)build markers when the spot list changes (e.g. featured-only toggle)
+  // Update pins when the spot list changes (e.g. featured-only toggle)
+  useEffect(() => {
+    const source = mapRef.current?.getSource(SPOTS_SOURCE) as
+      | GeoJSONSource
+      | undefined;
+    source?.setData(toGeoJSON(spots));
+  }, [spots]);
+
+  // Toggle the tilted 3D perspective around the selected spot
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    clusterRef.current?.remove();
-
-    const cluster = L.markerClusterGroup({
-      maxClusterRadius: 45,
-      showCoverageOnHover: false,
-      spiderfyOnMaxZoom: true,
-      disableClusteringAtZoom: 12,
-    });
-    for (const spot of spots) {
-      const marker = L.marker([spot.lat, spot.lng], {
-        icon: pinIcon(spot),
-        title: spot.name,
+    if (pitched) {
+      const spot = spotsRef.current.find((s) => s.id === selectedIdRef.current);
+      map.easeTo({
+        ...(spot ? { center: [spot.lng, spot.lat] as [number, number] } : {}),
+        // 3D buildings only exist from zoom 15 up
+        zoom: Math.max(map.getZoom(), 16.3),
+        pitch: 60,
+        duration: 1200,
       });
-      marker.on("click", () => {
-        onSelectRef.current(spot);
-      });
-      cluster.addLayer(marker);
+    } else if (map.getPitch() > 0) {
+      map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
     }
-    map.addLayer(cluster);
-    clusterRef.current = cluster;
-  }, [spots]);
+  }, [pitched]);
 
   // Fly to the selected spot
   useEffect(() => {
@@ -94,11 +274,21 @@ export default function SwimMap({
     if (!map || !selectedId) return;
     const spot = spots.find((s) => s.id === selectedId);
     if (spot) {
-      map.flyTo([spot.lat, spot.lng], Math.max(map.getZoom(), 14), {
-        duration: 0.8,
+      map.flyTo({
+        center: [spot.lng, spot.lat],
+        zoom: Math.max(map.getZoom(), 13),
+        duration: 800,
       });
     }
   }, [selectedId, spots]);
 
+  if (!MAPTILER_KEY) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-sky-50 px-6 text-center text-sm text-sky-800">
+        Map unavailable: set NEXT_PUBLIC_MAPTILER_KEY in .env.local (see
+        .env.example).
+      </div>
+    );
+  }
   return <div ref={containerRef} className="h-full w-full" />;
 }
