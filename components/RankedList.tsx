@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { describeWeatherCode } from "@/lib/data-sources/open-meteo";
 import { haversineKm } from "@/lib/geo";
-import { qualityStyle } from "@/lib/quality";
-import { swimScore } from "@/lib/score";
+import { t, weatherLabel } from "@/lib/i18n";
+import { parseAdvisory, qualityLabel, qualityStyle } from "@/lib/quality";
+import { swimScore, type CautionCode } from "@/lib/score";
 import type {
   LiveSpotSummary,
   LiveSummaryResponse,
   SpotWithData,
 } from "@/lib/types";
+import { useI18n } from "./I18nProvider";
 
 const TOP_N = 15;
 
@@ -18,7 +19,7 @@ interface RankedEntry {
   live: LiveSpotSummary | undefined;
   score: number;
   excluded: boolean;
-  cautions: string[];
+  cautions: CautionCode[];
   distanceKm: number | null;
 }
 
@@ -31,6 +32,7 @@ export default function RankedList({
   onSelect: (spot: SpotWithData) => void;
   onClose: () => void;
 }) {
+  const { dict } = useI18n();
   const [live, setLive] = useState<Map<string, LiveSpotSummary> | null>(null);
   const [liveError, setLiveError] = useState(false);
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(
@@ -84,6 +86,7 @@ export default function RankedList({
           weatherCode: l?.weather_code ?? null,
           windKmh: l?.wind_kmh ?? null,
           quality: spot.latest_quality?.status,
+          advisoryReason: parseAdvisory(spot.latest_quality?.raw_notes),
           distanceKm,
         });
         return { spot, live: l, score: s.score, cautions: s.cautions, excluded: s.excluded, distanceKm };
@@ -97,18 +100,20 @@ export default function RankedList({
     <aside className="pointer-events-auto flex h-full w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
       <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
         <div>
-          <h2 className="text-base font-bold text-gray-900">Best right now</h2>
+          <h2 className="text-base font-bold text-gray-900">
+            {dict.ranked.title}
+          </h2>
           <p className="text-xs text-gray-500">
             {userLoc
-              ? "Ranked by conditions and distance to you"
+              ? dict.ranked.subtitle_located
               : geoDenied
-                ? "Ranked by conditions — enable location for nearby picks"
-                : "Ranked by conditions…"}
+                ? dict.ranked.subtitle_denied
+                : dict.ranked.subtitle_loading}
           </p>
         </div>
         <button
           onClick={onClose}
-          aria-label="Close ranking"
+          aria-label={dict.ranked.close}
           className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
         >
           <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -125,11 +130,11 @@ export default function RankedList({
       <div className="flex-1 overflow-y-auto">
         {liveError ? (
           <p className="p-4 text-sm text-gray-400">
-            Live conditions unavailable right now.
+            {dict.ranked.live_unavailable}
           </p>
         ) : !live ? (
           <p className="animate-pulse p-4 text-sm text-gray-400">
-            Fetching live conditions for {spots.length} spots…
+            {t(dict.ranked.fetching, { count: spots.length })}
           </p>
         ) : (
           <ol>
@@ -137,10 +142,12 @@ export default function RankedList({
               const style = qualityStyle(entry.spot.latest_quality?.status);
               const parts = [
                 entry.live?.water_temp_c != null
-                  ? `${entry.live.water_temp_c.toFixed(1)}° water`
+                  ? t(dict.ranked.water_part, {
+                      temp: entry.live.water_temp_c.toFixed(1),
+                    })
                   : null,
                 entry.live?.air_temp_c != null
-                  ? `${describeWeatherCode(entry.live.weather_code ?? -1)} ${entry.live.air_temp_c.toFixed(0)}°`
+                  ? `${weatherLabel(entry.live.weather_code ?? -1, dict)} ${entry.live.air_temp_c.toFixed(0)}°`
                   : null,
                 entry.distanceKm != null
                   ? `${Math.round(entry.distanceKm)} km`
@@ -160,24 +167,27 @@ export default function RankedList({
                         <span
                           className="h-2 w-2 shrink-0 rounded-full"
                           style={{ background: style.pin }}
-                          title={style.label}
+                          title={qualityLabel(
+                            entry.spot.latest_quality?.status,
+                            dict
+                          )}
                         />
                         <span className="truncate text-sm font-semibold text-gray-900">
                           {entry.spot.name}
                         </span>
                         {entry.spot.official_status === "unofficial" && (
                           <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-px text-[10px] font-semibold text-amber-700">
-                            unofficial
+                            {dict.ranked.unofficial}
                           </span>
                         )}
                       </span>
                       <span className="block truncate text-xs text-gray-500">
-                        {parts.join(" · ") || "no live data"}
+                        {parts.join(" · ") || dict.ranked.no_live_data}
                         {entry.spot.municipality && ` · ${entry.spot.municipality}`}
                       </span>
                       {entry.cautions.length > 0 && (
                         <span className="block text-xs font-medium text-amber-600">
-                          ⚠ {entry.cautions.join(", ")}
+                          ⚠ {entry.cautions.map((c) => dict.cautions[c]).join(", ")}
                         </span>
                       )}
                     </span>

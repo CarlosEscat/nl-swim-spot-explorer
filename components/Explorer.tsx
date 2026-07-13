@@ -3,22 +3,31 @@
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import type { SpotWithData } from "@/lib/types";
+import { parseAdvisory } from "@/lib/quality";
+import { useI18n } from "./I18nProvider";
 import RankedList from "./RankedList";
 import SpotPanel from "./SpotPanel";
+
+function MapLoading() {
+  const { dict } = useI18n();
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-sky-50 text-sky-700">
+      {dict.explorer.loading_map}
+    </div>
+  );
+}
 
 // MapLibre touches `window` at import time — client-only.
 const SwimMap = dynamic(() => import("./SwimMap"), {
   ssr: false,
-  loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-sky-50 text-sky-700">
-      Loading map…
-    </div>
-  ),
+  loading: () => <MapLoading />,
 });
 
 export default function Explorer({ spots }: { spots: SpotWithData[] }) {
+  const { dict } = useI18n();
   const [selected, setSelected] = useState<SpotWithData | null>(null);
   const [featuredOnly, setFeaturedOnly] = useState(false);
+  const [hideAlgae, setHideAlgae] = useState(false);
   const [showRanked, setShowRanked] = useState(false);
   const [view3d, setView3d] = useState(false);
 
@@ -28,8 +37,14 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
   }, [selected]);
 
   const visibleSpots = useMemo(
-    () => (featuredOnly ? spots.filter((s) => s.is_featured) : spots),
-    [spots, featuredOnly]
+    () =>
+      spots.filter(
+        (s) =>
+          (!featuredOnly || s.is_featured) &&
+          (!hideAlgae ||
+            parseAdvisory(s.latest_quality?.raw_notes) !== "blue_green_algae")
+      ),
+    [spots, featuredOnly, hideAlgae]
   );
 
   return (
@@ -51,7 +66,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
               : "bg-white/95 text-sky-700 hover:bg-sky-50"
           }`}
         >
-          🏊 Best right now
+          {dict.explorer.best_right_now}
         </button>
         {selected && (
           <button
@@ -62,7 +77,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
                 : "bg-white/95 text-sky-700 hover:bg-sky-50"
             }`}
           >
-            🏙️ 3D view
+            {dict.explorer.view_3d}
           </button>
         )}
         <label className="flex cursor-pointer items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-gray-700 shadow-lg backdrop-blur">
@@ -72,7 +87,16 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
             onChange={(e) => setFeaturedOnly(e.target.checked)}
             className="h-4 w-4 accent-indigo-600"
           />
-          Amsterdam featured only
+          {dict.explorer.featured_only}
+        </label>
+        <label className="flex cursor-pointer items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-gray-700 shadow-lg backdrop-blur">
+          <input
+            type="checkbox"
+            checked={hideAlgae}
+            onChange={(e) => setHideAlgae(e.target.checked)}
+            className="h-4 w-4 accent-violet-600"
+          />
+          {dict.explorer.hide_algae}
         </label>
       </div>
 
@@ -80,7 +104,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
       {showRanked && (
         <div className="pointer-events-none absolute inset-x-2 bottom-2 top-1/2 z-[1001] sm:inset-x-auto sm:bottom-4 sm:left-4 sm:top-16 sm:w-96">
           <RankedList
-            spots={spots}
+            spots={visibleSpots}
             onSelect={setSelected}
             onClose={() => setShowRanked(false)}
           />

@@ -1,0 +1,160 @@
+{
+  "site": {
+    "name": "NL Swim Spot Explorer",
+    "tagline": "Dutch swim spots · live water & weather"
+  },
+  "meta": {
+    "title_default": "NL Swim Spot Explorer — outdoor swimming spots",
+    "title_template": "%s · NL Swim Spot Explorer",
+    "description": "Interactive map of all ~700 official Dutch outdoor swimming locations — plus well-known unofficial spots, clearly flagged — with live water temperature, weather, water quality status and facilities.",
+    "spot_title": "Swimming at {name} ({province})",
+    "spot_description_official": "{name} is an official outdoor swimming location in {place}. Check live water temperature, weather, official water quality status and facilities.",
+    "spot_description_unofficial": "{name} is a well-known but unofficial swim spot in {place} — not a designated bathing location, water quality not monitored. Check live water temperature and weather before you go."
+  },
+  "explorer": {
+    "loading_map": "Loading map…",
+    "best_right_now": "🏊 Best right now",
+    "view_3d": "🏙️ 3D view",
+    "featured_only": "Amsterdam featured only",
+    "hide_algae": "Hide algae warnings"
+  },
+  "map": {
+    "missing_key": "Map unavailable: set NEXT_PUBLIC_MAPTILER_KEY in .env.local (see .env.example)."
+  },
+  "ranked": {
+    "title": "Best right now",
+    "subtitle_located": "Ranked by conditions and distance to you",
+    "subtitle_denied": "Ranked by conditions — enable location for nearby picks",
+    "subtitle_loading": "Ranked by conditions…",
+    "close": "Close ranking",
+    "live_unavailable": "Live conditions unavailable right now.",
+    "fetching": "Fetching live conditions for {count} spots…",
+    "water_part": "{temp}° water",
+    "no_live_data": "no live data",
+    "unofficial": "unofficial"
+  },
+  "panel": {
+    "featured": "Featured",
+    "unofficial_spot": "Unofficial spot",
+    "close": "Close panel",
+    "aerial_alt": "Aerial photo of {name}",
+    "water_quality": "Water quality",
+    "as_of": "as of {date}",
+    "as_of_source": "as of {date} · source: {source}",
+    "not_monitored": "not monitored",
+    "no_reading": "no reading yet",
+    "unofficial_disclaimer": "This is not an officially designated swimming location. Water quality is not tested by zwemwater.nl and there is no supervision — swim at your own risk.",
+    "right_now": "Right now",
+    "access": "Access & hours",
+    "access_default": "Not curated yet — most official spots are open-access.",
+    "facilities": "Facilities",
+    "facilities_osm_note": "Facilities auto-detected from OpenStreetMap (within ~300 m).",
+    "facilities_missing": "Facilities not curated for this spot yet.",
+    "webcam": "Live camera",
+    "webcam_title": "Live camera at {name}",
+    "full_page": "Full page & details →"
+  },
+  "live": {
+    "unavailable": "Live conditions unavailable.",
+    "loading": "Loading live conditions…",
+    "water_temperature": "Water temperature",
+    "nearest_station": "nearest station: {name} ({km} km away)",
+    "on_site": "on-site sensor",
+    "feels_like": "feels like {temp}°C · wind {wind} km/h",
+    "weather": "Weather"
+  },
+  "water_history": {
+    "warmed": "▲ warmed {delta}°C this week",
+    "cooled": "▼ cooled {delta}°C this week"
+  },
+  "facilities": {
+    "restrooms": "Restrooms",
+    "catering": "Food & drinks",
+    "parking": "Parking",
+    "lifeguard": "Lifeguard",
+    "boat_ramp": "Boat ramp",
+    "lounging_area": "Lounging area",
+    "nude_recreation": "Nude recreation",
+    "unknown_title": "{label}: unknown",
+    "yes": "Yes",
+    "no": "No",
+    "unknown": "Unknown"
+  },
+  "spot": {
+    "back_to_map": "← Back to the map",
+    "official_intro": "Official outdoor swimming location in ",
+    "unofficial_intro": "Unofficial swim spot in ",
+    "unofficial_disclaimer": "This is a well-known swim spot, but not an officially designated bathing location: water quality is not tested by zwemwater.nl and there is no supervision. Swim at your own risk.",
+    "access_default": "Not curated yet — most official Dutch swim spots are open-access natural water without gates or fixed hours.",
+    "facilities_osm_note": "Facilities auto-detected from OpenStreetMap data within ~300 m of the spot.",
+    "facilities_missing": "Facilities for this spot haven't been curated yet.",
+    "location": "Location",
+    "province": "Province",
+    "municipality": "Municipality",
+    "coordinates": "Coordinates",
+    "open_osm": "Open in OpenStreetMap →",
+    "footer": "Water quality: zwemwater.nl (monthly official measures) · Water temperature: Rijkswaterstaat, nearest measuring station · Weather: Open-Meteo. Always check on-site signage before swimming."
+  },
+  "quality": {
+    "good": "Good — no active advisories",
+    "acceptable": "Acceptable",
+    "warning": "Warning",
+    "negative_advice": "Negative swimming advice",
+    "banned": "Swimming banned",
+    "unknown": "No data"
+  },
+  "advisory": {
+    "blue_green_algae": "Blue-green algae (blauwalg)",
+    "swimmers_itch": "Swimmer's itch (zwemmersjeuk)",
+    "water_quality": "Water quality issue",
+    "unsafe_situation": "Unsafe situation",
+    "special_circumstance": "Special circumstance",
+    "other": "Active advisory"
+  },
+  "cautions": {
+    "advised_against": "swimming advised against",
+    "thunderstorms": "thunderstorms",
+    "rain": "rain",
+    "quality_warning": "water quality warning",
+    "blue_green_algae": "blue-green algae"
+  },
+  "weather": {
+    "0": "Clear sky",
+    "1": "Mainly clear",
+    "2": "Partly cloudy",
+    "3": "Overcast",
+    "45": "Fog",
+    "48": "Depositing rime fog",
+    "51": "Light drizzle",
+    "53": "Drizzle",
+    "55": "Dense drizzle",
+    "61": "Light rain",
+    "63": "Rain",
+    "65": "Heavy rain",
+    "66": "Freezing rain",
+    "67": "Heavy freezing rain",
+    "71": "Light snow",
+    "73": "Snow",
+    "75": "Heavy snow",
+    "80": "Light showers",
+    "81": "Showers",
+    "82": "Violent showers",
+    "85": "Snow showers",
+    "86": "Heavy snow showers",
+    "95": "Thunderstorm",
+    "96": "Thunderstorm with hail",
+    "99": "Thunderstorm with heavy hail"
+  },
+  "eu": {
+    "label": "EU rating {year}: {classification}",
+    "tooltip": "Annual EU bathing water classification (EEA) — the rating on the blue signs",
+    "excellent": "Excellent",
+    "good": "Good",
+    "sufficient": "Sufficient",
+    "poor": "Poor",
+    "not_classified": "Not classified"
+  },
+  "timeline": {
+    "months": ["May", "Jun", "Jul", "Aug", "Sep"]
+  }
+}

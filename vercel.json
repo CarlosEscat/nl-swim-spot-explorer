@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/refresh-facilities",
       "schedule": "0 6 3 * *"
+    },
+    {
+      "path": "/api/cron/refresh-eu-classification",
+      "schedule": "0 6 20 6 *"
     }
   ]
 }

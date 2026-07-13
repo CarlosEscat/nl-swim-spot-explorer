@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
 import { aerialImageUrl } from "@/lib/aerial";
 import { getStore } from "@/lib/db/store";
-import { qualityStyle } from "@/lib/quality";
+import { defaultLocale, getDictionary, hasLocale } from "@/lib/i18n";
+import { qualityLabel, qualityStyle } from "@/lib/quality";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -10,9 +11,11 @@ export const revalidate = 86400;
 export default async function OgImage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { lang, slug } = await params;
+  const locale = hasLocale(lang) ? lang : defaultLocale;
+  const dict = await getDictionary(locale);
   const store = await getStore();
   const spot = await store.getSpotBySlug(slug);
   const style = qualityStyle(spot?.latest_quality?.status);
@@ -102,7 +105,9 @@ export default async function OgImage({
               background: style.pin,
             }}
           />
-          <div style={{ display: "flex" }}>{style.label}</div>
+          <div style={{ display: "flex" }}>
+            {qualityLabel(spot?.latest_quality?.status, dict)}
+          </div>
           <div style={{ display: "flex", opacity: 0.8 }}>
             · {[spot?.municipality, spot?.province].filter(Boolean).join(", ")}
           </div>

@@ -6,7 +6,7 @@ import type {
   SwimSpotDetails,
   WaterQualityReading,
 } from "@/lib/types";
-import type { DataStore } from "./store";
+import { defaultQualitySince, type DataStore } from "./store";
 
 let client: SupabaseClient | null = null;
 
@@ -103,6 +103,30 @@ export const supabaseStore: DataStore = {
       await db()
         .from("swim_spots")
         .update({ nearest_rws_station_id: stationId })
+        .eq("id", spotId)
+    );
+  },
+
+  async getQualityHistory(spotId, sinceIso) {
+    return throwIfError(
+      await db()
+        .from("water_quality_readings")
+        .select("*")
+        .eq("spot_id", spotId)
+        .gte("measured_at", sinceIso ?? defaultQualitySince())
+        .order("measured_at", { ascending: true })
+    ) as WaterQualityReading[];
+  },
+
+  async setEuClassification(spotId, c) {
+    throwIfError(
+      await db()
+        .from("swim_spots")
+        .update({
+          eu_bw_id: c?.bw_id ?? null,
+          eu_classification: c?.classification ?? null,
+          eu_classification_year: c?.year ?? null,
+        })
         .eq("id", spotId)
     );
   },

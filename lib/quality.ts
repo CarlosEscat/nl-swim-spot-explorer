@@ -1,7 +1,7 @@
+import type { Dictionary } from "@/lib/i18n";
 import type { QualityStatus } from "@/lib/types";
 
 export interface QualityStyle {
-  label: string;
   /** Tailwind classes for the badge */
   badge: string;
   /** Hex used for map pins */
@@ -10,32 +10,26 @@ export interface QualityStyle {
 
 const STYLES: Record<QualityStatus | "unknown", QualityStyle> = {
   good: {
-    label: "Good — no active advisories",
     badge: "bg-emerald-100 text-emerald-800 border-emerald-300",
     pin: "#10b981",
   },
   acceptable: {
-    label: "Acceptable",
     badge: "bg-lime-100 text-lime-800 border-lime-300",
     pin: "#84cc16",
   },
   warning: {
-    label: "Warning",
     badge: "bg-amber-100 text-amber-900 border-amber-300",
     pin: "#f59e0b",
   },
   negative_advice: {
-    label: "Negative swimming advice",
     badge: "bg-orange-100 text-orange-900 border-orange-300",
     pin: "#f97316",
   },
   banned: {
-    label: "Swimming banned",
     badge: "bg-red-100 text-red-900 border-red-300",
     pin: "#ef4444",
   },
   unknown: {
-    label: "No data",
     badge: "bg-gray-100 text-gray-600 border-gray-300",
     pin: "#9ca3af",
   },
@@ -43,4 +37,45 @@ const STYLES: Record<QualityStatus | "unknown", QualityStyle> = {
 
 export function qualityStyle(status: QualityStatus | null | undefined): QualityStyle {
   return STYLES[status ?? "unknown"] ?? STYLES.unknown;
+}
+
+/** Localized label for a quality status ("No data" when absent). */
+export function qualityLabel(
+  status: QualityStatus | null | undefined,
+  dict: Dictionary
+): string {
+  return dict.quality[status ?? "unknown"] ?? dict.quality.unknown;
+}
+
+/** Structured reason behind an advisory, derived from a reading's raw_notes. */
+export type AdvisoryReason =
+  | "blue_green_algae"
+  | "swimmers_itch"
+  | "water_quality"
+  | "unsafe_situation"
+  | "special_circumstance"
+  | "other";
+
+/**
+ * raw_notes is always "<STATUS>: <REASON>" from zwemwater.nl
+ * (e.g. "WAARSCHUWING: WAARSCHUWING_BLAUWALG"). Substring match — reason
+ * codes vary by severity prefix (WAARSCHUWING_/ONTRADEN_/VERBOD_).
+ */
+export function parseAdvisory(
+  rawNotes: string | null | undefined
+): AdvisoryReason | null {
+  if (!rawNotes) return null;
+  if (rawNotes.includes("BLAUWALG")) return "blue_green_algae";
+  if (rawNotes.includes("ZWEMMERSJEUK")) return "swimmers_itch";
+  if (rawNotes.includes("KWALITEIT") || rawNotes.includes("NORMOVERSCHRIJDING"))
+    return "water_quality";
+  if (rawNotes.includes("ONVEILIGE_SITUATIE")) return "unsafe_situation";
+  if (rawNotes.includes("BIJZONDERE_OMSTANDIGHEID"))
+    return "special_circumstance";
+  return "other";
+}
+
+/** Localized label for an advisory reason. */
+export function advisoryLabel(reason: AdvisoryReason, dict: Dictionary): string {
+  return dict.advisory[reason];
 }

@@ -7,6 +7,14 @@ export type QualityStatus =
   | "negative_advice"
   | "banned";
 
+/** Annual EU bathing-water rating (EEA) — the blue signs at official spots. */
+export type EuClassification =
+  | "excellent"
+  | "good"
+  | "sufficient"
+  | "poor"
+  | "not_classified";
+
 export interface SwimSpot {
   id: string;
   name: string;
@@ -20,6 +28,10 @@ export interface SwimSpot {
   is_featured: boolean;
   nearest_rws_station_id: string | null;
   webcam_url: string | null;
+  /** EEA bathing-water identifier (e.g. "NLBW02_9002"); null when unmatched. */
+  eu_bw_id?: string | null;
+  eu_classification?: EuClassification | null;
+  eu_classification_year?: number | null;
   created_at?: string;
   updated_at?: string;
 }

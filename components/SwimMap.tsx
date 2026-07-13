@@ -9,7 +9,8 @@ import maplibregl, {
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureCollection, Point } from "geojson";
 import type { SpotWithData } from "@/lib/types";
-import { qualityStyle } from "@/lib/quality";
+import { parseAdvisory, qualityStyle } from "@/lib/quality";
+import { useI18n } from "./I18nProvider";
 
 const NL_CENTER: LngLatLike = [5.3, 52.2];
 // MapLibre zoom runs ~1 lower than Leaflet's for the same view (512px tiles).
@@ -17,6 +18,7 @@ const NL_ZOOM = 7;
 const SPOTS_SOURCE = "swim-spots";
 const FEATURED_COLOR = "#4f46e5";
 const UNOFFICIAL_COLOR = "#d97706";
+const ALGAE_COLOR = "#7c3aed";
 
 // The MapTiler key must be spelled out literally so Next.js can inline it.
 const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
@@ -32,6 +34,8 @@ function toGeoJSON(spots: SpotWithData[]): FeatureCollection<Point> {
         pinColor: qualityStyle(spot.latest_quality?.status).pin,
         featured: spot.is_featured,
         unofficial: spot.official_status === "unofficial",
+        algae:
+          parseAdvisory(spot.latest_quality?.raw_notes) === "blue_green_algae",
       },
     })),
   };
@@ -68,6 +72,7 @@ export default function SwimMap({
   onSelect: (spot: SpotWithData) => void;
   pitched?: boolean;
 }) {
+  const { dict } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const spotsRef = useRef(spots);
@@ -141,6 +146,20 @@ export default function SwimMap({
           "text-size": 12,
         },
         paint: { "text-color": "#ffffff" },
+      });
+      // Outer violet ring flagging active blue-green algae advisories; the
+      // regular stroke stays reserved for featured/unofficial.
+      map.addLayer({
+        id: "spot-pins-algae-ring",
+        type: "circle",
+        source: SPOTS_SOURCE,
+        filter: ["all", ["!", ["has", "point_count"]], ["get", "algae"]],
+        paint: {
+          "circle-radius": ["+", PIN_RADIUS, 3.5],
+          "circle-opacity": 0,
+          "circle-stroke-color": ALGAE_COLOR,
+          "circle-stroke-width": 2.5,
+        },
       });
       map.addLayer({
         id: "spot-pins",
@@ -300,8 +319,7 @@ export default function SwimMap({
   if (!MAPTILER_KEY) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-sky-50 px-6 text-center text-sm text-sky-800">
-        Map unavailable: set NEXT_PUBLIC_MAPTILER_KEY in .env.local (see
-        .env.example).
+        {dict.map.missing_key}
       </div>
     );
   }

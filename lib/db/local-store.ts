@@ -8,7 +8,7 @@ import type {
   SwimSpotDetails,
   WaterQualityReading,
 } from "@/lib/types";
-import type { DataStore } from "./store";
+import { defaultQualitySince, type DataStore } from "./store";
 
 // File-backed store used when Supabase env vars are absent (local dev / demo).
 const DATA_DIR = path.join(process.cwd(), "data", "local");
@@ -43,6 +43,10 @@ export const localStore: DataStore = {
         nearest_rws_station_id:
           spot.nearest_rws_station_id ?? prev?.nearest_rws_station_id ?? null,
         webcam_url: spot.webcam_url ?? prev?.webcam_url ?? null,
+        eu_bw_id: spot.eu_bw_id ?? prev?.eu_bw_id ?? null,
+        eu_classification: spot.eu_classification ?? prev?.eu_classification ?? null,
+        eu_classification_year:
+          spot.eu_classification_year ?? prev?.eu_classification_year ?? null,
         updated_at: new Date().toISOString(),
       });
     }
@@ -97,6 +101,25 @@ export const localStore: DataStore = {
     const spot = spots.find((s) => s.id === spotId);
     if (spot) {
       spot.nearest_rws_station_id = stationId;
+      await writeJson("spots.json", spots);
+    }
+  },
+
+  async getQualityHistory(spotId, sinceIso) {
+    const since = sinceIso ?? defaultQualitySince();
+    const quality = await readJson<WaterQualityReading[]>("quality.json", []);
+    return quality
+      .filter((r) => r.spot_id === spotId && r.measured_at >= since)
+      .sort((a, b) => (a.measured_at < b.measured_at ? -1 : 1));
+  },
+
+  async setEuClassification(spotId, c) {
+    const spots = await readJson<SwimSpot[]>("spots.json", []);
+    const spot = spots.find((s) => s.id === spotId);
+    if (spot) {
+      spot.eu_bw_id = c?.bw_id ?? null;
+      spot.eu_classification = c?.classification ?? null;
+      spot.eu_classification_year = c?.year ?? null;
       await writeJson("spots.json", spots);
     }
   },

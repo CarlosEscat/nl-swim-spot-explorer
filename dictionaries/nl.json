@@ -1,0 +1,160 @@
+{
+  "site": {
+    "name": "NL Swim Spot Explorer",
+    "tagline": "Zwemplekken in Nederland · actueel water & weer"
+  },
+  "meta": {
+    "title_default": "NL Swim Spot Explorer — zwemplekken in Nederland",
+    "title_template": "%s · NL Swim Spot Explorer",
+    "description": "Interactieve kaart van alle ~700 officiële zwemlocaties in Nederland — plus bekende onofficiële zwemplekken, duidelijk gemarkeerd — met actuele watertemperatuur, weer, zwemwaterkwaliteit en voorzieningen.",
+    "spot_title": "Zwemmen bij {name} ({province})",
+    "spot_description_official": "{name} is een officiële zwemlocatie in {place}. Bekijk actuele watertemperatuur, weer, officiële zwemwaterkwaliteit en voorzieningen.",
+    "spot_description_unofficial": "{name} is een bekende maar onofficiële zwemplek in {place} — geen aangewezen zwemlocatie, waterkwaliteit wordt niet gecontroleerd. Check actuele watertemperatuur en weer voordat je gaat."
+  },
+  "explorer": {
+    "loading_map": "Kaart laden…",
+    "best_right_now": "🏊 Beste nu",
+    "view_3d": "🏙️ 3D-weergave",
+    "featured_only": "Alleen Amsterdam uitgelicht",
+    "hide_algae": "Verberg blauwalg"
+  },
+  "map": {
+    "missing_key": "Kaart niet beschikbaar: stel NEXT_PUBLIC_MAPTILER_KEY in in .env.local (zie .env.example)."
+  },
+  "ranked": {
+    "title": "Beste nu",
+    "subtitle_located": "Gerangschikt op omstandigheden en afstand tot jou",
+    "subtitle_denied": "Gerangschikt op omstandigheden — zet locatie aan voor plekken dichtbij",
+    "subtitle_loading": "Gerangschikt op omstandigheden…",
+    "close": "Ranglijst sluiten",
+    "live_unavailable": "Actuele omstandigheden zijn nu niet beschikbaar.",
+    "fetching": "Actuele omstandigheden ophalen voor {count} plekken…",
+    "water_part": "{temp}° water",
+    "no_live_data": "geen actuele data",
+    "unofficial": "onofficieel"
+  },
+  "panel": {
+    "featured": "Uitgelicht",
+    "unofficial_spot": "Onofficiële plek",
+    "close": "Paneel sluiten",
+    "aerial_alt": "Luchtfoto van {name}",
+    "water_quality": "Zwemwaterkwaliteit",
+    "as_of": "per {date}",
+    "as_of_source": "per {date} · bron: {source}",
+    "not_monitored": "niet gecontroleerd",
+    "no_reading": "nog geen meting",
+    "unofficial_disclaimer": "Dit is geen officieel aangewezen zwemlocatie. De waterkwaliteit wordt niet getest door zwemwater.nl en er is geen toezicht — zwemmen op eigen risico.",
+    "right_now": "Nu",
+    "access": "Toegang & tijden",
+    "access_default": "Nog niet samengesteld — de meeste officiële zwemplekken zijn vrij toegankelijk.",
+    "facilities": "Voorzieningen",
+    "facilities_osm_note": "Voorzieningen automatisch gedetecteerd via OpenStreetMap (binnen ~300 m).",
+    "facilities_missing": "Voorzieningen voor deze plek zijn nog niet samengesteld.",
+    "webcam": "Live camera",
+    "webcam_title": "Live camera bij {name}",
+    "full_page": "Volledige pagina & details →"
+  },
+  "live": {
+    "unavailable": "Actuele omstandigheden niet beschikbaar.",
+    "loading": "Actuele omstandigheden laden…",
+    "water_temperature": "Watertemperatuur",
+    "nearest_station": "dichtstbijzijnde meetstation: {name} ({km} km)",
+    "on_site": "sensor ter plaatse",
+    "feels_like": "voelt als {temp}°C · wind {wind} km/u",
+    "weather": "Weer"
+  },
+  "water_history": {
+    "warmed": "▲ {delta}°C opgewarmd deze week",
+    "cooled": "▼ {delta}°C afgekoeld deze week"
+  },
+  "facilities": {
+    "restrooms": "Toiletten",
+    "catering": "Eten & drinken",
+    "parking": "Parkeren",
+    "lifeguard": "Toezicht",
+    "boat_ramp": "Boothelling",
+    "lounging_area": "Ligweide",
+    "nude_recreation": "Naaktrecreatie",
+    "unknown_title": "{label}: onbekend",
+    "yes": "Ja",
+    "no": "Nee",
+    "unknown": "Onbekend"
+  },
+  "spot": {
+    "back_to_map": "← Terug naar de kaart",
+    "official_intro": "Officiële zwemlocatie in ",
+    "unofficial_intro": "Onofficiële zwemplek in ",
+    "unofficial_disclaimer": "Dit is een bekende zwemplek, maar geen officieel aangewezen zwemlocatie: de waterkwaliteit wordt niet getest door zwemwater.nl en er is geen toezicht. Zwemmen op eigen risico.",
+    "access_default": "Nog niet samengesteld — de meeste officiële zwemplekken in Nederland zijn vrij toegankelijk natuurwater zonder poorten of vaste tijden.",
+    "facilities_osm_note": "Voorzieningen automatisch gedetecteerd via OpenStreetMap binnen ~300 m van de plek.",
+    "facilities_missing": "De voorzieningen voor deze plek zijn nog niet samengesteld.",
+    "location": "Locatie",
+    "province": "Provincie",
+    "municipality": "Gemeente",
+    "coordinates": "Coördinaten",
+    "open_osm": "Openen in OpenStreetMap →",
+    "footer": "Zwemwaterkwaliteit: zwemwater.nl (maandelijkse officiële maatregelen) · Watertemperatuur: Rijkswaterstaat, dichtstbijzijnde meetstation · Weer: Open-Meteo. Controleer altijd de borden ter plaatse voordat je gaat zwemmen."
+  },
+  "quality": {
+    "good": "Goed — geen actieve waarschuwingen",
+    "acceptable": "Acceptabel",
+    "warning": "Waarschuwing",
+    "negative_advice": "Negatief zwemadvies",
+    "banned": "Zwemverbod",
+    "unknown": "Geen gegevens"
+  },
+  "advisory": {
+    "blue_green_algae": "Blauwalg",
+    "swimmers_itch": "Zwemmersjeuk",
+    "water_quality": "Waterkwaliteitsprobleem",
+    "unsafe_situation": "Onveilige situatie",
+    "special_circumstance": "Bijzondere omstandigheid",
+    "other": "Actieve maatregel"
+  },
+  "cautions": {
+    "advised_against": "zwemmen afgeraden",
+    "thunderstorms": "onweer",
+    "rain": "regen",
+    "quality_warning": "waarschuwing waterkwaliteit",
+    "blue_green_algae": "blauwalg"
+  },
+  "weather": {
+    "0": "Onbewolkt",
+    "1": "Vrijwel onbewolkt",
+    "2": "Half bewolkt",
+    "3": "Bewolkt",
+    "45": "Mist",
+    "48": "Aanvriezende mist",
+    "51": "Lichte motregen",
+    "53": "Motregen",
+    "55": "Dichte motregen",
+    "61": "Lichte regen",
+    "63": "Regen",
+    "65": "Zware regen",
+    "66": "IJzel",
+    "67": "Zware ijzel",
+    "71": "Lichte sneeuw",
+    "73": "Sneeuw",
+    "75": "Zware sneeuw",
+    "80": "Lichte buien",
+    "81": "Buien",
+    "82": "Zware buien",
+    "85": "Sneeuwbuien",
+    "86": "Zware sneeuwbuien",
+    "95": "Onweer",
+    "96": "Onweer met hagel",
+    "99": "Onweer met zware hagel"
+  },
+  "eu": {
+    "label": "EU-classificatie {year}: {classification}",
+    "tooltip": "Jaarlijkse EU-zwemwaterclassificatie (EEA) — de beoordeling op de blauwe borden",
+    "excellent": "Uitstekend",
+    "good": "Goed",
+    "sufficient": "Aanvaardbaar",
+    "poor": "Slecht",
+    "not_classified": "Niet geclassificeerd"
+  },
+  "timeline": {
+    "months": ["mei", "jun", "jul", "aug", "sep"]
+  }
+}

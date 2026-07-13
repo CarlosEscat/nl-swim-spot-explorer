@@ -181,6 +181,76 @@ export async function fetchLatestWaterTemps(
   return byStation;
 }
 
+export interface DailyWaterTemp {
+  /** YYYY-MM-DD */
+  date: string;
+  avg_c: number;
+  min_c: number;
+  max_c: number;
+}
+
+/**
+ * Surface-water temperature history for one station, aggregated to daily
+ * min/avg/max. Uses the period endpoint OphalenWaarnemingen, which takes a
+ * SINGULAR Locatie/AquoPlusWaarnemingMetadata (unlike the …Lijst plurals of
+ * the latest-value endpoint) and returns ~10-minute samples.
+ */
+export async function fetchWaterTempHistory(
+  stationCode: string,
+  days = 14
+): Promise<DailyWaterTemp[]> {
+  const end = new Date();
+  const begin = new Date(end.getTime() - days * 24 * 3600 * 1000);
+  const res = await fetch(
+    `${BASE}/ONLINEWAARNEMINGENSERVICES/OphalenWaarnemingen`,
+    {
+      method: "POST",
+      headers: HEADERS,
+      body: JSON.stringify({
+        Locatie: { Code: stationCode },
+        AquoPlusWaarnemingMetadata: {
+          AquoMetadata: { Grootheid: { Code: "T" }, Compartiment: { Code: "OW" } },
+        },
+        Periode: {
+          Begindatumtijd: begin.toISOString().replace("Z", "+00:00"),
+          Einddatumtijd: end.toISOString().replace("Z", "+00:00"),
+        },
+      }),
+      // History barely changes intraday; 6h keeps the sparkline cheap.
+      next: { revalidate: 21600 },
+    } as RequestInit
+  );
+  if (!res.ok) return [];
+  const json = (await res.json()) as LaatsteWaarnemingenResponse;
+  if (!json.Succesvol) return [];
+
+  const byDay = new Map<string, { sum: number; n: number; min: number; max: number }>();
+  for (const w of json.WaarnemingenLijst ?? []) {
+    if (w.AquoMetadata.Grootheid?.Code !== "T") continue;
+    for (const m of w.MetingenLijst ?? []) {
+      const value = m.Meetwaarde?.Waarde_Numeriek;
+      if (value == null || value > 100 || value < -10) continue;
+      const day = m.Tijdstip.slice(0, 10);
+      const cur = byDay.get(day);
+      if (!cur) byDay.set(day, { sum: value, n: 1, min: value, max: value });
+      else {
+        cur.sum += value;
+        cur.n += 1;
+        cur.min = Math.min(cur.min, value);
+        cur.max = Math.max(cur.max, value);
+      }
+    }
+  }
+  return [...byDay.entries()]
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .map(([date, d]) => ({
+      date,
+      avg_c: Math.round((d.sum / d.n) * 10) / 10,
+      min_c: Math.round(d.min * 10) / 10,
+      max_c: Math.round(d.max * 10) / 10,
+    }));
+}
+
 /** Latest surface-water temperature reading at a station, or null when it has none. */
 export async function fetchLatestWaterTemp(
   stationCode: string

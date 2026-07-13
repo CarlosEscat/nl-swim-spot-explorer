@@ -1,4 +1,5 @@
 import type {
+  EuClassification,
   RwsStation,
   SpotWithData,
   SwimSpot,
@@ -21,8 +22,26 @@ export interface DataStore {
   upsertStations(stations: RwsStation[]): Promise<void>;
   getStations(): Promise<RwsStation[]>;
   setNearestStation(spotId: string, stationId: string): Promise<void>;
+  /**
+   * All readings for one spot since `sinceIso` (default: Jan 1 of the current
+   * year), ascending by measured_at.
+   */
+  getQualityHistory(
+    spotId: string,
+    sinceIso?: string
+  ): Promise<WaterQualityReading[]>;
+  /** Set (or clear with null) a spot's annual EU bathing-water rating. */
+  setEuClassification(
+    spotId: string,
+    c: { bw_id: string; classification: EuClassification; year: number } | null
+  ): Promise<void>;
   getSpotsWithData(): Promise<SpotWithData[]>;
   getSpotBySlug(slug: string): Promise<SpotWithData | null>;
+}
+
+/** Default history window: the current calendar year (the bathing season). */
+export function defaultQualitySince(): string {
+  return `${new Date().getFullYear()}-01-01`;
 }
 
 export function hasSupabaseEnv(): boolean {

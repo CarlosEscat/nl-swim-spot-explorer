@@ -1,3 +1,4 @@
+import type { AdvisoryReason } from "@/lib/quality";
 import type { QualityStatus } from "@/lib/types";
 
 // "How good is swimming here right now?" — a pure function so the client can
@@ -10,17 +11,27 @@ export interface ScoreInput {
   weatherCode: number | null;
   windKmh: number | null;
   quality: QualityStatus | null | undefined;
+  /** Parsed advisory reason (parseAdvisory), for reason-specific cautions. */
+  advisoryReason?: AdvisoryReason | null;
   /** Distance from the user; omit/null when their location is unknown. */
   distanceKm?: number | null;
 }
+
+/** Machine codes so callers can localize; never shown to users directly. */
+export type CautionCode =
+  | "advised_against"
+  | "thunderstorms"
+  | "rain"
+  | "quality_warning"
+  | "blue_green_algae";
 
 export interface SpotScore {
   /** 0–100 after all terms; compare only within one ranking run. */
   score: number;
   /** Swimming is officially banned or advised against — never rank these. */
   excluded: boolean;
-  /** Penalty notes worth surfacing ("quality warning", "thunderstorms"). */
-  cautions: string[];
+  /** Penalty notes worth surfacing, as codes for the caller to label. */
+  cautions: CautionCode[];
 }
 
 /** Piecewise-linear interpolation over [x, y] breakpoints, clamped at the ends. */
@@ -35,10 +46,10 @@ function interp(x: number, points: [number, number][]): number {
 }
 
 export function swimScore(input: ScoreInput): SpotScore {
-  const cautions: string[] = [];
+  const cautions: CautionCode[] = [];
 
   if (input.quality === "banned" || input.quality === "negative_advice") {
-    return { score: 0, excluded: true, cautions: ["swimming advised against"] };
+    return { score: 0, excluded: true, cautions: ["advised_against"] };
   }
 
   let score = 50;
@@ -86,7 +97,11 @@ export function swimScore(input: ScoreInput): SpotScore {
 
   if (input.quality === "warning") {
     score = Math.min(score, 40);
-    cautions.push("water quality warning");
+    cautions.push(
+      input.advisoryReason === "blue_green_algae"
+        ? "blue_green_algae"
+        : "quality_warning"
+    );
   }
 
   score = Math.max(0, Math.min(100, score));

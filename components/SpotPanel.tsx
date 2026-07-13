@@ -5,15 +5,21 @@ import Image from "next/image";
 import Link from "next/link";
 import type { SpotLiveData, SpotWithData } from "@/lib/types";
 import { aerialImageUrl } from "@/lib/aerial";
-import { qualityStyle } from "@/lib/quality";
-import { describeWeatherCode } from "@/lib/data-sources/open-meteo";
+import { formatDate, pathFor, t, weatherLabel } from "@/lib/i18n";
+import { advisoryLabel, parseAdvisory, qualityLabel, qualityStyle } from "@/lib/quality";
+import EuClassBadge from "./EuClassBadge";
+import { useI18n } from "./I18nProvider";
+import QualityHistoryClient from "./QualityHistoryClient";
+import WaterHistory from "./WaterHistory";
 
 function FacilityChip({
   label,
   value,
+  unknownTitle,
 }: {
   label: string;
   value: boolean | null | undefined;
+  unknownTitle: string;
 }) {
   const cls =
     value === true
@@ -24,7 +30,7 @@ function FacilityChip({
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${cls}`}
-      title={value == null ? `${label}: unknown` : undefined}
+      title={value == null ? unknownTitle : undefined}
     >
       {label}
       {value == null && <span className="ml-1">?</span>}
@@ -39,6 +45,7 @@ export default function SpotPanel({
   spot: SpotWithData;
   onClose: () => void;
 }) {
+  const { locale, dict } = useI18n();
   const [live, setLive] = useState<SpotLiveData | null>(null);
   const [liveError, setLiveError] = useState(false);
 
@@ -60,6 +67,7 @@ export default function SpotPanel({
 
   const q = spot.latest_quality;
   const style = qualityStyle(q?.status);
+  const reason = parseAdvisory(q?.raw_notes);
   const d = spot.details;
 
   return (
@@ -71,7 +79,7 @@ export default function SpotPanel({
             height: 180,
             spanM: 350,
           })}
-          alt={`Aerial photo of ${spot.name}`}
+          alt={t(dict.panel.aerial_alt, { name: spot.name })}
           width={448}
           height={180}
           className="h-[180px] w-full object-cover sm:rounded-tl-2xl"
@@ -87,19 +95,19 @@ export default function SpotPanel({
             {[spot.municipality, spot.province].filter(Boolean).join(", ")}
             {spot.is_featured && (
               <span className="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
-                Featured
+                {dict.panel.featured}
               </span>
             )}
             {spot.official_status === "unofficial" && (
               <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
-                Unofficial spot
+                {dict.panel.unofficial_spot}
               </span>
             )}
           </p>
         </div>
         <button
           onClick={onClose}
-          aria-label="Close panel"
+          aria-label={dict.panel.close}
           className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -117,30 +125,43 @@ export default function SpotPanel({
         {/* Water quality */}
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Water quality
+            {dict.panel.water_quality}
           </h3>
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <span
               className={`inline-flex items-center rounded-lg border px-3 py-1 text-sm font-semibold ${style.badge}`}
             >
-              {style.label}
+              {qualityLabel(q?.status, dict)}
             </span>
+            {reason === "blue_green_algae" && (
+              <span className="inline-flex items-center rounded-lg border border-violet-300 bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-900">
+                ⚠ {advisoryLabel(reason, dict)}
+              </span>
+            )}
+            <EuClassBadge
+              classification={spot.eu_classification}
+              year={spot.eu_classification_year}
+              dict={dict}
+            />
             <span className="text-xs text-gray-500">
               {q
-                ? `as of ${new Date(q.measured_at).toLocaleDateString("en-NL", { day: "numeric", month: "short", year: "numeric" })}`
+                ? t(dict.panel.as_of, { date: formatDate(q.measured_at, locale) })
                 : spot.official_status === "unofficial"
-                  ? "not monitored"
-                  : "no reading yet"}
+                  ? dict.panel.not_monitored
+                  : dict.panel.no_reading}
             </span>
           </div>
-          {q?.raw_notes && (
-            <p className="mt-1.5 text-xs text-gray-500">{q.raw_notes}</p>
+          {reason && reason !== "blue_green_algae" && (
+            <p className="mt-1.5 text-xs text-gray-500">
+              {advisoryLabel(reason, dict)}
+            </p>
+          )}
+          {spot.official_status === "official" && (
+            <QualityHistoryClient slug={spot.slug} />
           )}
           {spot.official_status === "unofficial" && (
             <p className="mt-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
-              This is not an officially designated swimming location. Water
-              quality is not tested by zwemwater.nl and there is no supervision
-              — swim at your own risk.
+              {dict.panel.unofficial_disclaimer}
             </p>
           )}
         </section>
@@ -148,15 +169,15 @@ export default function SpotPanel({
         {/* Live conditions */}
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Right now
+            {dict.panel.right_now}
           </h3>
           {liveError ? (
             <p className="mt-1.5 text-sm text-gray-400">
-              Live conditions unavailable.
+              {dict.live.unavailable}
             </p>
           ) : !live ? (
             <p className="mt-1.5 animate-pulse text-sm text-gray-400">
-              Loading live conditions…
+              {dict.live.loading}
             </p>
           ) : (
             <div className="mt-2 grid grid-cols-2 gap-3">
@@ -165,16 +186,21 @@ export default function SpotPanel({
                   {live.water ? `${live.water.temperature_c.toFixed(1)}°C` : "—"}
                 </div>
                 <div className="mt-0.5 text-xs text-sky-700">
-                  Water temperature
+                  {dict.live.water_temperature}
                   {live.water && (
                     <span className="block text-sky-500">
                       {live.water.distance_km != null &&
                       live.water.distance_km > 1
-                        ? `nearest station: ${live.water.station_name ?? live.water.station_id} (${live.water.distance_km} km away)`
-                        : (live.water.station_name ?? "on-site sensor")}
+                        ? t(dict.live.nearest_station, {
+                            name:
+                              live.water.station_name ?? live.water.station_id,
+                            km: live.water.distance_km,
+                          })
+                        : (live.water.station_name ?? dict.live.on_site)}
                     </span>
                   )}
                 </div>
+                <WaterHistory slug={spot.slug} />
               </div>
               <div className="rounded-xl bg-amber-50 p-3">
                 <div className="text-2xl font-bold text-amber-900">
@@ -183,14 +209,16 @@ export default function SpotPanel({
                 <div className="mt-0.5 text-xs text-amber-700">
                   {live.weather ? (
                     <>
-                      {describeWeatherCode(live.weather.weather_code)}
+                      {weatherLabel(live.weather.weather_code, dict)}
                       <span className="block text-amber-500">
-                        feels like {live.weather.apparent_temperature_c.toFixed(0)}
-                        °C · wind {Math.round(live.weather.wind_speed_kmh)} km/h
+                        {t(dict.live.feels_like, {
+                          temp: live.weather.apparent_temperature_c.toFixed(0),
+                          wind: Math.round(live.weather.wind_speed_kmh),
+                        })}
                       </span>
                     </>
                   ) : (
-                    "Weather"
+                    dict.live.weather
                   )}
                 </div>
               </div>
@@ -201,12 +229,12 @@ export default function SpotPanel({
         {/* Access & hours */}
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Access &amp; hours
+            {dict.panel.access}
           </h3>
           <p className="mt-1.5 text-sm text-gray-700">
             {d?.access_notes ?? (
               <span className="text-gray-400">
-                Not curated yet — most official spots are open-access.
+                {dict.panel.access_default}
               </span>
             )}
           </p>
@@ -215,28 +243,41 @@ export default function SpotPanel({
         {/* Facilities */}
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Facilities
+            {dict.panel.facilities}
           </h3>
           {d ? (
             <>
               <div className="mt-2 flex flex-wrap gap-1.5">
-                <FacilityChip label="Restrooms" value={d.has_restrooms} />
-                <FacilityChip label="Food & drinks" value={d.has_catering} />
-                <FacilityChip label="Parking" value={d.has_parking} />
-                <FacilityChip label="Lifeguard" value={d.has_lifeguard} />
-                <FacilityChip label="Boat ramp" value={d.has_boat_ramp} />
-                <FacilityChip label="Lounging area" value={d.lounging_area} />
-                <FacilityChip label="Nude recreation" value={d.nude_recreation} />
+                {(
+                  [
+                    ["restrooms", d.has_restrooms],
+                    ["catering", d.has_catering],
+                    ["parking", d.has_parking],
+                    ["lifeguard", d.has_lifeguard],
+                    ["boat_ramp", d.has_boat_ramp],
+                    ["lounging_area", d.lounging_area],
+                    ["nude_recreation", d.nude_recreation],
+                  ] as const
+                ).map(([key, value]) => (
+                  <FacilityChip
+                    key={key}
+                    label={dict.facilities[key]}
+                    value={value}
+                    unknownTitle={t(dict.facilities.unknown_title, {
+                      label: dict.facilities[key],
+                    })}
+                  />
+                ))}
               </div>
               {d.facilities_source === "osm" && (
                 <p className="mt-1.5 text-[11px] text-gray-400">
-                  Facilities auto-detected from OpenStreetMap (within ~300 m).
+                  {dict.panel.facilities_osm_note}
                 </p>
               )}
             </>
           ) : (
             <p className="mt-1.5 text-sm text-gray-400">
-              Facilities not curated for this spot yet.
+              {dict.panel.facilities_missing}
             </p>
           )}
         </section>
@@ -245,22 +286,22 @@ export default function SpotPanel({
         {spot.webcam_url && (
           <section>
             <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-              Live camera
+              {dict.panel.webcam}
             </h3>
             <iframe
               src={spot.webcam_url}
               className="mt-2 aspect-video w-full rounded-xl border border-gray-200"
               allow="autoplay"
-              title={`Live camera at ${spot.name}`}
+              title={t(dict.panel.webcam_title, { name: spot.name })}
             />
           </section>
         )}
 
         <Link
-          href={`/spots/${spot.slug}`}
+          href={pathFor(locale, `/spots/${spot.slug}`)}
           className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-800"
         >
-          Full page &amp; details →
+          {dict.panel.full_page}
         </Link>
       </div>
     </aside>
