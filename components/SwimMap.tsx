@@ -77,8 +77,6 @@ export default function SwimMap({
   const mapRef = useRef<maplibregl.Map | null>(null);
   const spotsRef = useRef(spots);
   spotsRef.current = spots;
-  const selectedIdRef = useRef(selectedId);
-  selectedIdRef.current = selectedId;
   const onSelectRef = useRef(onSelect);
   useEffect(() => {
     onSelectRef.current = onSelect;
@@ -284,37 +282,49 @@ export default function SwimMap({
     source?.setData(toGeoJSON(spots));
   }, [spots]);
 
-  // Toggle the tilted 3D perspective around the selected spot
+  // Drive the camera from selection + 3D state together — combined into one
+  // effect so a selection change and a pitch change landing in the same
+  // render don't fire two competing easeTo/flyTo calls that cancel each other.
+  const lastSpotRef = useRef<{ lng: number; lat: number } | null>(null);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    if (pitched) {
-      const spot = spotsRef.current.find((s) => s.id === selectedIdRef.current);
+    if (selectedId) {
+      const spot = spots.find((s) => s.id === selectedId);
+      if (spot) {
+        lastSpotRef.current = { lng: spot.lng, lat: spot.lat };
+        if (pitched) {
+          map.easeTo({
+            center: [spot.lng, spot.lat],
+            // 3D buildings only exist from zoom 15 up
+            zoom: Math.max(map.getZoom(), 16.3),
+            pitch: 60,
+            duration: 1200,
+          });
+        } else {
+          map.easeTo({
+            center: [spot.lng, spot.lat],
+            zoom: Math.max(map.getZoom(), 13),
+            pitch: 0,
+            bearing: 0,
+            duration: 800,
+          });
+        }
+      }
+    } else if (lastSpotRef.current) {
       map.easeTo({
-        ...(spot ? { center: [spot.lng, spot.lat] as [number, number] } : {}),
-        // 3D buildings only exist from zoom 15 up
-        zoom: Math.max(map.getZoom(), 16.3),
-        pitch: 60,
-        duration: 1200,
+        center: [lastSpotRef.current.lng, lastSpotRef.current.lat],
+        // City-wide overview zoom, but never zoom in from a wider view.
+        zoom: Math.min(map.getZoom(), 11),
+        pitch: 0,
+        bearing: 0,
+        duration: 1000,
       });
+      lastSpotRef.current = null;
     } else if (map.getPitch() > 0) {
       map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
     }
-  }, [pitched]);
-
-  // Fly to the selected spot
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !selectedId) return;
-    const spot = spots.find((s) => s.id === selectedId);
-    if (spot) {
-      map.flyTo({
-        center: [spot.lng, spot.lat],
-        zoom: Math.max(map.getZoom(), 13),
-        duration: 800,
-      });
-    }
-  }, [selectedId, spots]);
+  }, [selectedId, pitched, spots]);
 
   if (!MAPTILER_KEY) {
     return (

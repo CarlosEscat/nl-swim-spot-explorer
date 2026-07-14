@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import type { SpotWithData } from "@/lib/types";
 import { parseAdvisory } from "@/lib/quality";
@@ -31,10 +31,19 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
   const [showRanked, setShowRanked] = useState(false);
   const [view3d, setView3d] = useState(false);
 
-  // Flatten the camera again once no spot is selected
-  useEffect(() => {
-    if (!selected) setView3d(false);
-  }, [selected]);
+  // Selecting a spot tilts into its 3D view automatically
+  const handleSelect = (spot: SpotWithData) => {
+    setSelected(spot);
+    setView3d(true);
+  };
+
+  // Batched with deselection so SwimMap sees selectedId and pitched flip in
+  // the same render — two separate renders would fire competing camera
+  // animations that cancel each other mid-flight.
+  const handleClose = () => {
+    setSelected(null);
+    setView3d(false);
+  };
 
   const visibleSpots = useMemo(
     () =>
@@ -52,7 +61,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
       <SwimMap
         spots={visibleSpots}
         selectedId={selected?.id ?? null}
-        onSelect={setSelected}
+        onSelect={handleSelect}
         pitched={view3d}
       />
 
@@ -105,7 +114,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
         <div className="pointer-events-none absolute inset-x-2 bottom-2 top-1/2 z-[1001] sm:inset-x-auto sm:bottom-4 sm:left-4 sm:top-16 sm:w-96">
           <RankedList
             spots={visibleSpots}
-            onSelect={setSelected}
+            onSelect={handleSelect}
             onClose={() => setShowRanked(false)}
           />
         </div>
@@ -117,7 +126,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
           <SpotPanel
             key={selected.id}
             spot={selected}
-            onClose={() => setSelected(null)}
+            onClose={handleClose}
           />
         </div>
       )}
