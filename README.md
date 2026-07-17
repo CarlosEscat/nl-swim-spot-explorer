@@ -17,6 +17,15 @@ with:
 - **EU bathing-water classification** — the annual excellent/good/sufficient/poor
   rating from the EEA dataset (the blue signs at the water), shown with its year
   next to the advisory badge (`ingest:eu`, yearly cron)
+- **⭐ Top rated (Beste zwemwater)** — a data-derived shortlist of ~73 spots:
+  EU rating "excellent" + the most facilities, top 5 per province
+  (`compute:featured`, monthly cron), plus the hand-picked list in
+  `lib/ingest/featured-spots.ts`. Indigo badge + bigger pins, a map toggle, and
+  an explainer callout on the spot card saying why it's top-rated
+- **Map filters** — city selector (18 major cities from `lib/cities.ts`; shows
+  spots within 20 km and flies the camera there), water-type dropdown
+  (sea/lake/river/estuary, from the EEA water category), top-rated and
+  hide-algae pill toggles
 - **Water temperature** — latest reading from the nearest *live* Rijkswaterstaat
   sensor, plus a **14-day sparkline** with a "warmed X°C this week" delta
   (RWS period endpoint, fetched on demand, 6 h cache)
