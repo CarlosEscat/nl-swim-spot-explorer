@@ -298,9 +298,18 @@ export default function SwimMap({
       const spot = spots.find((s) => s.id === selectedId);
       if (spot) {
         lastSpotRef.current = { lng: spot.lng, lat: spot.lat };
+        // Below Tailwind's `sm` breakpoint the panel covers the bottom 2/3 of
+        // the screen (Explorer: top-1/3) — shift the camera target up so the
+        // pin lands mid-way in the visible top third instead of behind it.
+        const container = map.getContainer();
+        const offset: [number, number] =
+          container.clientWidth < 640
+            ? [0, -container.clientHeight / 3]
+            : [0, 0];
         if (pitched) {
           map.easeTo({
             center: [spot.lng, spot.lat],
+            offset,
             // 3D buildings only exist from zoom 15 up
             zoom: Math.max(map.getZoom(), 16.3),
             pitch: 60,
@@ -309,6 +318,7 @@ export default function SwimMap({
         } else {
           map.easeTo({
             center: [spot.lng, spot.lat],
+            offset,
             zoom: Math.max(map.getZoom(), 13),
             pitch: 0,
             bearing: 0,

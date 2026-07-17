@@ -168,6 +168,15 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
 
       {/* Detail panel */}
       {selected && (
+        // Mobile: the card covers the bottom 2/3 — a tap anywhere outside it
+        // (the visible map strip, including over the controls) closes it.
+        <div
+          aria-hidden
+          className="absolute inset-0 z-[1001] sm:hidden"
+          onClick={handleClose}
+        />
+      )}
+      {selected && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 top-1/3 z-[1002] sm:inset-y-0 sm:left-auto sm:right-0 sm:w-full sm:max-w-md sm:p-3">
           <SpotPanel
             key={selected.id}
