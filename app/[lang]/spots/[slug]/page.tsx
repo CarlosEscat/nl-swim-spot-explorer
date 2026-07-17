@@ -79,13 +79,38 @@ export async function generateMetadata({
   };
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
+function Fact({
+  label,
+  value,
+  positive = false,
+}: {
+  label: string;
+  value: string;
+  /** Highlight the tile green — used for facilities that are present. */
+  positive?: boolean;
+}) {
   return (
-    <div className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
-      <dt className="text-xs font-medium uppercase tracking-wide text-gray-400">
+    <div
+      className={`rounded-lg border px-3 py-2 ${
+        positive
+          ? "border-green-200 bg-green-50"
+          : "border-gray-100 bg-gray-50"
+      }`}
+    >
+      <dt
+        className={`text-xs font-medium uppercase tracking-wide ${
+          positive ? "text-green-600" : "text-gray-400"
+        }`}
+      >
         {label}
       </dt>
-      <dd className="mt-0.5 text-sm font-semibold text-gray-800">{value}</dd>
+      <dd
+        className={`mt-0.5 text-sm font-semibold ${
+          positive ? "text-green-800" : "text-gray-800"
+        }`}
+      >
+        {value}
+      </dd>
     </div>
   );
 }
@@ -126,7 +151,10 @@ export default async function SpotPage({
     <div className="h-full overflow-y-auto">
       <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <nav className="mb-4 text-sm text-gray-400">
-          <Link href={pathFor(locale, "/")} className="hover:text-indigo-600">
+          <Link
+            href={`${pathFor(locale, "/")}?spot=${spot.slug}`}
+            className="hover:text-indigo-600"
+          >
             {dict.spot.back_to_map}
           </Link>
         </nav>
@@ -264,30 +292,37 @@ export default async function SpotPage({
                 <Fact
                   label={dict.facilities.restrooms}
                   value={facilityText(d.has_restrooms, dict)}
+                  positive={d.has_restrooms === true}
                 />
                 <Fact
                   label={dict.facilities.catering}
                   value={facilityText(d.has_catering, dict)}
+                  positive={d.has_catering === true}
                 />
                 <Fact
                   label={dict.facilities.parking}
                   value={facilityText(d.has_parking, dict)}
+                  positive={d.has_parking === true}
                 />
                 <Fact
                   label={dict.facilities.lifeguard}
                   value={facilityText(d.has_lifeguard, dict)}
+                  positive={d.has_lifeguard === true}
                 />
                 <Fact
                   label={dict.facilities.boat_ramp}
                   value={facilityText(d.has_boat_ramp, dict)}
+                  positive={d.has_boat_ramp === true}
                 />
                 <Fact
                   label={dict.facilities.lounging_area}
                   value={facilityText(d.lounging_area, dict)}
+                  positive={d.lounging_area === true}
                 />
                 <Fact
                   label={dict.facilities.nude_recreation}
                   value={facilityText(d.nude_recreation, dict)}
+                  positive={d.nude_recreation === true}
                 />
               </dl>
               {d.facilities_source === "osm" && (

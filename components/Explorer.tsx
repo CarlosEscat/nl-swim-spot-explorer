@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import type { SpotWithData, WaterType } from "@/lib/types";
 import { CITIES, CITY_RADIUS_KM } from "@/lib/cities";
@@ -25,38 +25,65 @@ const SwimMap = dynamic(() => import("./SwimMap"), {
   loading: () => <MapLoading />,
 });
 
+// The ?spot= deep-link param never changes while mounted (in-app navigation
+// uses replaceState on close), so the subscription is a no-op.
+const noopSubscribe = () => () => {};
+const readDeepLinkSlug = () =>
+  new URLSearchParams(window.location.search).get("spot");
+const serverDeepLinkSlug = () => null;
+
 export default function Explorer({ spots }: { spots: SpotWithData[] }) {
   const { locale, dict } = useI18n();
-  const [selected, setSelected] = useState<SpotWithData | null>(null);
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [hideAlgae, setHideAlgae] = useState(false);
   const [waterType, setWaterType] = useState<WaterType | "">("");
   const [cityId, setCityId] = useState("");
+  const [showRanked, setShowRanked] = useState(false);
   // Module constant → stable identity for SwimMap's focus effect.
   const city = CITIES.find((c) => c.id === cityId) ?? null;
+
+  // Deep link: /?spot=<slug> opens that spot's panel — this is how the detail
+  // page's "back to the map" link restores the selection. It only applies
+  // until the first explicit interaction (select/close/city change).
+  const deepLinkSlug = useSyncExternalStore(
+    noopSubscribe,
+    readDeepLinkSlug,
+    serverDeepLinkSlug
+  );
+  const deepLinkSpot = useMemo(
+    () => (deepLinkSlug ? spots.find((s) => s.slug === deepLinkSlug) : null),
+    [deepLinkSlug, spots]
+  );
+
+  // Selection + 3D tilt live in one state object so SwimMap sees both flip in
+  // the same render — two separate renders would fire competing camera
+  // animations that cancel each other mid-flight. null = no interaction yet,
+  // which lets the deep link (if any) drive the initial selection.
+  const [interaction, setInteraction] = useState<{
+    spot: SpotWithData | null;
+    tilt: boolean;
+  } | null>(null);
+  const selected = interaction ? interaction.spot : (deepLinkSpot ?? null);
+  const view3d = interaction ? interaction.tilt : deepLinkSpot != null;
+
+  // Selecting a spot tilts into its 3D view automatically
+  const handleSelect = (spot: SpotWithData) => {
+    setInteraction({ spot, tilt: true });
+  };
+
+  const handleClose = () => {
+    setInteraction({ spot: null, tilt: false });
+    // Drop a ?spot= deep-link param so a reload doesn't reopen the panel.
+    if (window.location.search) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  };
 
   // Switching city closes any open spot panel so the camera flight isn't
   // fighting the selection zoom.
   const handleCityChange = (id: string) => {
-    setSelected(null);
-    setView3d(false);
+    setInteraction({ spot: null, tilt: false });
     setCityId(id);
-  };
-  const [showRanked, setShowRanked] = useState(false);
-  const [view3d, setView3d] = useState(false);
-
-  // Selecting a spot tilts into its 3D view automatically
-  const handleSelect = (spot: SpotWithData) => {
-    setSelected(spot);
-    setView3d(true);
-  };
-
-  // Batched with deselection so SwimMap sees selectedId and pitched flip in
-  // the same render — two separate renders would fire competing camera
-  // animations that cancel each other mid-flight.
-  const handleClose = () => {
-    setSelected(null);
-    setView3d(false);
   };
 
   const visibleSpots = useMemo(
@@ -97,7 +124,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
         </button>
         {selected && (
           <button
-            onClick={() => setView3d((v) => !v)}
+            onClick={() => setInteraction({ spot: selected, tilt: !view3d })}
             className={`rounded-full px-4 py-2 text-sm font-semibold shadow-lg backdrop-blur ${
               view3d
                 ? "bg-sky-600 text-white"
