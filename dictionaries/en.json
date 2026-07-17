@@ -103,7 +103,7 @@
     "province": "Province",
     "municipality": "Municipality",
     "coordinates": "Coordinates",
-    "open_osm": "Open in OpenStreetMap →",
+    "open_maps": "Open in Google Maps →",
     "footer": "Water quality: zwemwater.nl (monthly official measures) · Water temperature: Rijkswaterstaat, nearest measuring station · Weather: Open-Meteo. Always check on-site signage before swimming."
   },
   "quality": {

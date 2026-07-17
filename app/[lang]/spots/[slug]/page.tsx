@@ -374,11 +374,11 @@ export default async function SpotPage({
           <p className="mt-3 text-sm">
             <a
               className="font-semibold text-indigo-600 hover:text-indigo-800"
-              href={`https://www.openstreetmap.org/?mlat=${spot.lat}&mlon=${spot.lng}#map=16/${spot.lat}/${spot.lng}`}
+              href={`https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lng}`}
               target="_blank"
               rel="noreferrer"
             >
-              {dict.spot.open_osm}
+              {dict.spot.open_maps}
             </a>
           </p>
         </section>

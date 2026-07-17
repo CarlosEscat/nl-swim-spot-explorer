@@ -103,7 +103,7 @@
     "province": "Provincie",
     "municipality": "Gemeente",
     "coordinates": "Coördinaten",
-    "open_osm": "Openen in OpenStreetMap →",
+    "open_maps": "Openen in Google Maps →",
     "footer": "Zwemwaterkwaliteit: zwemwater.nl (maandelijkse officiële maatregelen) · Watertemperatuur: Rijkswaterstaat, dichtstbijzijnde meetstation · Weer: Open-Meteo. Controleer altijd de borden ter plaatse voordat je gaat zwemmen."
   },
   "quality": {
