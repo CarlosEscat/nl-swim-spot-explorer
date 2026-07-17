@@ -80,6 +80,11 @@ export async function ingestEuClassification(
         classification: qualityById.get(best.id)!,
         year: season,
       });
+      // The registry also knows the water category (sea/lake/river/…) —
+      // backfill it from the same join.
+      if (best.category && spot.water_type !== best.category) {
+        await store.setWaterType(spot.id, best.category);
+      }
       matchedEeaIds.add(best.id);
       matched++;
     } else {

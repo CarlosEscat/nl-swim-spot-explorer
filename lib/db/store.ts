@@ -5,6 +5,7 @@ import type {
   SwimSpot,
   SwimSpotDetails,
   WaterQualityReading,
+  WaterType,
 } from "@/lib/types";
 
 /** Shared interface for the Supabase store and the local JSON fallback. */
@@ -30,6 +31,10 @@ export interface DataStore {
     spotId: string,
     sinceIso?: string
   ): Promise<WaterQualityReading[]>;
+  /** Declaratively mark exactly these spot ids as featured, clearing all others. */
+  setFeaturedSpots(spotIds: string[]): Promise<void>;
+  /** Set (or clear with null) a spot's water category. */
+  setWaterType(spotId: string, waterType: WaterType | null): Promise<void>;
   /** Set (or clear with null) a spot's annual EU bathing-water rating. */
   setEuClassification(
     spotId: string,

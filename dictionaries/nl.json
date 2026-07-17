@@ -15,8 +15,16 @@
     "loading_map": "Kaart laden…",
     "best_right_now": "🏊 Beste nu",
     "view_3d": "🏙️ 3D-weergave",
-    "featured_only": "Alleen Amsterdam uitgelicht",
-    "hide_algae": "Verberg blauwalg"
+    "featured_only": "⭐ Beste zwemwater",
+    "hide_algae": "Verberg blauwalg",
+    "water_type_all": "Alle watertypes",
+    "city_all": "Heel Nederland"
+  },
+  "water": {
+    "sea": "Zee",
+    "lake": "Meer of plas",
+    "river": "Rivier of kanaal",
+    "transitional": "Estuarium"
   },
   "map": {
     "missing_key": "Kaart niet beschikbaar: stel NEXT_PUBLIC_MAPTILER_KEY in in .env.local (zie .env.example)."
@@ -34,7 +42,9 @@
     "unofficial": "onofficieel"
   },
   "panel": {
-    "featured": "Uitgelicht",
+    "featured": "⭐ Beste zwemwater",
+    "featured_note_rated": "Een van de best beoordeelde zwemplekken van {province}: 'uitstekend' in de jaarlijkse EU-zwemwaterclassificatie én goede voorzieningen.",
+    "featured_note_picked": "Met de hand geselecteerd als een van de fijnste zwemplekken van de regio.",
     "unofficial_spot": "Onofficiële plek",
     "close": "Paneel sluiten",
     "aerial_alt": "Luchtfoto van {name}",
@@ -89,6 +99,7 @@
     "facilities_osm_note": "Voorzieningen automatisch gedetecteerd via OpenStreetMap binnen ~300 m van de plek.",
     "facilities_missing": "De voorzieningen voor deze plek zijn nog niet samengesteld.",
     "location": "Locatie",
+    "water_type": "Type water",
     "province": "Provincie",
     "municipality": "Gemeente",
     "coordinates": "Coördinaten",
@@ -144,6 +155,13 @@
     "95": "Onweer",
     "96": "Onweer met hagel",
     "99": "Onweer met zware hagel"
+  },
+  "describe": {
+    "monitored": "Officiële zwemlocatie: de waterkwaliteit wordt tijdens het badseizoen (1 mei – 1 oktober) regelmatig gecontroleerd.",
+    "eu_rated": "In de EU-zwemwaterclassificatie van {year} beoordeeld als '{classification}'.",
+    "facilities": "Voorzieningen in de buurt: {list}.",
+    "open_access": "Vrij toegankelijk natuurwater — controleer altijd de borden ter plaatse voordat je gaat zwemmen.",
+    "generated_note": "Automatisch samengesteld uit officiële data — nog niet handmatig gecontroleerd."
   },
   "eu": {
     "label": "EU-classificatie {year}: {classification}",

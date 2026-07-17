@@ -31,7 +31,7 @@ export const UNOFFICIAL_SPOTS: UnofficialSeed[] = [
     lng: 4.9103,
     province: "Noord-Holland",
     municipality: "Amsterdam",
-    water_type: "fresh",
+    water_type: "river",
     details: {
       has_restrooms: false,
       has_catering: null,
@@ -49,7 +49,7 @@ export const UNOFFICIAL_SPOTS: UnofficialSeed[] = [
     lng: 4.943,
     province: "Noord-Holland",
     municipality: "Amsterdam",
-    water_type: "fresh",
+    water_type: "river",
     details: {
       has_restrooms: false,
       has_catering: null,
@@ -67,7 +67,7 @@ export const UNOFFICIAL_SPOTS: UnofficialSeed[] = [
     lng: 4.867,
     province: "Noord-Holland",
     municipality: "Amsterdam",
-    water_type: "fresh",
+    water_type: "lake",
     details: {
       has_restrooms: false,
       has_catering: false,
@@ -85,7 +85,7 @@ export const UNOFFICIAL_SPOTS: UnofficialSeed[] = [
     lng: 5.095,
     province: "Utrecht",
     municipality: "Utrecht",
-    water_type: "fresh",
+    water_type: "river",
     details: {
       has_restrooms: false,
       has_catering: null,

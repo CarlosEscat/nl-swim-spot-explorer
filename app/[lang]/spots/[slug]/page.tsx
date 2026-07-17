@@ -8,6 +8,7 @@ import QualityTimeline from "@/components/QualityTimeline";
 import SpotLiveClient from "@/components/SpotLiveClient";
 import { AERIAL_ATTRIBUTION, aerialImageUrl } from "@/lib/aerial";
 import { getStore } from "@/lib/db/store";
+import { generatedAccessNotes } from "@/lib/describe";
 import {
   defaultLocale,
   formatDate,
@@ -117,6 +118,9 @@ export default async function SpotPage({
   const style = qualityStyle(q?.status);
   const reason = parseAdvisory(q?.raw_notes);
   const d = spot.details;
+  const generatedNotes = d?.access_notes
+    ? null
+    : generatedAccessNotes(spot, dict);
 
   return (
     <div className="h-full overflow-y-auto">
@@ -166,6 +170,14 @@ export default async function SpotPage({
             )}
           </p>
         </header>
+
+        {spot.is_featured && (
+          <p className="mt-4 rounded-lg bg-indigo-50 px-3 py-2 text-sm text-indigo-800">
+            {spot.eu_classification === "excellent"
+              ? t(dict.panel.featured_note_rated, { province: spot.province })
+              : dict.panel.featured_note_picked}
+          </p>
+        )}
 
         <section className="mt-6">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
@@ -231,10 +243,15 @@ export default async function SpotPage({
             {dict.panel.access}
           </h2>
           <p className="mt-2 text-gray-700">
-            {d?.access_notes ?? (
+            {d?.access_notes ?? generatedNotes ?? (
               <span className="text-gray-400">{dict.spot.access_default}</span>
             )}
           </p>
+          {generatedNotes && (
+            <p className="mt-2 text-xs text-gray-400">
+              {dict.describe.generated_note}
+            </p>
+          )}
         </section>
 
         <section className="mt-6">
@@ -305,6 +322,10 @@ export default async function SpotPage({
             {dict.spot.location}
           </h2>
           <dl className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <Fact
+              label={dict.spot.water_type}
+              value={spot.water_type ? dict.water[spot.water_type] : "—"}
+            />
             <Fact label={dict.spot.province} value={spot.province} />
             <Fact
               label={dict.spot.municipality}

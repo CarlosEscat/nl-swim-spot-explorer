@@ -1,5 +1,6 @@
 /**
- * Exact PDOK names of the hand-curated, visually featured Amsterdam-area spots.
+ * Exact PDOK names of hand-picked spots that are always featured, on top of
+ * the data-derived national set computed in featured.ts.
  * Keys are nameKey() forms so matching survives case/spacing differences.
  */
 import { nameKey } from "@/lib/slug";

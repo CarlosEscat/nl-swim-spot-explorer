@@ -1,4 +1,4 @@
-import type { EuClassification } from "@/lib/types";
+import type { EuClassification, WaterType } from "@/lib/types";
 
 // EEA bathing-water directive data via DISCODATA (SQL-over-HTTP, no auth).
 // The [latest] schema lags the annual report by a few months; ingest always
@@ -25,7 +25,16 @@ export interface EeaBathingWater {
   name: string;
   lat: number;
   lon: number;
+  /** EEA water category ("coastalBathingWater" → "sea", etc.); null when unknown. */
+  category: WaterType | null;
 }
+
+const CATEGORY_MAP: Record<string, WaterType> = {
+  coastalBathingWater: "sea",
+  lakeBathingWater: "lake",
+  riverBathingWater: "river",
+  transitionalBathingWater: "transitional",
+};
 
 /** All NL bathing-water locations with coordinates, latest registry year per id. */
 export async function fetchNlBathingWaters(): Promise<EeaBathingWater[]> {
@@ -34,9 +43,10 @@ export async function fetchNlBathingWaters(): Promise<EeaBathingWater[]> {
     nameText: string;
     lat: number | null;
     lon: number | null;
+    specialisedZoneType: string | null;
     cYear: number;
   }>(
-    "SELECT thematicIdIdentifier, nameText, lat, lon, cYear " +
+    "SELECT thematicIdIdentifier, nameText, lat, lon, specialisedZoneType, cYear " +
       "FROM [WISE_BWD].[latest].[spatial_ProtectedArea] " +
       "WHERE countryCode='NL'"
   );
@@ -51,6 +61,7 @@ export async function fetchNlBathingWaters(): Promise<EeaBathingWater[]> {
     name: r.nameText,
     lat: r.lat!,
     lon: r.lon!,
+    category: CATEGORY_MAP[r.specialisedZoneType ?? ""] ?? null,
   }));
 }
 

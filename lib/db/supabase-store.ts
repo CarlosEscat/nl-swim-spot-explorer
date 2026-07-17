@@ -118,6 +118,32 @@ export const supabaseStore: DataStore = {
     ) as WaterQualityReading[];
   },
 
+  async setFeaturedSpots(spotIds) {
+    throwIfError(
+      await db()
+        .from("swim_spots")
+        .update({ is_featured: false })
+        .eq("is_featured", true)
+    );
+    for (let i = 0; i < spotIds.length; i += 500) {
+      throwIfError(
+        await db()
+          .from("swim_spots")
+          .update({ is_featured: true })
+          .in("id", spotIds.slice(i, i + 500))
+      );
+    }
+  },
+
+  async setWaterType(spotId, waterType) {
+    throwIfError(
+      await db()
+        .from("swim_spots")
+        .update({ water_type: waterType })
+        .eq("id", spotId)
+    );
+  },
+
   async setEuClassification(spotId, c) {
     throwIfError(
       await db()

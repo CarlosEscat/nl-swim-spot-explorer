@@ -91,7 +91,11 @@ export async function ingestLocations(
       lng: loc.lng,
       water_type: null,
       official_status: "official",
-      is_featured: isFeaturedName(loc.name),
+      // Featured is recomputed from data (see featured.ts); keep whatever the
+      // last recompute decided and only fall back to the hand-picked list for
+      // spots we've never seen before.
+      is_featured:
+        existing.get(slugs[i])?.is_featured ?? isFeaturedName(loc.name),
       nearest_rws_station_id: null,
       webcam_url: null,
     })

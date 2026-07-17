@@ -66,17 +66,22 @@ export default function SwimMap({
   selectedId,
   onSelect,
   pitched = false,
+  focus = null,
 }: {
   spots: SpotWithData[];
   selectedId: string | null;
   onSelect: (spot: SpotWithData) => void;
   pitched?: boolean;
+  /** City to fly to (stable object identity required); null = NL overview. */
+  focus?: { lat: number; lng: number } | null;
 }) {
   const { dict } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const spotsRef = useRef(spots);
-  spotsRef.current = spots;
+  useEffect(() => {
+    spotsRef.current = spots;
+  }, [spots]);
   const onSelectRef = useRef(onSelect);
   useEffect(() => {
     onSelectRef.current = onSelect;
@@ -325,6 +330,37 @@ export default function SwimMap({
       map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
     }
   }, [selectedId, pitched, spots]);
+
+  // City focus flight. Declared after the selection effect on purpose: when a
+  // city change also clears the selection, both effects fire camera moves in
+  // the same commit and the later call wins.
+  const focusMountedRef = useRef(false);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!focusMountedRef.current) {
+      // Skip the initial render — the map already starts at the NL overview.
+      focusMountedRef.current = true;
+      return;
+    }
+    if (!map) return;
+    if (focus) {
+      map.flyTo({
+        center: [focus.lng, focus.lat],
+        zoom: 10,
+        pitch: 0,
+        bearing: 0,
+        duration: 1400,
+      });
+    } else {
+      map.flyTo({
+        center: NL_CENTER,
+        zoom: NL_ZOOM,
+        pitch: 0,
+        bearing: 0,
+        duration: 1400,
+      });
+    }
+  }, [focus]);
 
   if (!MAPTILER_KEY) {
     return (

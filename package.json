@@ -12,10 +12,11 @@
     "ingest:facilities": "tsx scripts/ingest-facilities.ts",
     "ingest:eu": "tsx scripts/ingest-eu-classification.ts",
     "seed:stations": "tsx scripts/seed-rws-stations.ts",
-    "seed:amsterdam": "tsx scripts/seed-amsterdam-details.ts",
+    "seed:details": "tsx scripts/seed-details.ts",
     "seed:unofficial": "tsx scripts/seed-unofficial-spots.ts",
     "compute:nearest": "tsx scripts/compute-nearest-station.ts",
-    "ingest:all": "npm run ingest:locations && npm run seed:unofficial && npm run seed:stations && npm run ingest:quality && npm run seed:amsterdam && npm run ingest:facilities && npm run ingest:eu"
+    "compute:featured": "tsx scripts/compute-featured.ts",
+    "ingest:all": "npm run ingest:locations && npm run seed:unofficial && npm run seed:stations && npm run ingest:quality && npm run seed:details && npm run ingest:facilities && npm run ingest:eu && npm run compute:featured"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",

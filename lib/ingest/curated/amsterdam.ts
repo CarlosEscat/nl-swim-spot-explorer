@@ -1,7 +1,4 @@
-import "./lib/env";
-import { getStore } from "@/lib/db/store";
-import { nameKey } from "@/lib/slug";
-import type { SwimSpotDetails } from "@/lib/types";
+import type { DetailSeed } from "../curated-details";
 
 /**
  * Hand-curated facilities/hours for the featured Amsterdam-area spots.
@@ -12,9 +9,7 @@ import type { SwimSpotDetails } from "@/lib/types";
  * All official NL spots are quality-monitored 1 May – 1 Oct; none of these
  * has permanent water supervision unless noted.
  */
-type DetailSeed = Omit<SwimSpotDetails, "spot_id"> & { name: string };
-
-const SEEDS: DetailSeed[] = [
+export const AMSTERDAM_SEEDS: DetailSeed[] = [
   {
     name: "Gaasperplas Noord",
     has_restrooms: null,
@@ -123,38 +118,3 @@ const SEEDS: DetailSeed[] = [
       "Beach in recreation area Het Twiske (open access; parking is paid). Facilities vary per beach — toilets and horeca available centrally in the park. No water supervision. Monitored 1 May – 1 Oct.",
   })),
 ];
-
-async function main() {
-  const store = await getStore();
-  console.log(`Store: ${store.name}`);
-
-  const spots = await store.getSpots();
-  const byKey = new Map(spots.map((s) => [nameKey(s.name), s]));
-
-  const details: SwimSpotDetails[] = [];
-  for (const seed of SEEDS) {
-    const spot = byKey.get(nameKey(seed.name));
-    if (!spot) {
-      console.warn(`⚠ No spot found for "${seed.name}" — run ingest-locations first.`);
-      continue;
-    }
-    details.push({
-      spot_id: spot.id,
-      has_restrooms: seed.has_restrooms,
-      has_catering: seed.has_catering,
-      has_lifeguard: seed.has_lifeguard,
-      has_boat_ramp: seed.has_boat_ramp,
-      nude_recreation: seed.nude_recreation,
-      lounging_area: seed.lounging_area,
-      access_notes: seed.access_notes,
-      facilities_source: "manual",
-    });
-  }
-  await store.upsertDetails(details);
-  console.log(`Seeded details for ${details.length}/${SEEDS.length} featured spots.`);
-}
-
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});

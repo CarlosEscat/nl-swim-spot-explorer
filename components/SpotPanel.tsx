@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { SpotLiveData, SpotWithData } from "@/lib/types";
 import { aerialImageUrl } from "@/lib/aerial";
+import { generatedAccessNotes } from "@/lib/describe";
 import { formatDate, pathFor, t, weatherLabel } from "@/lib/i18n";
 import { advisoryLabel, parseAdvisory, qualityLabel, qualityStyle } from "@/lib/quality";
 import EuClassBadge from "./EuClassBadge";
@@ -69,6 +70,9 @@ export default function SpotPanel({
   const style = qualityStyle(q?.status);
   const reason = parseAdvisory(q?.raw_notes);
   const d = spot.details;
+  const generatedNotes = d?.access_notes
+    ? null
+    : generatedAccessNotes(spot, dict);
 
   return (
     <aside className="pointer-events-auto flex h-full w-full flex-col overflow-y-auto bg-white shadow-2xl sm:max-w-md sm:rounded-l-2xl">
@@ -92,7 +96,13 @@ export default function SpotPanel({
         <div>
           <h2 className="text-xl font-bold text-gray-900">{spot.name}</h2>
           <p className="mt-0.5 text-sm text-gray-500">
-            {[spot.municipality, spot.province].filter(Boolean).join(", ")}
+            {[
+              spot.water_type ? dict.water[spot.water_type] : null,
+              spot.municipality,
+              spot.province,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
             {spot.is_featured && (
               <span className="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
                 {dict.panel.featured}
@@ -122,6 +132,15 @@ export default function SpotPanel({
       </div>
 
       <div className="flex flex-col gap-5 p-5">
+        {/* Top-rated callout */}
+        {spot.is_featured && (
+          <p className="rounded-lg bg-indigo-50 px-3 py-2 text-xs text-indigo-800">
+            {spot.eu_classification === "excellent"
+              ? t(dict.panel.featured_note_rated, { province: spot.province })
+              : dict.panel.featured_note_picked}
+          </p>
+        )}
+
         {/* Water quality */}
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
@@ -232,12 +251,17 @@ export default function SpotPanel({
             {dict.panel.access}
           </h3>
           <p className="mt-1.5 text-sm text-gray-700">
-            {d?.access_notes ?? (
+            {d?.access_notes ?? generatedNotes ?? (
               <span className="text-gray-400">
                 {dict.panel.access_default}
               </span>
             )}
           </p>
+          {generatedNotes && (
+            <p className="mt-1.5 text-[11px] text-gray-400">
+              {dict.describe.generated_note}
+            </p>
+          )}
         </section>
 
         {/* Facilities */}

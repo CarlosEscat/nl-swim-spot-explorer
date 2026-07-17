@@ -27,8 +27,10 @@ with:
 - **Aerial photos** — PDOK Luchtfoto (25 cm orthophoto) hero/thumbnail/OG image
   per spot, generated deterministically from coordinates (`lib/aerial.ts`)
 - **Facilities** — toilets/food/parking auto-detected from OpenStreetMap for all
-  spots (`ingest:facilities`), hand-curated data for the featured Amsterdam-area
-  spots always wins
+  spots (`ingest:facilities`); hand-curated data for eight city regions
+  (`lib/ingest/curated/`) always wins. Spots
+  without curated notes get a localized description generated from structured
+  data (`lib/describe.ts`)
 - **Unofficial spots** — hand-curated, widely-known swim spots that aren't
   officially designated (`seed:unofficial`, list in
   `lib/ingest/unofficial-spots.ts`); flagged everywhere with an amber pin ring,
@@ -55,7 +57,7 @@ npm run dev        # → http://localhost:3000, fully working
 
 1. Create a project at [supabase.com](https://supabase.com) and run the files
    in `supabase/migrations/` (0001 init, 0002 facilities, 0003 EU
-   classification) in order in the SQL editor.
+   classification, 0004 water-type categories) in order in the SQL editor.
 2. `cp .env.example .env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` (scripts/cron only — never shipped to the client)
@@ -77,13 +79,14 @@ which runs, in order:
 | `seed:unofficial` | Hand-curated, widely-used **unofficial** swim spots (`official_status: "unofficial"`) with access notes; not quality-monitored, flagged as swim-at-your-own-risk in the UI. Add new ones in `lib/ingest/unofficial-spots.ts` |
 | `seed:stations` | Pulls the RWS WaterWebservices catalog (~1080 stations measuring surface-water temp), probes them in batches and keeps only the ~116 with a reading in the last 7 days, then links every spot to its nearest live station (≤ 25 km) |
 | `ingest:quality` | Downloads the monthly zwemwater.nl advisory XLSX, maps active advisories (warning / negative advice / ban) onto spots by normalized name, snapshots a status per spot into `water_quality_readings` |
-| `seed:amsterdam` | Hand-curated facilities/hours for the 15 featured Amsterdam-area spots (Gaasperplas, IJburg, Nieuwe Meer, Diemerpark, Marineterrein, Het Twiske) |
+| `seed:details` | Hand-curated facilities/hours for the Amsterdam, Utrecht, Rotterdam, Den Haag, Eindhoven, Alkmaar, Haarlem and Groningen regions (~83 spots; one seed module per city in `lib/ingest/curated/`) |
 | `ingest:facilities` | Downloads toilets/parking/food/lifeguard POIs for all of NL from OSM Overpass (one country-wide dump per category — spatially-scoped queries time out at 744 spots), matches them to spots via a grid index (300–400 m radius), fills only fields the curated seeds left null |
-| `ingest:eu` | Pulls the latest-season EU bathing-water classifications + registry coordinates from EEA DISCODATA, joins them to official spots by proximity (0.5 km cap, normalized-name fallback; ~98% matched), stores `eu_bw_id` / `eu_classification` / `eu_classification_year` on `swim_spots` |
+| `ingest:eu` | Pulls the latest-season EU bathing-water classifications + registry coordinates from EEA DISCODATA, joins them to official spots by proximity (0.5 km cap, normalized-name fallback; ~98% matched), stores `eu_bw_id` / `eu_classification` / `eu_classification_year` and the water category (`water_type`: sea/lake/river/transitional) on `swim_spots` |
+| `compute:featured` | Re-derives the featured set from data: official spots rated "excellent" (EU) ranked by facility count, top 5 per province, plus the hand-picked list in `lib/ingest/featured-spots.ts` |
 
 ## Scheduled refresh (Vercel Cron)
 
-`vercel.json` defines four jobs (all authorized via the `CRON_SECRET` bearer
+`vercel.json` defines five jobs (all authorized via the `CRON_SECRET` bearer
 token Vercel sends automatically):
 
 - `/api/cron/refresh-quality` — monthly (2nd, 06:00 UTC): re-ingests the advisory
@@ -94,7 +97,9 @@ token Vercel sends automatically):
 - `/api/cron/refresh-facilities` — monthly (3rd, 06:00 UTC): re-runs the OSM
   facilities backfill
 - `/api/cron/refresh-eu-classification` — yearly (June 20, 06:00 UTC, after the
-  EEA publishes): re-ingests the annual EU classification
+  EEA publishes): re-ingests the annual EU classification + water categories
+- `/api/cron/refresh-featured` — monthly (3rd, 07:00 UTC, after the facilities
+  refresh): re-derives the data-driven featured set
 
 Live data (weather + water temp) is deliberately **not** cron-ingested: the
 `/api/spot/[slug]/live` route fetches it on request with a 30-minute cache, and
@@ -141,8 +146,9 @@ flowchart LR
     I2["quality.ts"]
     I3["stations.ts<br/>+ nearest-station links"]
     I4["facilities.ts<br/>(grid-index matching)"]
-    I5["seed-amsterdam-details.ts<br/>(hand-curated, always wins)"]
-    I6["eu-classification.ts<br/>(proximity join, yearly)"]
+    I5["curated-details.ts + curated/*<br/>(hand-curated, always wins)"]
+    I6["eu-classification.ts<br/>(proximity join, yearly)<br/>+ water categories"]
+    I7["featured.ts<br/>(derived: EU rating + facilities)"]
   end
 
   STORE["lib/db/store.ts<br/>DataStore interface"]
@@ -160,6 +166,7 @@ flowchart LR
   I4 --> STORE
   I5 --> STORE
   I6 --> STORE
+  I7 --> STORE
   STORE --> LOCAL
   STORE --> SUPA
 ```

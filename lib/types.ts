@@ -1,4 +1,5 @@
-export type WaterType = "fresh" | "salt";
+/** EEA bathing-water category (specialisedZoneType, minus the suffix). */
+export type WaterType = "sea" | "lake" | "river" | "transitional";
 export type OfficialStatus = "official" | "delisted" | "unofficial";
 export type QualityStatus =
   | "good"

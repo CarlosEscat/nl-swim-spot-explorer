@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import type { SpotWithData } from "@/lib/types";
+import type { SpotWithData, WaterType } from "@/lib/types";
+import { CITIES, CITY_RADIUS_KM } from "@/lib/cities";
+import { haversineKm } from "@/lib/geo";
 import { parseAdvisory } from "@/lib/quality";
 import { useI18n } from "./I18nProvider";
 import RankedList from "./RankedList";
@@ -24,10 +26,22 @@ const SwimMap = dynamic(() => import("./SwimMap"), {
 });
 
 export default function Explorer({ spots }: { spots: SpotWithData[] }) {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const [selected, setSelected] = useState<SpotWithData | null>(null);
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [hideAlgae, setHideAlgae] = useState(false);
+  const [waterType, setWaterType] = useState<WaterType | "">("");
+  const [cityId, setCityId] = useState("");
+  // Module constant → stable identity for SwimMap's focus effect.
+  const city = CITIES.find((c) => c.id === cityId) ?? null;
+
+  // Switching city closes any open spot panel so the camera flight isn't
+  // fighting the selection zoom.
+  const handleCityChange = (id: string) => {
+    setSelected(null);
+    setView3d(false);
+    setCityId(id);
+  };
   const [showRanked, setShowRanked] = useState(false);
   const [view3d, setView3d] = useState(false);
 
@@ -50,10 +64,13 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
       spots.filter(
         (s) =>
           (!featuredOnly || s.is_featured) &&
+          (!waterType || s.water_type === waterType) &&
+          (!city ||
+            haversineKm(city.lat, city.lng, s.lat, s.lng) <= CITY_RADIUS_KM) &&
           (!hideAlgae ||
             parseAdvisory(s.latest_quality?.raw_notes) !== "blue_green_algae")
       ),
-    [spots, featuredOnly, hideAlgae]
+    [spots, featuredOnly, hideAlgae, waterType, city]
   );
 
   return (
@@ -63,6 +80,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
         selectedId={selected?.id ?? null}
         onSelect={handleSelect}
         pitched={view3d}
+        focus={city}
       />
 
       {/* Controls */}
@@ -89,24 +107,52 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
             {dict.explorer.view_3d}
           </button>
         )}
-        <label className="flex cursor-pointer items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-gray-700 shadow-lg backdrop-blur">
-          <input
-            type="checkbox"
-            checked={featuredOnly}
-            onChange={(e) => setFeaturedOnly(e.target.checked)}
-            className="h-4 w-4 accent-indigo-600"
-          />
+        <button
+          onClick={() => setFeaturedOnly((v) => !v)}
+          aria-pressed={featuredOnly}
+          className={`rounded-full px-4 py-2 text-sm font-semibold shadow-lg backdrop-blur ${
+            featuredOnly
+              ? "bg-indigo-600 text-white"
+              : "bg-white/95 text-indigo-700 hover:bg-indigo-50"
+          }`}
+        >
           {dict.explorer.featured_only}
-        </label>
-        <label className="flex cursor-pointer items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-gray-700 shadow-lg backdrop-blur">
-          <input
-            type="checkbox"
-            checked={hideAlgae}
-            onChange={(e) => setHideAlgae(e.target.checked)}
-            className="h-4 w-4 accent-violet-600"
-          />
+        </button>
+        <select
+          value={cityId}
+          onChange={(e) => handleCityChange(e.target.value)}
+          className="cursor-pointer rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-gray-700 shadow-lg backdrop-blur"
+        >
+          <option value="">{dict.explorer.city_all}</option>
+          {CITIES.map((c) => (
+            <option key={c.id} value={c.id}>
+              {locale === "en" ? (c.name_en ?? c.name) : c.name}
+            </option>
+          ))}
+        </select>
+        <select
+          value={waterType}
+          onChange={(e) => setWaterType(e.target.value as WaterType | "")}
+          className="cursor-pointer rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-gray-700 shadow-lg backdrop-blur"
+        >
+          <option value="">{dict.explorer.water_type_all}</option>
+          {(["sea", "lake", "river", "transitional"] as const).map((wt) => (
+            <option key={wt} value={wt}>
+              {dict.water[wt]}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={() => setHideAlgae((v) => !v)}
+          aria-pressed={hideAlgae}
+          className={`rounded-full px-4 py-2 text-sm font-semibold shadow-lg backdrop-blur ${
+            hideAlgae
+              ? "bg-violet-600 text-white"
+              : "bg-white/95 text-violet-700 hover:bg-violet-50"
+          }`}
+        >
           {dict.explorer.hide_algae}
-        </label>
+        </button>
       </div>
 
       {/* Ranked "best right now" panel */}

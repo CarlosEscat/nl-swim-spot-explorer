@@ -113,6 +113,22 @@ export const localStore: DataStore = {
       .sort((a, b) => (a.measured_at < b.measured_at ? -1 : 1));
   },
 
+  async setFeaturedSpots(spotIds) {
+    const spots = await readJson<SwimSpot[]>("spots.json", []);
+    const ids = new Set(spotIds);
+    for (const s of spots) s.is_featured = ids.has(s.id);
+    await writeJson("spots.json", spots);
+  },
+
+  async setWaterType(spotId, waterType) {
+    const spots = await readJson<SwimSpot[]>("spots.json", []);
+    const spot = spots.find((s) => s.id === spotId);
+    if (spot) {
+      spot.water_type = waterType;
+      await writeJson("spots.json", spots);
+    }
+  },
+
   async setEuClassification(spotId, c) {
     const spots = await readJson<SwimSpot[]>("spots.json", []);
     const spot = spots.find((s) => s.id === spotId);

@@ -15,8 +15,16 @@
     "loading_map": "Loading map…",
     "best_right_now": "🏊 Best right now",
     "view_3d": "🏙️ 3D view",
-    "featured_only": "Amsterdam featured only",
-    "hide_algae": "Hide algae warnings"
+    "featured_only": "⭐ Top rated",
+    "hide_algae": "Hide algae warnings",
+    "water_type_all": "All water types",
+    "city_all": "All of the Netherlands"
+  },
+  "water": {
+    "sea": "Sea",
+    "lake": "Lake",
+    "river": "River or canal",
+    "transitional": "Estuary"
   },
   "map": {
     "missing_key": "Map unavailable: set NEXT_PUBLIC_MAPTILER_KEY in .env.local (see .env.example)."
@@ -34,7 +42,9 @@
     "unofficial": "unofficial"
   },
   "panel": {
-    "featured": "Featured",
+    "featured": "⭐ Top rated",
+    "featured_note_rated": "One of the top-rated swim spots in {province}: 'excellent' in the annual EU bathing-water classification, with good facilities.",
+    "featured_note_picked": "Hand-picked as one of the nicest swim spots in the region.",
     "unofficial_spot": "Unofficial spot",
     "close": "Close panel",
     "aerial_alt": "Aerial photo of {name}",
@@ -89,6 +99,7 @@
     "facilities_osm_note": "Facilities auto-detected from OpenStreetMap data within ~300 m of the spot.",
     "facilities_missing": "Facilities for this spot haven't been curated yet.",
     "location": "Location",
+    "water_type": "Water type",
     "province": "Province",
     "municipality": "Municipality",
     "coordinates": "Coordinates",
@@ -144,6 +155,13 @@
     "95": "Thunderstorm",
     "96": "Thunderstorm with hail",
     "99": "Thunderstorm with heavy hail"
+  },
+  "describe": {
+    "monitored": "Official bathing location: the water quality is checked regularly during the swimming season (1 May – 1 October).",
+    "eu_rated": "In the {year} EU bathing-water classification it was rated '{classification}'.",
+    "facilities": "Facilities nearby: {list}.",
+    "open_access": "Open-access natural water — always check the on-site signs before you swim.",
+    "generated_note": "Compiled automatically from official data — not yet hand-checked."
   },
   "eu": {
     "label": "EU rating {year}: {classification}",
