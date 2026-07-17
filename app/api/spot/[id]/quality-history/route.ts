@@ -7,9 +7,9 @@ export interface QualityHistoryResponse {
 }
 
 /**
- * This season's stored quality readings for one spot (monthly cron snapshots),
- * powering the season timeline in the map panel. Data changes monthly, so a
- * day of CDN cache is fine.
+ * This season's stored quality readings for one spot (daily cron snapshots
+ * in-season, monthly off-season), powering the season timeline in the map
+ * panel.
  */
 export async function GET(
   _req: Request,
@@ -31,7 +31,7 @@ export async function GET(
   const payload: QualityHistoryResponse = { readings };
   return NextResponse.json(payload, {
     headers: {
-      "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=86400",
+      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
     },
   });
 }

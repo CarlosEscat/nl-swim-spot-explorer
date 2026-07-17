@@ -8,7 +8,8 @@ with:
   quality and (client-side) distance to you; powered by `GET /api/live`, one
   CDN-cacheable batch snapshot for all spots
 - **Water quality** — official status from zwemwater.nl advisories (+ last-measured
-  date), plus a **season timeline** of this year's monthly readings per spot
+  date), plus a **season timeline** of this year's readings per spot (refreshed
+  daily during the bathing season, monthly off-season)
 - **Blue-green algae (blauwalg) front and center** — advisory reasons are parsed
   out of the raw zwemwater.nl codes (`lib/quality.ts parseAdvisory`); algae gets
   its own violet badge, a violet map-pin ring and a "hide algae warnings"
@@ -78,7 +79,7 @@ which runs, in order:
 | `ingest:locations` | Pulls the PDOK *Zwemwaterlocaties* INSPIRE dataset (GML), converts polygon centroids EPSG:3035 → WGS84, reverse-geocodes province/municipality via PDOK Locatieserver, upserts `swim_spots` |
 | `seed:unofficial` | Hand-curated, widely-used **unofficial** swim spots (`official_status: "unofficial"`) with access notes; not quality-monitored, flagged as swim-at-your-own-risk in the UI. Add new ones in `lib/ingest/unofficial-spots.ts` |
 | `seed:stations` | Pulls the RWS WaterWebservices catalog (~1080 stations measuring surface-water temp), probes them in batches and keeps only the ~116 with a reading in the last 7 days, then links every spot to its nearest live station (≤ 25 km) |
-| `ingest:quality` | Downloads the monthly zwemwater.nl advisory XLSX, maps active advisories (warning / negative advice / ban) onto spots by normalized name, snapshots a status per spot into `water_quality_readings` |
+| `ingest:quality` | Downloads the zwemwater.nl advisory XLSX, maps active advisories (warning / negative advice / ban) onto spots by normalized name, snapshots a status per spot into `water_quality_readings` |
 | `seed:details` | Hand-curated facilities/hours for the Amsterdam, Utrecht, Rotterdam, Den Haag, Eindhoven, Alkmaar, Haarlem and Groningen regions (~83 spots; one seed module per city in `lib/ingest/curated/`) |
 | `ingest:facilities` | Downloads toilets/parking/food/lifeguard POIs for all of NL from OSM Overpass (one country-wide dump per category — spatially-scoped queries time out at 744 spots), matches them to spots via a grid index (300–400 m radius), fills only fields the curated seeds left null |
 | `ingest:eu` | Pulls the latest-season EU bathing-water classifications + registry coordinates from EEA DISCODATA, joins them to official spots by proximity (0.5 km cap, normalized-name fallback; ~98% matched), stores `eu_bw_id` / `eu_classification` / `eu_classification_year` and the water category (`water_type`: sea/lake/river/transitional) on `swim_spots` |
@@ -86,12 +87,13 @@ which runs, in order:
 
 ## Scheduled refresh (Vercel Cron)
 
-`vercel.json` defines five jobs (all authorized via the `CRON_SECRET` bearer
-token Vercel sends automatically):
+`vercel.json` defines six schedules across five routes (all authorized via the
+`CRON_SECRET` bearer token Vercel sends automatically):
 
-- `/api/cron/refresh-quality` — monthly (2nd, 06:00 UTC): re-ingests the advisory
-  XLSX; readings are append-only per `(spot_id, measured_at, source)`, so this
-  builds the per-spot quality history the season timeline renders
+- `/api/cron/refresh-quality` — daily (06:00 UTC) during the bathing season
+  (May–Oct), monthly (2nd, 06:00 UTC) the rest of the year: re-ingests the
+  advisory XLSX; readings are append-only per `(spot_id, measured_at, source)`,
+  so this builds the per-spot quality history the season timeline renders
 - `/api/cron/refresh-locations` — weekly (Mon, 05:00 UTC): re-pulls PDOK **and**
   re-probes live stations / re-links nearest stations
 - `/api/cron/refresh-facilities` — monthly (3rd, 06:00 UTC): re-runs the OSM
@@ -109,7 +111,7 @@ Open-Meteo's burst limits) behind the same 30-minute CDN cache. Water-temp
 *history* (`/api/spot/[slug]/water-history`) is likewise fetched on demand from
 RWS's period endpoint, aggregated to daily min/avg/max, behind a 6-hour cache;
 `/api/spot/[slug]/quality-history` serves the stored season readings with a
-1-day cache.
+1-hour cache.
 
 ## Architecture
 
@@ -249,7 +251,7 @@ app/
   api/live/route.ts         # batch live snapshot (CDN-cached 30 min)
   api/spot/[id]/live/       # per-spot live data
   api/spot/[id]/water-history/    # daily water temps (14 d) + week delta (6 h cache)
-  api/spot/[id]/quality-history/  # stored season readings (1 d cache)
+  api/spot/[id]/quality-history/  # stored season readings (1 h cache)
   api/cron/refresh-*        # quality / locations / facilities / eu-classification
 components/
   Explorer.tsx              # client state hub: map + ranked list + panel + filters
@@ -274,7 +276,7 @@ supabase/migrations/        # schema (0001 init, 0002 facilities, 0003 EU classi
 |---|---|
 | Locations | [PDOK — Zwemwaterlocaties (INSPIRE)](https://service.pdok.nl/provincies/zwemwater-provinciaal-rijkswateren/atom/v1_0/index.xml) (CC-BY 4.0) |
 | Province/municipality | [PDOK Locatieserver](https://api.pdok.nl/bzk/locatieserver/search/v3_1/reverse) reverse geocoding |
-| Water quality | [zwemwater.nl](https://www.zwemwater.nl/data-en-api) monthly published-measures XLSX |
+| Water quality | [zwemwater.nl](https://www.zwemwater.nl/data-en-api) published-measures XLSX |
 | Water temperature | [Rijkswaterstaat WaterWebservices 2.0](https://rijkswaterstaatdata.nl/waterdata/) (`ddapi20-waterwebservices.rijkswaterstaat.nl`; latest + period history) |
 | EU classification | [EEA DISCODATA](https://discodata.eea.europa.eu/) `WISE_BWD` (annual bathing-water status + registry coordinates) |
 | Weather | [Open-Meteo](https://open-meteo.com/) (no key) |
@@ -302,8 +304,9 @@ spots today.
   out). `ingest:eu` always takes `MAX(season)`, and the UI shows the year on
   the badge, so stale data is self-describing.
 - The quality **season timeline** renders only once a spot has ≥2 stored
-  readings; history accumulates one snapshot per monthly cron run, so first
-  seasons look sparse by design.
+  readings; history accumulates one snapshot per `refresh-quality` cron run
+  (daily in-season, monthly off-season), so first seasons look sparse by
+  design.
 - **Deploying the EU-classification feature to prod**: run
   `supabase/migrations/0003_eu_classification.sql`, then `npm run ingest:eu`
   once (the yearly cron takes over afterwards).
