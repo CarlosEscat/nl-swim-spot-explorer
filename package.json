@@ -11,6 +11,7 @@
     "ingest:quality": "tsx scripts/ingest-quality.ts",
     "ingest:facilities": "tsx scripts/ingest-facilities.ts",
     "ingest:eu": "tsx scripts/ingest-eu-classification.ts",
+    "ingest:zwemwater-ids": "tsx scripts/ingest-zwemwater-ids.ts",
     "seed:stations": "tsx scripts/seed-rws-stations.ts",
     "seed:details": "tsx scripts/seed-details.ts",
     "seed:unofficial": "tsx scripts/seed-unofficial-spots.ts",

@@ -66,6 +66,103 @@ function toIsoDate(v: unknown): string | null {
   return isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
 }
 
+/** One entry from zwemwater.nl's server-rendered location list. */
+export interface ZwemwaterLocation {
+  id: string;
+  name: string;
+}
+
+/**
+ * All ~950 locations from the zwemwater.nl homepage. Each card renders as
+ * `<h3 class="h5">NAME</h3> … data-spotid="NNNNN"`, so pair them up in
+ * document order.
+ */
+export async function fetchLocationList(): Promise<ZwemwaterLocation[]> {
+  const res = await fetch("https://www.zwemwater.nl/", {
+    headers: { "User-Agent": "nl-swim-spot-explorer/1.0" },
+  });
+  if (!res.ok) throw new Error(`zwemwater.nl homepage failed: ${res.status}`);
+  const html = await res.text();
+
+  const locations: ZwemwaterLocation[] = [];
+  // The no-other-h3 guard keeps stray page headings from pairing with the
+  // first card's spotid.
+  const card =
+    /<h3 class="h5">([^<]+)<\/h3>(?:(?!<h3)[\s\S])*?data-spotid="(\d+)"/g;
+  for (const m of html.matchAll(card)) {
+    locations.push({ id: m[2], name: decodeEntities(m[1].trim()) });
+  }
+  if (locations.length < 100) {
+    throw new Error(
+      `zwemwater.nl location list looks broken: only ${locations.length} entries parsed`
+    );
+  }
+  return locations;
+}
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&#0?39;|&#8217;|&rsquo;/g, "'")
+    .replace(/&#8216;|&lsquo;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
+}
+
+/** One measured value from the zwemwater.nl per-location "Meetgegevens" tab. */
+export interface ZwemwaterMeasurement {
+  /** Sample date (ISO, date part of the lab's reported time). */
+  date: string;
+  /** cfu/100 ml; 15 is the lab's detection limit ("<15", best result). */
+  value: number;
+}
+
+export interface ZwemwaterMeasurements {
+  e_coli: ZwemwaterMeasurement[];
+  enterococci: ZwemwaterMeasurement[];
+}
+
+/**
+ * Current-season bacteriological measurements for one location, parsed from
+ * the JSON blob zwemwater.nl embeds in its detail overlay (the same data
+ * behind their "Meetgegevens" charts). Returns null when the location has no
+ * measurement data.
+ */
+export async function fetchMeasurements(
+  zwemwaterId: string
+): Promise<ZwemwaterMeasurements | null> {
+  const url = `https://www.zwemwater.nl/wp-content/themes/stuurlui/blocks/map/map-content.php?spotid=${encodeURIComponent(zwemwaterId)}`;
+  const res = await fetch(url, {
+    headers: { "User-Agent": "nl-swim-spot-explorer/1.0" },
+  });
+  if (!res.ok) throw new Error(`zwemwater.nl map-content failed: ${res.status}`);
+  const html = await res.text();
+
+  const m = html.match(/value='([^']*)'\s+id="monitoring-data"/);
+  if (!m || !m[1]) return null;
+
+  let raw: Record<string, Record<string, [number, string]>>;
+  try {
+    raw = JSON.parse(m[1]);
+  } catch {
+    return null;
+  }
+
+  const toSeries = (
+    series: Record<string, [number, string]> | undefined
+  ): ZwemwaterMeasurement[] =>
+    Object.values(series ?? {})
+      .filter(([value, at]) => typeof value === "number" && at)
+      .map(([value, at]) => ({ date: String(at).slice(0, 10), value }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+  const e_coli = toSeries(raw.E_COLI);
+  const enterococci = toSeries(raw.INTTNLETRCCN);
+  if (e_coli.length === 0 && enterococci.length === 0) return null;
+  return { e_coli, enterococci };
+}
+
 /** Map a raw zwemwater.nl measure status onto our quality scale. */
 export function mapAdvisoryStatus(raw: string): QualityStatus {
   switch (raw) {

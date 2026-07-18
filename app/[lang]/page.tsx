@@ -4,6 +4,7 @@ import I18nProvider from "@/components/I18nProvider";
 import JsonLd from "@/components/JsonLd";
 import SpotLinkCard from "@/components/SpotLinkCard";
 import { CITIES } from "@/lib/cities";
+import { GUIDES } from "@/lib/content/guides";
 import { getStore } from "@/lib/db/store";
 import {
   defaultLocale,
@@ -78,6 +79,14 @@ export default async function HomePage({
                   />
                 ))}
               </div>
+              <p className="mt-3 text-sm">
+                <Link
+                  href={pathFor(locale, "/beste-zwemplekken")}
+                  className="font-semibold text-indigo-600 hover:text-indigo-800"
+                >
+                  {dict.best.link}
+                </Link>
+              </p>
             </section>
           )}
 
@@ -114,6 +123,24 @@ export default async function HomePage({
                     className="font-medium text-indigo-600 hover:text-indigo-800"
                   >
                     {t(dict.region.city_h1, { name: cityName(c, locale) })}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="mt-8">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
+              {dict.guides.section_title}
+            </h2>
+            <ul className="mt-3 space-y-1.5 text-sm">
+              {GUIDES.map((g) => (
+                <li key={g.slug}>
+                  <Link
+                    href={pathFor(locale, `/info/${g.slug}`)}
+                    className="font-medium text-indigo-600 hover:text-indigo-800"
+                  >
+                    {g.content[locale].title}
                   </Link>
                 </li>
               ))}

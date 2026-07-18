@@ -95,6 +95,19 @@ export function breadcrumbJsonLd(items: { name: string; url?: string }[]) {
   };
 }
 
+/** FAQ rich-result markup for the /info guide pages. */
+export function faqJsonLd(faqs: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+}
+
 /** Ordered list of spot pages, for the province/city landing pages. */
 export function itemListJsonLd(
   name: string,

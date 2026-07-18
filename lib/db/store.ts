@@ -35,6 +35,8 @@ export interface DataStore {
   setFeaturedSpots(spotIds: string[]): Promise<void>;
   /** Set (or clear with null) a spot's water category. */
   setWaterType(spotId: string, waterType: WaterType | null): Promise<void>;
+  /** Set (or clear with null) a spot's zwemwater.nl location id. */
+  setZwemwaterId(spotId: string, zwemwaterId: string | null): Promise<void>;
   /** Set (or clear with null) a spot's annual EU bathing-water rating. */
   setEuClassification(
     spotId: string,

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAuthorizedCron } from "@/lib/cron-auth";
 import { ingestLocations } from "@/lib/ingest/locations";
 import { refreshStationsAndLinks } from "@/lib/ingest/stations";
+import { ingestZwemwaterIds } from "@/lib/ingest/zwemwater-ids";
 
 export const maxDuration = 300;
 export const dynamic = "force-dynamic";
@@ -18,7 +19,9 @@ export async function GET(req: Request) {
   try {
     const locations = await ingestLocations(console.log);
     const stations = await refreshStationsAndLinks(console.log);
-    return NextResponse.json({ ok: true, locations, stations });
+    // Re-match zwemwater.nl ids afterwards — the upsert may add new spots.
+    const zwemwaterIds = await ingestZwemwaterIds(console.log);
+    return NextResponse.json({ ok: true, locations, stations, zwemwaterIds });
   } catch (err) {
     console.error("refresh-locations failed:", err);
     return NextResponse.json(

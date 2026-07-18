@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CITIES } from "@/lib/cities";
+import { GUIDES } from "@/lib/content/guides";
 import { getStore } from "@/lib/db/store";
 import { listProvinces, provinceSlug } from "@/lib/regions";
 
@@ -32,6 +33,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       regionEntry(`/zwemplekken/${provinceSlug(p)}`)
     ),
     ...CITIES.map((c) => regionEntry(`/zwemmen/${c.id}`)),
+    regionEntry("/beste-zwemplekken"),
+    ...GUIDES.map((g) => ({
+      ...regionEntry(`/info/${g.slug}`),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
     ...spots.map((s) => ({
       url: `${base}/spots/${s.slug}`,
       lastModified: s.updated_at ? new Date(s.updated_at) : undefined,

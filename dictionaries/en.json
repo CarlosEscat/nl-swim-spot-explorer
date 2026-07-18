@@ -114,7 +114,17 @@
     "banned": "Swimming banned",
     "unknown": "No data"
   },
+  "measurements": {
+    "title": "Measurements",
+    "e_coli": "E. coli",
+    "enterococci": "Intestinal enterococci",
+    "unit": "cfu/100 ml",
+    "norm": "'excellent' standard",
+    "source_note": "Values measured this bathing season; <{limit} is below the detection limit (best result) · source:"
+  },
   "advisory": {
+    "algae_note": "Blue-green algae has been found at this spot.",
+    "algae_more": "Read more about blue-green algae and what the measures mean →",
     "blue_green_algae": "Blue-green algae (blauwalg)",
     "swimmers_itch": "Swimmer's itch (zwemmersjeuk)",
     "water_quality": "Water quality issue",
@@ -202,5 +212,17 @@
     "h1": "Outdoor swimming spots in the Netherlands",
     "intro": "Discover all {count} official outdoor swimming locations in the Netherlands — plus well-known unofficial spots, clearly flagged. Check live water temperature, weather, official water quality and facilities for every spot.",
     "top_rated_hint": "A data-driven shortlist: 'excellent' EU bathing-water rating and the best facilities, per province."
+  },
+  "guides": {
+    "section_title": "Swimming water guides",
+    "faq_title": "Frequently asked questions",
+    "more_title": "More about swimming water"
+  },
+  "best": {
+    "meta_title": "The best swimming spots in the Netherlands ({year})",
+    "meta_description": "The {count} best swimming spots in the Netherlands in {year}: rated 'excellent' in the EU bathing-water classification with the best facilities, per province — with live water quality and temperature.",
+    "h1": "The best swimming spots in the Netherlands ({year})",
+    "intro": "These {count} spots are selected from data, not opinion: official swimming locations rated 'excellent' in the annual EU bathing-water classification with the most facilities, topped up with a handful of hand-picked favourites. Every spot links to live water quality, water temperature and weather.",
+    "link": "The best swimming spots in the Netherlands →"
   }
 }

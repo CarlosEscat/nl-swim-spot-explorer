@@ -129,6 +129,15 @@ export const localStore: DataStore = {
     }
   },
 
+  async setZwemwaterId(spotId, zwemwaterId) {
+    const spots = await readJson<SwimSpot[]>("spots.json", []);
+    const spot = spots.find((s) => s.id === spotId);
+    if (spot) {
+      spot.zwemwater_id = zwemwaterId;
+      await writeJson("spots.json", spots);
+    }
+  },
+
   async setEuClassification(spotId, c) {
     const spots = await readJson<SwimSpot[]>("spots.json", []);
     const spot = spots.find((s) => s.id === spotId);

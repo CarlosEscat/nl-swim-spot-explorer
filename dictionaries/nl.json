@@ -114,7 +114,17 @@
     "banned": "Zwemverbod",
     "unknown": "Geen gegevens"
   },
+  "measurements": {
+    "title": "Meetgegevens",
+    "e_coli": "E. coli",
+    "enterococci": "Intestinale enterokokken",
+    "unit": "kve/100 ml",
+    "norm": "norm 'uitstekend'",
+    "source_note": "Gemeten waarden van dit badseizoen; <{limit} is onder de detectiegrens (beste resultaat) · bron:"
+  },
   "advisory": {
+    "algae_note": "Blauwalg aangetroffen bij deze zwemplek.",
+    "algae_more": "Lees meer over blauwalg en wat de maatregelen betekenen →",
     "blue_green_algae": "Blauwalg",
     "swimmers_itch": "Zwemmersjeuk",
     "water_quality": "Waterkwaliteitsprobleem",
@@ -202,5 +212,17 @@
     "h1": "Zwemplekken in Nederland",
     "intro": "Ontdek alle {count} officiële zwemlocaties van Nederland — plus bekende onofficiële zwemplekken, duidelijk gemarkeerd. Bekijk per zwemplek de actuele watertemperatuur, het weer, de officiële zwemwaterkwaliteit en de voorzieningen.",
     "top_rated_hint": "Een datagedreven selectie: EU-beoordeling 'uitstekend' én de beste voorzieningen, per provincie."
+  },
+  "guides": {
+    "section_title": "Gidsen over zwemwater",
+    "faq_title": "Veelgestelde vragen",
+    "more_title": "Meer over zwemwater"
+  },
+  "best": {
+    "meta_title": "De beste zwemplekken van Nederland ({year})",
+    "meta_description": "De {count} beste zwemplekken van Nederland in {year}: EU-beoordeling 'uitstekend' én de beste voorzieningen, per provincie — met actuele zwemwaterkwaliteit en watertemperatuur.",
+    "h1": "De beste zwemplekken van Nederland ({year})",
+    "intro": "Deze {count} zwemplekken zijn geselecteerd op data, niet op mening: officiële zwemlocaties met de EU-beoordeling 'uitstekend' in de jaarlijkse zwemwaterclassificatie én de meeste voorzieningen, aangevuld met een handvol met de hand gekozen favorieten. Elke plek linkt naar actuele zwemwaterkwaliteit, watertemperatuur en weer.",
+    "link": "De beste zwemplekken van Nederland →"
   }
 }

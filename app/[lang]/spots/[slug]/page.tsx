@@ -5,11 +5,13 @@ import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
 import EuClassBadge from "@/components/EuClassBadge";
 import JsonLd from "@/components/JsonLd";
+import MeasurementsChart from "@/components/MeasurementsChart";
 import SpotLinkCard from "@/components/SpotLinkCard";
 import I18nProvider from "@/components/I18nProvider";
 import QualityTimeline from "@/components/QualityTimeline";
 import SpotLiveClient from "@/components/SpotLiveClient";
 import { AERIAL_ATTRIBUTION, aerialImageUrl } from "@/lib/aerial";
+import { GUIDES } from "@/lib/content/guides";
 import { getStore } from "@/lib/db/store";
 import { generatedAccessNotes } from "@/lib/describe";
 import {
@@ -295,12 +297,26 @@ export default async function SpotPage({
                   : dict.panel.no_reading}
             </span>
           </div>
+          {reason === "blue_green_algae" && (
+            <p className="mt-2 rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-sm text-violet-900">
+              {dict.advisory.algae_note}{" "}
+              <Link
+                href={pathFor(locale, "/info/blauwalg")}
+                className="font-semibold underline hover:text-violet-700"
+              >
+                {dict.advisory.algae_more}
+              </Link>
+            </p>
+          )}
           {reason && reason !== "blue_green_algae" && (
             <p className="mt-2 text-sm text-gray-500">
               {advisoryLabel(reason, dict)}
             </p>
           )}
           <QualityTimeline readings={qualityHistory} dict={dict} />
+          {spot.zwemwater_id && (
+            <MeasurementsChart slug={spot.slug} dict={dict} locale={locale} />
+          )}
           {spot.official_status === "unofficial" && (
             <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
               {dict.spot.unofficial_disclaimer}
@@ -473,6 +489,29 @@ export default async function SpotPage({
             </p>
           </section>
         )}
+
+        <section className="mt-8 border-t border-gray-100 pt-4">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
+            {dict.guides.more_title}
+          </h2>
+          <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            {GUIDES.map((g) => (
+              <Link
+                key={g.slug}
+                href={pathFor(locale, `/info/${g.slug}`)}
+                className="font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                {g.content[locale].title}
+              </Link>
+            ))}
+            <Link
+              href={pathFor(locale, "/beste-zwemplekken")}
+              className="font-medium text-indigo-600 hover:text-indigo-800"
+            >
+              {dict.best.link}
+            </Link>
+          </p>
+        </section>
 
         <footer className="mt-10 border-t border-gray-100 pt-4 text-xs text-gray-400">
           {dict.spot.footer}

@@ -170,6 +170,17 @@ export default function SpotPanel({
                   : dict.panel.no_reading}
             </span>
           </div>
+          {reason === "blue_green_algae" && (
+            <p className="mt-1.5 rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-xs text-violet-900">
+              {dict.advisory.algae_note}{" "}
+              <Link
+                href={pathFor(locale, "/info/blauwalg")}
+                className="font-semibold underline hover:text-violet-700"
+              >
+                {dict.advisory.algae_more}
+              </Link>
+            </p>
+          )}
           {reason && reason !== "blue_green_algae" && (
             <p className="mt-1.5 text-xs text-gray-500">
               {advisoryLabel(reason, dict)}

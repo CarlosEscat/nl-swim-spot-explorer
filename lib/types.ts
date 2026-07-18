@@ -31,6 +31,8 @@ export interface SwimSpot {
   webcam_url: string | null;
   /** EEA bathing-water identifier (e.g. "NLBW02_9002"); null when unmatched. */
   eu_bw_id?: string | null;
+  /** zwemwater.nl internal location id (the ?id= in their URLs); null when unmatched. */
+  zwemwater_id?: string | null;
   eu_classification?: EuClassification | null;
   eu_classification_year?: number | null;
   created_at?: string;

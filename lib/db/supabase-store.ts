@@ -144,6 +144,15 @@ export const supabaseStore: DataStore = {
     );
   },
 
+  async setZwemwaterId(spotId, zwemwaterId) {
+    throwIfError(
+      await db()
+        .from("swim_spots")
+        .update({ zwemwater_id: zwemwaterId })
+        .eq("id", spotId)
+    );
+  },
+
   async setEuClassification(spotId, c) {
     throwIfError(
       await db()
