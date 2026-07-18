@@ -48,7 +48,9 @@ export interface SwimSpotDetails {
   has_parking?: boolean | null;
   nude_recreation: boolean | null;
   lounging_area: boolean | null;
-  access_notes: string | null;
+  /** Hand-curated access/hours copy, localized per language; null means uncurated. */
+  access_notes_nl: string | null;
+  access_notes_en: string | null;
   /** Provenance: 'manual' (hand-curated, authoritative) or 'osm' (auto-detected). */
   facilities_source?: string | null;
   updated_at?: string;

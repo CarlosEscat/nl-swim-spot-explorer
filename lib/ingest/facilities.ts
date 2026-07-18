@@ -109,7 +109,8 @@ export async function ingestFacilities(
       lounging_area:
         prev?.lounging_area ??
         (index.hasNear("beach_resort", spot.lat, spot.lng) || null),
-      access_notes: prev?.access_notes ?? null,
+      access_notes_nl: prev?.access_notes_nl ?? null,
+      access_notes_en: prev?.access_notes_en ?? null,
       facilities_source: prev?.facilities_source ?? (prev ? "manual" : "osm"),
     };
 

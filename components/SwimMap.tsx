@@ -9,7 +9,7 @@ import maplibregl, {
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureCollection, Point } from "geojson";
 import type { SpotWithData } from "@/lib/types";
-import { parseAdvisory, qualityStyle } from "@/lib/quality";
+import { isUrgentStatus, parseAdvisory, qualityStyle } from "@/lib/quality";
 import { useI18n } from "./I18nProvider";
 
 const NL_CENTER: LngLatLike = [5.3, 52.2];
@@ -36,6 +36,7 @@ function toGeoJSON(spots: SpotWithData[]): FeatureCollection<Point> {
         unofficial: spot.official_status === "unofficial",
         algae:
           parseAdvisory(spot.latest_quality?.raw_notes) === "blue_green_algae",
+        urgent: isUrgentStatus(spot.latest_quality?.status),
       },
     })),
   };
@@ -60,6 +61,47 @@ const PIN_STROKE_WIDTH: ExpressionSpecification = [
   2,
 ];
 const NO_MATCH_FILTER: ExpressionSpecification = ["==", ["get", "id"], "__none__"];
+
+// Radar-ping pulse for pins with an active warning/negative-advice/algae
+// status: a ring that expands from the pin and fades out, looping. Driven by
+// rAF rather than a CSS animation since these are WebGL circle layers, not
+// DOM nodes. Throttled well below 60fps — it's a slow, soft breathing pulse,
+// not something that needs per-frame precision.
+//
+// circle-radius is intentionally animated as a plain number, not a
+// data-driven expression (e.g. one embedding PIN_RADIUS's featured/normal
+// case) — re-parsing and recompiling an expression on every tick is by far
+// the most expensive kind of paint update (it touches geometry buffers) and
+// was heavy enough, called on two layers ~20x/sec during initial load, to
+// stall the main thread and drop pin clicks and camera gestures.
+const PULSE_DURATION_MS = 1800;
+const PULSE_FRAME_INTERVAL_MS = 50;
+const PULSE_BASE_RADIUS = 8;
+const PULSE_GROWTH_PX = 9;
+const PULSE_MAX_OPACITY = 0.55;
+
+function startPulseAnimation(
+  map: maplibregl.Map,
+  ringLayerIds: string[]
+): () => void {
+  let frameId: number;
+  let lastTick = 0;
+  function tick(now: number) {
+    frameId = requestAnimationFrame(tick);
+    if (now - lastTick < PULSE_FRAME_INTERVAL_MS) return;
+    lastTick = now;
+    const t = (now % PULSE_DURATION_MS) / PULSE_DURATION_MS;
+    const radius = PULSE_BASE_RADIUS + PULSE_GROWTH_PX * t;
+    const opacity = PULSE_MAX_OPACITY * (1 - t);
+    for (const id of ringLayerIds) {
+      if (!map.getLayer(id)) continue;
+      map.setPaintProperty(id, "circle-radius", radius);
+      map.setPaintProperty(id, "circle-stroke-opacity", opacity);
+    }
+  }
+  frameId = requestAnimationFrame(tick);
+  return () => cancelAnimationFrame(frameId);
+}
 
 export default function SwimMap({
   spots,
@@ -100,6 +142,7 @@ export default function SwimMap({
       new maplibregl.NavigationControl({ visualizePitch: true }),
       "bottom-right"
     );
+    let stopPulse: (() => void) | null = null;
 
     // MapLibre's own ResizeObserver misses the first layout in some embedded
     // browsers — sync the canvas size explicitly as a fallback.
@@ -150,18 +193,39 @@ export default function SwimMap({
         },
         paint: { "text-color": "#ffffff" },
       });
-      // Outer violet ring flagging active blue-green algae advisories; the
-      // regular stroke stays reserved for featured/unofficial.
+      // Outer ring flagging an active advisory, pulsing outward to draw the
+      // eye before a pin is even clicked. Algae gets its own violet colour
+      // (a distinct advisory type); other urgent statuses (warning/negative
+      // advice) reuse the pin's own severity colour. A pin never gets both.
       map.addLayer({
         id: "spot-pins-algae-ring",
         type: "circle",
         source: SPOTS_SOURCE,
         filter: ["all", ["!", ["has", "point_count"]], ["get", "algae"]],
         paint: {
-          "circle-radius": ["+", PIN_RADIUS, 3.5],
+          "circle-radius": PULSE_BASE_RADIUS,
           "circle-opacity": 0,
           "circle-stroke-color": ALGAE_COLOR,
           "circle-stroke-width": 2.5,
+          "circle-stroke-opacity": PULSE_MAX_OPACITY,
+        },
+      });
+      map.addLayer({
+        id: "spot-pins-alert-ring",
+        type: "circle",
+        source: SPOTS_SOURCE,
+        filter: [
+          "all",
+          ["!", ["has", "point_count"]],
+          ["get", "urgent"],
+          ["!", ["get", "algae"]],
+        ],
+        paint: {
+          "circle-radius": PULSE_BASE_RADIUS,
+          "circle-opacity": 0,
+          "circle-stroke-color": ["get", "pinColor"],
+          "circle-stroke-width": 2.5,
+          "circle-stroke-opacity": PULSE_MAX_OPACITY,
         },
       });
       map.addLayer({
@@ -189,6 +253,11 @@ export default function SwimMap({
           "circle-stroke-width": PIN_STROKE_WIDTH,
         },
       });
+
+      stopPulse = startPulseAnimation(map, [
+        "spot-pins-algae-ring",
+        "spot-pins-alert-ring",
+      ]);
 
       const styleLayers = map.getStyle().layers;
 
@@ -274,6 +343,7 @@ export default function SwimMap({
     mapRef.current = map;
     return () => {
       window.removeEventListener("resize", syncSize);
+      stopPulse?.();
       map.remove();
       mapRef.current = null;
     };

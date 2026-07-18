@@ -13,7 +13,7 @@ import SpotLiveClient from "@/components/SpotLiveClient";
 import { AERIAL_ATTRIBUTION, aerialImageUrl } from "@/lib/aerial";
 import { GUIDES } from "@/lib/content/guides";
 import { getStore } from "@/lib/db/store";
-import { generatedAccessNotes } from "@/lib/describe";
+import { generatedAccessNotes, localizedAccessNotes } from "@/lib/describe";
 import {
   defaultLocale,
   formatDate,
@@ -25,6 +25,7 @@ import {
 } from "@/lib/i18n";
 import {
   advisoryLabel,
+  isUrgentStatus,
   parseAdvisory,
   qualityLabel,
   qualityStyle,
@@ -154,9 +155,8 @@ export default async function SpotPage({
   const style = qualityStyle(q?.status);
   const reason = parseAdvisory(q?.raw_notes);
   const d = spot.details;
-  const generatedNotes = d?.access_notes
-    ? null
-    : generatedAccessNotes(spot, dict);
+  const curatedNotes = localizedAccessNotes(d, locale);
+  const generatedNotes = curatedNotes ? null : generatedAccessNotes(spot, dict);
 
   const place = [spot.municipality, spot.province].filter(Boolean).join(", ");
   const metaDescription = t(
@@ -268,13 +268,14 @@ export default async function SpotPage({
           </h2>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span
-              className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-sm font-semibold ${style.badge}`}
+              className={`inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm font-semibold ${style.badge}`}
             >
+              {isUrgentStatus(q?.status) && <span aria-hidden>⚠</span>}
               {qualityLabel(q?.status, dict)}
             </span>
             {reason === "blue_green_algae" && (
-              <span className="inline-flex items-center rounded-lg border border-violet-300 bg-violet-100 px-3 py-1.5 text-sm font-semibold text-violet-900">
-                ⚠ {advisoryLabel(reason, dict)}
+              <span className="inline-flex items-center gap-1 rounded-lg border border-transparent bg-violet-700 px-3 py-1.5 text-sm font-semibold text-white">
+                <span aria-hidden>⚠</span> {advisoryLabel(reason, dict)}
               </span>
             )}
             <EuClassBadge
@@ -340,7 +341,7 @@ export default async function SpotPage({
             {dict.panel.access}
           </h2>
           <p className="mt-2 text-gray-700">
-            {d?.access_notes ?? generatedNotes ?? (
+            {curatedNotes ?? generatedNotes ?? (
               <span className="text-gray-400">{dict.spot.access_default}</span>
             )}
           </p>

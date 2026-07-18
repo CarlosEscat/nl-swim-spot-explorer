@@ -39,7 +39,9 @@ export const UNOFFICIAL_SPOTS: UnofficialSeed[] = [
       has_boat_ramp: false,
       nude_recreation: false,
       lounging_area: true,
-      access_notes:
+      access_notes_nl:
+        "Klein stadsstrandje op de oostoever van de Amstel tussen de Ruyschstraat en de Berlagebrug, ontzettend populair op warme dagen. Geen officiële zwemlocatie: de Amstel is druk vaarwater en de waterkwaliteit wordt niet gecontroleerd. Blijf dicht bij de kant en let op scheepvaart. Cafés langs de Weesperzijde.",
+      access_notes_en:
         "Small city 'beach' on the east bank of the Amstel between the Ruyschstraat and the Berlagebrug, hugely popular on hot days. Not an official swimming location: the Amstel is active boating water and quality is not monitored. Stay close to the bank and watch for boat traffic. Cafés along the Weesperzijde.",
     },
   },
@@ -57,7 +59,9 @@ export const UNOFFICIAL_SPOTS: UnofficialSeed[] = [
       has_boat_ramp: false,
       nude_recreation: false,
       lounging_area: false,
-      access_notes:
+      access_notes_nl:
+        "Kades en steigers langs de Borneokade (Entrepothaven) in de Oostelijke Handelskade, een lokale favoriet voor een snelle duik. Geen officiële zwemlocatie — geen controle op waterkwaliteit. Blijf uit de buurt van afgemeerde en passerende boten, en check op een ladder of trapje voordat je erin springt: uitstapplekken zijn schaars.",
+      access_notes_en:
         "Quays and jetties along the Borneokade (Entrepothaven) in the Eastern Docklands, a local favourite for a quick plunge. Not an official swimming location — no quality monitoring. Keep clear of moored and passing boats, and check for a ladder or steps before jumping in: exits are scarce.",
     },
   },
@@ -75,7 +79,9 @@ export const UNOFFICIAL_SPOTS: UnofficialSeed[] = [
       has_boat_ramp: false,
       nude_recreation: null,
       lounging_area: true,
-      access_notes:
+      access_notes_nl:
+        "Rustige plas tussen Amsterdam-Noord en Zaandam, gebruikt om wild te zwemmen vanaf de natuurlijke oevers. Geen officiële zwemlocatie: onbewaakt diep water, geen voorzieningen, geen controle op waterkwaliteit. Check bij warm weer op blauwalg voordat je erin gaat.",
+      access_notes_en:
         "Quiet lake between Amsterdam-Noord and Zaandam, used for wild swimming from the natural banks. Not an official swimming location: unsupervised deep water, no facilities, no quality monitoring. In warm spells check for blue-green algae before getting in.",
     },
   },
@@ -93,7 +99,9 @@ export const UNOFFICIAL_SPOTS: UnofficialSeed[] = [
       has_boat_ramp: false,
       nude_recreation: false,
       lounging_area: true,
-      access_notes:
+      access_notes_nl:
+        "Zwemmen in de gracht vanaf de kades rond de Muntbrug en Muntsluis, een bekende Utrechtse zomerhangplek. Geen officiële zwemlocatie — het kanaal is vaarwater en de waterkwaliteit wordt niet getest. Let op scheepvaart en gebruik de kadetrappen of ladders om eruit te komen.",
+      access_notes_en:
         "Canal swimming off the quays around the Muntbrug and Muntsluis, a well-known Utrecht summer hangout. Not an official swimming location — the canal is boating water and quality is untested. Mind boat traffic and use the quay steps or ladders to get out.",
     },
   },

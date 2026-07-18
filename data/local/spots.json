@@ -13986,13 +13986,16 @@
     "municipality": "Amsterdam",
     "lat": 52.35,
     "lng": 4.9103,
-    "water_type": "fresh",
+    "water_type": "river",
     "official_status": "unofficial",
     "is_featured": false,
     "nearest_rws_station_id": "diemen",
     "webcam_url": null,
     "id": "c86631e4-7105-4b14-b865-f494ae836a63",
-    "updated_at": "2026-07-12T14:08:19.982Z"
+    "updated_at": "2026-07-18T17:14:59.962Z",
+    "eu_bw_id": null,
+    "eu_classification": null,
+    "eu_classification_year": null
   },
   {
     "name": "Borneo-eiland Entrepothaven",
@@ -14001,13 +14004,16 @@
     "municipality": "Amsterdam",
     "lat": 52.371,
     "lng": 4.943,
-    "water_type": "fresh",
+    "water_type": "river",
     "official_status": "unofficial",
     "is_featured": false,
     "nearest_rws_station_id": "amsterdam.schellingwouderbrug",
     "webcam_url": null,
     "id": "c53e4d58-c9c8-46ee-b4f4-f539528c0477",
-    "updated_at": "2026-07-12T14:08:19.982Z"
+    "updated_at": "2026-07-18T17:14:59.963Z",
+    "eu_bw_id": null,
+    "eu_classification": null,
+    "eu_classification_year": null
   },
   {
     "name": "Noorder IJplas",
@@ -14016,13 +14022,16 @@
     "municipality": "Amsterdam",
     "lat": 52.422,
     "lng": 4.867,
-    "water_type": "fresh",
+    "water_type": "lake",
     "official_status": "unofficial",
     "is_featured": false,
     "nearest_rws_station_id": "amsterdam.schellingwouderbrug",
     "webcam_url": null,
     "id": "49f447a6-b7f5-41b2-899b-e9fb5f6a921a",
-    "updated_at": "2026-07-12T14:08:19.982Z"
+    "updated_at": "2026-07-18T17:14:59.963Z",
+    "eu_bw_id": null,
+    "eu_classification": null,
+    "eu_classification_year": null
   },
   {
     "name": "Merwedekanaal Muntbrug",
@@ -14031,12 +14040,15 @@
     "municipality": "Utrecht",
     "lat": 52.086,
     "lng": 5.095,
-    "water_type": "fresh",
+    "water_type": "river",
     "official_status": "unofficial",
     "is_featured": false,
     "nearest_rws_station_id": "maarssen.kanaal",
     "webcam_url": null,
     "id": "46479acf-7f52-4512-bd88-dbba1a5cf1fe",
-    "updated_at": "2026-07-12T14:08:19.982Z"
+    "updated_at": "2026-07-18T17:14:59.963Z",
+    "eu_bw_id": null,
+    "eu_classification": null,
+    "eu_classification_year": null
   }
 ]

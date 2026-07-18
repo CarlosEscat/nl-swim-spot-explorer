@@ -5,9 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import type { SpotLiveData, SpotWithData } from "@/lib/types";
 import { aerialImageUrl } from "@/lib/aerial";
-import { generatedAccessNotes } from "@/lib/describe";
+import { generatedAccessNotes, localizedAccessNotes } from "@/lib/describe";
 import { formatDate, pathFor, t, weatherLabel } from "@/lib/i18n";
-import { advisoryLabel, parseAdvisory, qualityLabel, qualityStyle } from "@/lib/quality";
+import {
+  advisoryLabel,
+  isUrgentStatus,
+  parseAdvisory,
+  qualityLabel,
+  qualityStyle,
+} from "@/lib/quality";
 import EuClassBadge from "./EuClassBadge";
 import { useI18n } from "./I18nProvider";
 import QualityHistoryClient from "./QualityHistoryClient";
@@ -70,9 +76,8 @@ export default function SpotPanel({
   const style = qualityStyle(q?.status);
   const reason = parseAdvisory(q?.raw_notes);
   const d = spot.details;
-  const generatedNotes = d?.access_notes
-    ? null
-    : generatedAccessNotes(spot, dict);
+  const curatedNotes = localizedAccessNotes(d, locale);
+  const generatedNotes = curatedNotes ? null : generatedAccessNotes(spot, dict);
 
   return (
     <aside className="pointer-events-auto flex h-full w-full flex-col overflow-y-auto bg-white shadow-2xl sm:max-w-md sm:rounded-l-2xl">
@@ -148,13 +153,14 @@ export default function SpotPanel({
           </h3>
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <span
-              className={`inline-flex items-center rounded-lg border px-3 py-1 text-sm font-semibold ${style.badge}`}
+              className={`inline-flex items-center gap-1 rounded-lg border px-3 py-1 text-sm font-semibold ${style.badge}`}
             >
+              {isUrgentStatus(q?.status) && <span aria-hidden>⚠</span>}
               {qualityLabel(q?.status, dict)}
             </span>
             {reason === "blue_green_algae" && (
-              <span className="inline-flex items-center rounded-lg border border-violet-300 bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-900">
-                ⚠ {advisoryLabel(reason, dict)}
+              <span className="inline-flex items-center gap-1 rounded-lg border border-transparent bg-violet-700 px-3 py-1 text-sm font-semibold text-white">
+                <span aria-hidden>⚠</span> {advisoryLabel(reason, dict)}
               </span>
             )}
             <EuClassBadge
@@ -262,7 +268,7 @@ export default function SpotPanel({
             {dict.panel.access}
           </h3>
           <p className="mt-1.5 text-sm text-gray-700">
-            {d?.access_notes ?? generatedNotes ?? (
+            {curatedNotes ?? generatedNotes ?? (
               <span className="text-gray-400">
                 {dict.panel.access_default}
               </span>

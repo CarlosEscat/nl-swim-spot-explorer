@@ -1,5 +1,14 @@
-import { t, type Dictionary } from "@/lib/i18n";
-import type { SpotWithData } from "@/lib/types";
+import { t, type Dictionary, type Locale } from "@/lib/i18n";
+import type { SpotWithData, SwimSpotDetails } from "@/lib/types";
+
+/** The hand-curated access notes in the requested locale; null when uncurated. */
+export function localizedAccessNotes(
+  details: SwimSpotDetails | null | undefined,
+  locale: Locale
+): string | null {
+  if (!details) return null;
+  return (locale === "nl" ? details.access_notes_nl : details.access_notes_en) ?? null;
+}
 
 /**
  * Localized fallback description for official spots without hand-written

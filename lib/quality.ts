@@ -17,12 +17,14 @@ const STYLES: Record<QualityStatus | "unknown", QualityStyle> = {
     badge: "bg-lime-100 text-lime-800 border-lime-300",
     pin: "#84cc16",
   },
+  // Solid fill, not the pastel treatment the calmer statuses use — these two
+  // are active warnings and should read as more urgent at a glance.
   warning: {
-    badge: "bg-amber-100 text-amber-900 border-amber-300",
+    badge: "bg-amber-700 text-white border-transparent",
     pin: "#f59e0b",
   },
   negative_advice: {
-    badge: "bg-orange-100 text-orange-900 border-orange-300",
+    badge: "bg-orange-700 text-white border-transparent",
     pin: "#f97316",
   },
   banned: {
@@ -37,6 +39,11 @@ const STYLES: Record<QualityStatus | "unknown", QualityStyle> = {
 
 export function qualityStyle(status: QualityStatus | null | undefined): QualityStyle {
   return STYLES[status ?? "unknown"] ?? STYLES.unknown;
+}
+
+/** Active-advisory statuses that get the bold ⚠ badge treatment. */
+export function isUrgentStatus(status: QualityStatus | null | undefined): boolean {
+  return status === "warning" || status === "negative_advice";
 }
 
 /** Localized label for a quality status ("No data" when absent). */
