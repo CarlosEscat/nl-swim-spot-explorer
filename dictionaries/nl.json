@@ -174,5 +174,33 @@
   },
   "timeline": {
     "months": ["mei", "jun", "jul", "aug", "sep"]
+  },
+  "region": {
+    "breadcrumb_home": "Home",
+    "province_meta_title": "Zwemplekken in {name} — zwemwaterkwaliteit & watertemperatuur",
+    "province_meta_description": "Alle {count} officiële zwemlocaties in {name} op een rij — met actuele watertemperatuur, weer, officiële zwemwaterkwaliteit en voorzieningen per zwemplek.",
+    "province_h1": "Zwemplekken in {name}",
+    "province_intro_base": "{name} telt {count} officiële zwemlocaties.",
+    "intro_excellent": " Daarvan kregen er {count} de beoordeling 'uitstekend' in de jaarlijkse EU-zwemwaterclassificatie.",
+    "intro_detail": " Elke zwemplek linkt naar een eigen pagina met actuele watertemperatuur, weer, officiële zwemwaterkwaliteit en voorzieningen.",
+    "city_meta_title": "Zwemmen bij {name} — de beste zwemplekken binnen {radius} km",
+    "city_meta_description": "{count} officiële zwemlocaties binnen {radius} km van {name}. Vergelijk actuele watertemperatuur, zwemwaterkwaliteit en voorzieningen en kies de beste zwemplek.",
+    "city_h1": "Zwemmen bij {name}",
+    "city_intro_base": "Binnen {radius} km van {name} liggen {count} officiële zwemlocaties.",
+    "city_intro_nearest": " De dichtstbijzijnde is {name}, op {km} km.",
+    "all_spots_in": "Alle zwemplekken in {name}",
+    "all_spots_near": "Alle zwemplekken binnen {radius} km",
+    "km_away": "{km} km",
+    "by_province": "Zwemplekken per provincie",
+    "by_city": "Zwemmen bij een stad",
+    "province_link": "Alle zwemplekken in {name} →",
+    "city_link": "Zwemmen bij {name} →",
+    "nearby": "Zwemplekken in de buurt",
+    "spot_count": "{count} zwemplekken"
+  },
+  "home": {
+    "h1": "Zwemplekken in Nederland",
+    "intro": "Ontdek alle {count} officiële zwemlocaties van Nederland — plus bekende onofficiële zwemplekken, duidelijk gemarkeerd. Bekijk per zwemplek de actuele watertemperatuur, het weer, de officiële zwemwaterkwaliteit en de voorzieningen.",
+    "top_rated_hint": "Een datagedreven selectie: EU-beoordeling 'uitstekend' én de beste voorzieningen, per provincie."
   }
 }

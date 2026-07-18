@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Breadcrumb from "@/components/Breadcrumb";
 import EuClassBadge from "@/components/EuClassBadge";
+import JsonLd from "@/components/JsonLd";
+import SpotLinkCard from "@/components/SpotLinkCard";
 import I18nProvider from "@/components/I18nProvider";
 import QualityTimeline from "@/components/QualityTimeline";
 import SpotLiveClient from "@/components/SpotLiveClient";
@@ -24,6 +27,8 @@ import {
   qualityLabel,
   qualityStyle,
 } from "@/lib/quality";
+import { breadcrumbJsonLd, siteBase, spotJsonLd } from "@/lib/jsonld";
+import { cityForSpot, cityName, nearestSpots, provinceSlug } from "@/lib/regions";
 
 // ISR: pages regenerate hourly; quality data itself refreshes monthly via cron.
 export const revalidate = 3600;
@@ -135,6 +140,10 @@ export default async function SpotPage({
   const spot = await store.getSpotBySlug(slug);
   if (!spot) notFound();
 
+  const allSpots = await store.getSpotsWithData();
+  const nearby = nearestSpots(spot, allSpots, 5);
+  const city = cityForSpot(spot);
+
   const qualityHistory =
     spot.official_status === "official"
       ? await store.getQualityHistory(spot.id)
@@ -147,17 +156,61 @@ export default async function SpotPage({
     ? null
     : generatedAccessNotes(spot, dict);
 
+  const place = [spot.municipality, spot.province].filter(Boolean).join(", ");
+  const metaDescription = t(
+    spot.official_status === "unofficial"
+      ? dict.meta.spot_description_unofficial
+      : dict.meta.spot_description_official,
+    { name: spot.name, place }
+  );
+  const spotUrl = `${siteBase()}${pathFor(locale, `/spots/${spot.slug}`)}`;
+
   return (
     <div className="h-full overflow-y-auto">
+      <JsonLd data={spotJsonLd(spot, metaDescription, spotUrl, dict)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          {
+            name: dict.region.breadcrumb_home,
+            url: `${siteBase()}${pathFor(locale, "/")}`,
+          },
+          {
+            name: spot.province,
+            url: `${siteBase()}${pathFor(
+              locale,
+              `/zwemplekken/${provinceSlug(spot.province)}`
+            )}`,
+          },
+          { name: spot.name },
+        ])}
+      />
       <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-        <nav className="mb-4 text-sm text-gray-400">
-          <Link
-            href={`${pathFor(locale, "/")}?spot=${spot.slug}`}
-            className="hover:text-indigo-600"
-          >
-            {dict.spot.back_to_map}
-          </Link>
-        </nav>
+        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+          <Breadcrumb
+            items={[
+              {
+                label: dict.region.breadcrumb_home,
+                href: pathFor(locale, "/"),
+              },
+              {
+                label: spot.province,
+                href: pathFor(
+                  locale,
+                  `/zwemplekken/${provinceSlug(spot.province)}`
+                ),
+              },
+              { label: spot.name },
+            ]}
+          />
+          <nav className="mb-4 text-sm text-gray-400">
+            <Link
+              href={`${pathFor(locale, "/")}?spot=${spot.slug}`}
+              className="hover:text-indigo-600"
+            >
+              {dict.spot.back_to_map}
+            </Link>
+          </nav>
+        </div>
 
         <figure className="mb-6">
           <Image
@@ -382,6 +435,44 @@ export default async function SpotPage({
             </a>
           </p>
         </section>
+
+        {nearby.length > 0 && (
+          <section className="mt-8">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
+              {dict.region.nearby}
+            </h2>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {nearby.map(({ spot: s, km }) => (
+                <SpotLinkCard
+                  key={s.id}
+                  spot={s}
+                  locale={locale}
+                  dict={dict}
+                  km={km}
+                />
+              ))}
+            </div>
+            <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+              <Link
+                href={pathFor(
+                  locale,
+                  `/zwemplekken/${provinceSlug(spot.province)}`
+                )}
+                className="font-semibold text-indigo-600 hover:text-indigo-800"
+              >
+                {t(dict.region.province_link, { name: spot.province })}
+              </Link>
+              {city && (
+                <Link
+                  href={pathFor(locale, `/zwemmen/${city.id}`)}
+                  className="font-semibold text-indigo-600 hover:text-indigo-800"
+                >
+                  {t(dict.region.city_link, { name: cityName(city, locale) })}
+                </Link>
+              )}
+            </p>
+          </section>
+        )}
 
         <footer className="mt-10 border-t border-gray-100 pt-4 text-xs text-gray-400">
           {dict.spot.footer}

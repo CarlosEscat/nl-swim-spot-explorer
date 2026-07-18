@@ -174,5 +174,33 @@
   },
   "timeline": {
     "months": ["May", "Jun", "Jul", "Aug", "Sep"]
+  },
+  "region": {
+    "breadcrumb_home": "Home",
+    "province_meta_title": "Swim spots in {name} — water quality & water temperature",
+    "province_meta_description": "All {count} official outdoor swimming locations in {name} on one page — with live water temperature, weather, official water quality and facilities per spot.",
+    "province_h1": "Swim spots in {name}",
+    "province_intro_base": "{name} has {count} official outdoor swimming locations.",
+    "intro_excellent": " {count} of them are rated 'excellent' in the annual EU bathing-water classification.",
+    "intro_detail": " Every spot links to its own page with live water temperature, weather, official water quality and facilities.",
+    "city_meta_title": "Swimming near {name} — the best swim spots within {radius} km",
+    "city_meta_description": "{count} official outdoor swimming locations within {radius} km of {name}. Compare live water temperature, water quality and facilities and pick the best spot.",
+    "city_h1": "Swimming near {name}",
+    "city_intro_base": "There are {count} official outdoor swimming locations within {radius} km of {name}.",
+    "city_intro_nearest": " The nearest is {name}, {km} km away.",
+    "all_spots_in": "All swim spots in {name}",
+    "all_spots_near": "All swim spots within {radius} km",
+    "km_away": "{km} km",
+    "by_province": "Swim spots by province",
+    "by_city": "Swimming near a city",
+    "province_link": "All swim spots in {name} →",
+    "city_link": "Swimming near {name} →",
+    "nearby": "Swim spots nearby",
+    "spot_count": "{count} swim spots"
+  },
+  "home": {
+    "h1": "Outdoor swimming spots in the Netherlands",
+    "intro": "Discover all {count} official outdoor swimming locations in the Netherlands — plus well-known unofficial spots, clearly flagged. Check live water temperature, weather, official water quality and facilities for every spot.",
+    "top_rated_hint": "A data-driven shortlist: 'excellent' EU bathing-water rating and the best facilities, per province."
   }
 }
