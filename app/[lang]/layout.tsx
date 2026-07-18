@@ -47,6 +47,15 @@ export async function generateMetadata({
       canonical: pathFor(locale, "/"),
       languages: { nl: "/", en: "/en", "x-default": "/" },
     },
+    openGraph: {
+      title: dict.meta.title_default,
+      description: dict.meta.description,
+      siteName: dict.site.name,
+      type: "website",
+      locale: locale === "nl" ? "nl_NL" : "en_GB",
+      url: pathFor(locale, "/"),
+    },
+    twitter: { card: "summary_large_image" },
   };
 }
 

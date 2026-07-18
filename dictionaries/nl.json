@@ -4,7 +4,7 @@
     "tagline": "Zwemplekken in Nederland · actueel water & weer"
   },
   "meta": {
-    "title_default": "NL Swim Spot Explorer — zwemplekken in Nederland",
+    "title_default": "Zwemplekken in Nederland — waterkwaliteit & watertemperatuur | NL Swim Spot Explorer",
     "title_template": "%s · NL Swim Spot Explorer",
     "description": "Interactieve kaart van alle ~700 officiële zwemlocaties in Nederland — plus bekende onofficiële zwemplekken, duidelijk gemarkeerd — met actuele watertemperatuur, weer, zwemwaterkwaliteit en voorzieningen.",
     "spot_title": "Zwemmen bij {name} ({province})",

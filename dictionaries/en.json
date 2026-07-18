@@ -4,7 +4,7 @@
     "tagline": "Dutch swim spots · live water & weather"
   },
   "meta": {
-    "title_default": "NL Swim Spot Explorer — outdoor swimming spots",
+    "title_default": "Swimming spots in the Netherlands — water quality & temperature | NL Swim Spot Explorer",
     "title_template": "%s · NL Swim Spot Explorer",
     "description": "Interactive map of all ~700 official Dutch outdoor swimming locations — plus well-known unofficial spots, clearly flagged — with live water temperature, weather, water quality status and facilities.",
     "spot_title": "Swimming at {name} ({province})",

@@ -67,6 +67,9 @@ export async function generateMetadata({
       description,
       type: "website",
       url: pathFor(locale, path),
+      // A page-level openGraph block overrides the [lang] segment's
+      // file-convention image, so point back at it explicitly.
+      images: [pathFor(locale, "/opengraph-image")],
     },
   };
 }
