@@ -18,7 +18,8 @@
     "featured_only": "⭐ Beste zwemwater",
     "hide_algae": "Verberg blauwalg",
     "water_type_all": "Alle watertypes",
-    "city_all": "Heel Nederland"
+    "city_all": "Heel Nederland",
+    "filters": "Filters"
   },
   "water": {
     "sea": "Zee",

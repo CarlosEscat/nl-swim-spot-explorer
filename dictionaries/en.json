@@ -18,7 +18,8 @@
     "featured_only": "⭐ Top rated",
     "hide_algae": "Hide algae warnings",
     "water_type_all": "All water types",
-    "city_all": "All of the Netherlands"
+    "city_all": "All of the Netherlands",
+    "filters": "Filters"
   },
   "water": {
     "sea": "Sea",

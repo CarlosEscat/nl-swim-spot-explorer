@@ -28,6 +28,6 @@ export const config = {
   // Never touch API routes (Vercel cron hits /api/cron/* directly), Next
   // internals, or root metadata files.
   matcher: [
-    "/((?!api|_next|favicon\\.ico|sitemap\\.xml|robots\\.txt|\\.well-known).*)",
+    "/((?!api|_next|favicon\\.ico|icon\\.svg|sitemap\\.xml|robots\\.txt|\\.well-known).*)",
   ],
 };
