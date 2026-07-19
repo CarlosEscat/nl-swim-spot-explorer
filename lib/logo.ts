@@ -1,0 +1,11 @@
+const LOGO_SVG = `<svg width="64" height="64" viewBox="-6.4 -6.4 76.80 76.80" xmlns="http://www.w3.org/2000/svg" stroke-width="3" stroke="#ffffff" fill="none">
+<rect x="-6.4" y="-6.4" width="76.8" height="76.8" rx="16" fill="#0ea5e9" stroke="none"/>
+<g stroke-linecap="square">
+<path d="M39,34,31.05,23.52l-2-2.59-3.88-5.22L22,18.15,14.66,23.9a2.28,2.28,0,0,0,0,3.11c1.14,1.19,2.46,1.33,3.17.78l6.33-5.37,3.21,3.95-8.9,6.94"/>
+<circle cx="42.38" cy="21.91" r="6.1"/>
+<path d="M4.79,41.15c3.89,0,3.89,4,7.77,4s3.89-4,7.77-4,3.89,4,7.77,4,3.89-4,7.78-4,3.89,4,7.77,4,3.89-4,7.78-4,3.89,4,7.78,4"/>
+<path d="M4.79,33.06c3.89,0,3.89,4,7.77,4s3.89-4,7.77-4,3.89,4,7.77,4,3.89-4,7.78-4,3.89,4,7.77,4,3.89-4,7.78-4,3.89,4,7.78,4"/>
+</g>
+</svg>`;
+
+export const logoDataUrl = `data:image/svg+xml;base64,${Buffer.from(LOGO_SVG).toString("base64")}`;

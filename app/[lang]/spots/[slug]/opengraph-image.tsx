@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { aerialImageUrl } from "@/lib/aerial";
 import { getStore } from "@/lib/db/store";
 import { defaultLocale, getDictionary, hasLocale } from "@/lib/i18n";
+import { logoDataUrl } from "@/lib/logo";
 import { qualityLabel, qualityStyle } from "@/lib/quality";
 
 export const size = { width: 1200, height: 630 };
@@ -70,11 +71,14 @@ export default async function OgImage({
         <div
           style={{
             display: "flex",
+            alignItems: "center",
+            gap: 14,
             fontSize: 34,
             opacity: 0.95,
           }}
         >
-          🏊 NL Swim Spot Explorer
+          <img src={logoDataUrl} width={40} height={40} alt="" />
+          {dict.site.name}
         </div>
         <div
           style={{

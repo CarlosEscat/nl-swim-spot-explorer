@@ -10,6 +10,7 @@ import {
   locales,
   pathFor,
 } from "@/lib/i18n";
+import { logoDataUrl } from "@/lib/logo";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -78,7 +79,8 @@ export default async function RootLayout({
       <body className="flex h-dvh flex-col font-sans">
         <header className="z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-2.5 sm:px-6">
           <Link href={pathFor(lang, "/")} className="flex items-center gap-2">
-            <span className="text-xl">🏊</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logoDataUrl} alt="" width={24} height={24} />
             <span className="text-base font-bold tracking-tight text-gray-900">
               {dict.site.name}
             </span>

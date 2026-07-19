@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getStore } from "@/lib/db/store";
 import { defaultLocale, getDictionary, hasLocale, t } from "@/lib/i18n";
+import { logoDataUrl } from "@/lib/logo";
 
 // Site-wide OG image: used by the homepage and inherited by the region
 // pages; spot pages have their own aerial-photo version one level deeper.
@@ -38,8 +39,17 @@ export default async function OgImage({
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", fontSize: 34, opacity: 0.95 }}>
-          🏊 {dict.site.name}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            fontSize: 34,
+            opacity: 0.95,
+          }}
+        >
+          <img src={logoDataUrl} width={40} height={40} alt="" />
+          {dict.site.name}
         </div>
         <div
           style={{
