@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { haversineKm } from "@/lib/geo";
 import { t, weatherLabel } from "@/lib/i18n";
 import { parseAdvisory, qualityLabel, qualityStyle } from "@/lib/quality";
@@ -13,6 +13,18 @@ import type {
 import { useI18n } from "./I18nProvider";
 
 const TOP_N = 15;
+
+type GeoStatus =
+  | "unsupported"
+  | "idle"
+  | "locating"
+  | "granted"
+  | "denied"
+  | "error";
+
+// Remembered opt-out. Browser permission can't be revoked from script, so
+// this is what stops us re-using an already-granted permission on every open.
+const GEO_STORAGE_KEY = "zwemstek:location";
 
 interface RankedEntry {
   spot: SpotWithData;
@@ -41,10 +53,39 @@ export default function RankedList({
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(
     null
   );
+  // Location is opt-in: we never call getCurrentPosition (which is what
+  // triggers the browser prompt) until the user asks for it, or unless
+  // permission was already granted in an earlier session.
   // Only rendered post-hydration (behind a user toggle), so navigator exists.
-  const [geoDenied, setGeoDenied] = useState<boolean>(
-    () => typeof navigator !== "undefined" && !navigator.geolocation
+  const [geoStatus, setGeoStatus] = useState<GeoStatus>(() =>
+    typeof navigator !== "undefined" && !navigator.geolocation
+      ? "unsupported"
+      : "idle"
   );
+
+  const requestLocation = useCallback(() => {
+    if (!navigator.geolocation) return;
+    setGeoStatus("locating");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setGeoStatus("granted");
+        try {
+          window.localStorage.removeItem(GEO_STORAGE_KEY);
+        } catch {
+          // Storage unavailable — the toggle still works for this session.
+        }
+      },
+      (err) => {
+        // A hard block resolves here with no prompt shown, so the denied copy
+        // has to point at the browser setting or the button looks broken.
+        setGeoStatus(
+          err.code === err.PERMISSION_DENIED ? "denied" : "error"
+        );
+      },
+      { maximumAge: 600_000, timeout: 10_000 }
+    );
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -57,23 +98,37 @@ export default function RankedList({
       .catch(() => {
         if (!cancelled) setLiveError(true);
       });
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          if (!cancelled)
-            setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        },
-        () => {
-          if (!cancelled) setGeoDenied(true);
-        },
-        { maximumAge: 600_000, timeout: 10_000 }
-      );
-    }
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const disableLocation = () => {
+    setUserLoc(null);
+    setGeoStatus("idle");
+    try {
+      window.localStorage.setItem(GEO_STORAGE_KEY, "off");
+    } catch {
+      // Storage unavailable — the opt-out still holds for this session.
+    }
+  };
+
+  // Already granted in a previous session (and not opted out)? Use it — that
+  // shows no prompt, so it costs nothing and saves a pointless click.
+  // Permissions API support for geolocation is uneven; failure leaves the button.
+  useEffect(() => {
+    let cancelled = false;
+    if (window.localStorage.getItem(GEO_STORAGE_KEY) === "off") return;
+    navigator.permissions
+      ?.query({ name: "geolocation" as PermissionName })
+      .then((status) => {
+        if (!cancelled && status.state === "granted") requestLocation();
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [requestLocation]);
 
   const ranked = useMemo<RankedEntry[]>(() => {
     if (!live) return [];
@@ -109,10 +164,52 @@ export default function RankedList({
           <p className="text-xs text-gray-500">
             {userLoc
               ? dict.ranked.subtitle_located
-              : geoDenied
-                ? dict.ranked.subtitle_denied
-                : dict.ranked.subtitle_loading}
+              : dict.ranked.subtitle_idle}
           </p>
+          {/* Location is always visibly on or off — never silently used.
+              Turning it off can't revoke the browser permission, so the
+              choice is remembered to stop us re-using it on the next open. */}
+          {userLoc && (
+            <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-sky-50 py-1 pl-2.5 pr-1 text-xs font-semibold text-sky-700">
+              {dict.ranked.location_on}
+              <button
+                onClick={disableLocation}
+                aria-label={dict.ranked.location_disable}
+                className="rounded-full p-0.5 text-sky-500 hover:bg-sky-100 hover:text-sky-800"
+              >
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                  <path
+                    d="M1.5 1.5l7 7M8.5 1.5l-7 7"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </span>
+          )}
+          {/* Opt-in location. Stays available after a failure so a user who
+              unblocks the site in their browser can retry. */}
+          {!userLoc && geoStatus !== "unsupported" && (
+            <>
+              <button
+                onClick={requestLocation}
+                disabled={geoStatus === "locating"}
+                className="mt-1.5 rounded-full bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 disabled:opacity-60"
+              >
+                {geoStatus === "locating"
+                  ? dict.ranked.locating
+                  : dict.ranked.use_location}
+              </button>
+              {(geoStatus === "denied" || geoStatus === "error") && (
+                <p className="mt-1 text-[11px] text-amber-700">
+                  {geoStatus === "denied"
+                    ? dict.ranked.location_denied
+                    : dict.ranked.location_error}
+                </p>
+              )}
+            </>
+          )}
         </div>
         <button
           onClick={onClose}
