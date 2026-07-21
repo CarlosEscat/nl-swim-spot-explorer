@@ -19,7 +19,12 @@
     "hide_algae": "Hide algae warnings",
     "water_type_all": "All water types",
     "city_all": "All of the Netherlands",
-    "filters": "Filters"
+    "filters": "Filters",
+    "clear_filters": "Clear filters",
+    "results_all": "{count} spots",
+    "results_filtered": "{count} of {total} spots",
+    "empty_title": "No spots found",
+    "empty_body": "No swim spot matches these filters."
   },
   "water": {
     "sea": "Sea",
@@ -40,6 +45,8 @@
     "fetching": "Fetching live conditions for {count} spots…",
     "water_part": "{temp}° water",
     "no_live_data": "no live data",
+    "empty_filtered": "No spots within these filters.",
+    "empty_excluded": "Every spot in this selection has a negative swimming advisory.",
     "unofficial": "unofficial"
   },
   "panel": {

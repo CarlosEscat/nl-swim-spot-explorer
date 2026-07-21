@@ -19,7 +19,12 @@
     "hide_algae": "Verberg blauwalg",
     "water_type_all": "Alle watertypes",
     "city_all": "Heel Nederland",
-    "filters": "Filters"
+    "filters": "Filters",
+    "clear_filters": "Wis filters",
+    "results_all": "{count} plekken",
+    "results_filtered": "{count} van {total} plekken",
+    "empty_title": "Geen plekken gevonden",
+    "empty_body": "Geen zwemplek voldoet aan deze filters."
   },
   "water": {
     "sea": "Zee",
@@ -40,6 +45,8 @@
     "fetching": "Actuele omstandigheden ophalen voor {count} plekken…",
     "water_part": "{temp}° water",
     "no_live_data": "geen actuele data",
+    "empty_filtered": "Geen plekken binnen deze filters.",
+    "empty_excluded": "Alle plekken in deze selectie hebben een negatief zwemadvies.",
     "unofficial": "onofficieel"
   },
   "panel": {

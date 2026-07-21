@@ -27,10 +27,13 @@ export default function RankedList({
   spots,
   onSelect,
   onClose,
+  onClearFilters,
 }: {
   spots: SpotWithData[];
   onSelect: (spot: SpotWithData) => void;
   onClose: () => void;
+  /** Provided only while filters are active — offers a way out of an empty list. */
+  onClearFilters?: () => void;
 }) {
   const { dict } = useI18n();
   const [live, setLive] = useState<Map<string, LiveSpotSummary> | null>(null);
@@ -136,6 +139,24 @@ export default function RankedList({
           <p className="animate-pulse p-4 text-sm text-gray-400">
             {t(dict.ranked.fetching, { count: spots.length })}
           </p>
+        ) : ranked.length === 0 ? (
+          // Empty for two different reasons: filters left nothing to rank, or
+          // everything left is advised against. Say which.
+          <div className="p-4">
+            <p className="text-sm text-gray-500">
+              {spots.length === 0
+                ? dict.ranked.empty_filtered
+                : dict.ranked.empty_excluded}
+            </p>
+            {onClearFilters && (
+              <button
+                onClick={onClearFilters}
+                className="mt-2 rounded-full bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-700"
+              >
+                {dict.explorer.clear_filters}
+              </button>
+            )}
+          </div>
         ) : (
           <ol>
             {ranked.map((entry, i) => {

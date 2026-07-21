@@ -11,6 +11,7 @@ import dynamic from "next/dynamic";
 import type { SpotWithData, WaterType } from "@/lib/types";
 import { CITIES, CITY_RADIUS_KM } from "@/lib/cities";
 import { haversineKm } from "@/lib/geo";
+import { t } from "@/lib/i18n";
 import { parseAdvisory } from "@/lib/quality";
 import { useI18n } from "./I18nProvider";
 import RankedList from "./RankedList";
@@ -175,6 +176,13 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
   const activeFilterCount = [featuredOnly, hideAlgae, waterType !== "", cityId !== ""]
     .filter(Boolean).length;
 
+  const handleClearFilters = () => {
+    setFeaturedOnly(false);
+    setHideAlgae(false);
+    setWaterType("");
+    setCityId("");
+  };
+
   const visibleSpots = useMemo(
     () =>
       spots.filter(
@@ -314,7 +322,57 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
             {dict.explorer.hide_algae}
           </button>
         </div>
+        {/* Result count — always visible, so a filter's effect is never
+            invisible. Live region: filtering is a pointer-only interaction
+            whose only feedback is the map itself. */}
+        <span
+          aria-live="polite"
+          className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-medium text-gray-600 shadow backdrop-blur"
+        >
+          {activeFilterCount > 0
+            ? t(dict.explorer.results_filtered, {
+                count: visibleSpots.length,
+                total: spots.length,
+              })
+            : t(dict.explorer.results_all, { count: spots.length })}
+        </span>
+        {activeFilterCount > 0 && (
+          <button
+            onClick={handleClearFilters}
+            className="flex items-center gap-1 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-gray-700 shadow backdrop-blur hover:bg-gray-50"
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+              <path
+                d="M1.5 1.5l7 7M8.5 1.5l-7 7"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+            {dict.explorer.clear_filters}
+          </button>
+        )}
       </div>
+
+      {/* Over-filtered dead end: name what happened and offer the way out. */}
+      {visibleSpots.length === 0 && (
+        <div className="pointer-events-none absolute inset-x-4 top-1/2 z-[1001] flex -translate-y-1/2 justify-center">
+          <div className="pointer-events-auto max-w-xs rounded-2xl bg-white/95 p-5 text-center shadow-2xl backdrop-blur">
+            <p className="text-base font-bold text-gray-900">
+              {dict.explorer.empty_title}
+            </p>
+            <p className="mt-1 text-sm text-gray-500">
+              {dict.explorer.empty_body}
+            </p>
+            <button
+              onClick={handleClearFilters}
+              className="mt-3 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700"
+            >
+              {dict.explorer.clear_filters}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Ranked "best right now" panel — on mobile it sits above the spot card
           (selecting an entry closes it via handleRankedSelect). */}
@@ -324,6 +382,9 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
             spots={visibleSpots}
             onSelect={handleRankedSelect}
             onClose={() => setShowRanked(false)}
+            onClearFilters={
+              activeFilterCount > 0 ? handleClearFilters : undefined
+            }
           />
         </div>
       )}
