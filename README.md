@@ -97,21 +97,29 @@ which runs, in order:
 
 ## Scheduled refresh (Vercel Cron)
 
-`vercel.json` defines six schedules across five routes (all authorized via the
-`CRON_SECRET` bearer token Vercel sends automatically):
+Vercel's Hobby plan allows **two cron jobs per project**, so `vercel.json`
+defines a single daily schedule (05:00 UTC) pointing at `/api/cron/daily`, and
+that route decides what is due from the date. Per-job schedules live in the
+`JOBS` table in `app/api/cron/daily/route.ts`. Jobs run sequentially and a
+failure in one does not skip the rest; everything is authorized via the
+`CRON_SECRET` bearer token Vercel sends automatically.
 
-- `/api/cron/refresh-quality` — daily (06:00 UTC) during the bathing season
-  (May–Oct), monthly (2nd, 06:00 UTC) the rest of the year: re-ingests the
-  advisory XLSX; readings are append-only per `(spot_id, measured_at, source)`,
-  so this builds the per-spot quality history the season timeline renders
-- `/api/cron/refresh-locations` — weekly (Mon, 05:00 UTC): re-pulls PDOK **and**
-  re-probes live stations / re-links nearest stations
-- `/api/cron/refresh-facilities` — monthly (3rd, 06:00 UTC): re-runs the OSM
-  facilities backfill
-- `/api/cron/refresh-eu-classification` — yearly (June 20, 06:00 UTC, after the
-  EEA publishes): re-ingests the annual EU classification + water categories
-- `/api/cron/refresh-featured` — monthly (3rd, 07:00 UTC, after the facilities
-  refresh): re-derives the data-driven featured set
+- **quality** — daily during the bathing season (May–Oct), monthly (2nd) the
+  rest of the year: re-ingests the advisory XLSX; readings are append-only per
+  `(spot_id, measured_at, source)`, so this builds the per-spot quality history
+  the season timeline renders
+- **locations** — weekly (Mon), and first in the run order because its upsert
+  may add spots the later jobs need to see: re-pulls PDOK **and** re-probes
+  live stations / re-links nearest stations / re-matches zwemwater.nl ids
+- **facilities** — monthly (3rd): re-runs the OSM facilities backfill
+- **featured** — monthly (4th, the day after facilities, which it is derived
+  from): re-derives the data-driven featured set
+- **eu-classification** — yearly (June 20, after the EEA publishes):
+  re-ingests the annual EU classification + water categories
+
+The per-job `/api/cron/refresh-*` routes are kept for manual triggering
+(`curl -H "Authorization: Bearer $CRON_SECRET" …`) — they are no longer
+scheduled. Note that Hobby cron triggers are approximate (within the hour).
 
 Live data (weather + water temp) is deliberately **not** cron-ingested: the
 `/api/spot/[slug]/live` route fetches it on request with a 30-minute cache, and
@@ -262,7 +270,8 @@ app/
   api/spot/[id]/live/       # per-spot live data
   api/spot/[id]/water-history/    # daily water temps (14 d) + week delta (6 h cache)
   api/spot/[id]/quality-history/  # stored season readings (1 h cache)
-  api/cron/refresh-*        # quality / locations / facilities / eu-classification
+  api/cron/daily            # the one scheduled route; dispatches what's due
+  api/cron/refresh-*        # per-job routes, manual trigger only
 components/
   Explorer.tsx              # client state hub: map + ranked list + panel + filters
   SwimMap.tsx  RankedList.tsx  SpotPanel.tsx  SpotLiveClient.tsx
