@@ -31,8 +31,9 @@ const SwimMap = dynamic(() => import("./SwimMap"), {
   loading: () => <MapLoading />,
 });
 
-// The ?spot= deep-link param never changes while mounted (in-app navigation
-// uses replaceState on close), so the subscription is a no-op.
+// Initial ?spot= deep link. Later URL changes (selection pushState, Back/
+// Forward) are handled by the popstate effect + interaction state, so this
+// snapshot only drives the pre-interaction render and needs no subscription.
 const noopSubscribe = () => () => {};
 const readDeepLinkSlug = () =>
   new URLSearchParams(window.location.search).get("spot");
@@ -88,9 +89,19 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
     ? interaction.tilt
     : deepLinkSpot != null && prefer3d;
 
-  // Selecting a spot tilts into its 3D view if the user hasn't opted out
+  // Selecting a spot tilts into its 3D view if the user hasn't opted out.
+  // The selection is mirrored into the URL (?spot=slug) so it is shareable
+  // and Back/Forward work: the first open pushes ONE flagged history entry,
+  // switching spots replaces it — A→B→C stays a single Back away from the
+  // clean map. Native pushState integrates with the Next router.
   const handleSelect = (spot: SpotWithData) => {
     setInteraction({ spot, tilt: prefer3d });
+    const url = `${window.location.pathname}?spot=${spot.slug}`;
+    if (window.history.state?.spotPushed) {
+      window.history.replaceState({ spotPushed: true }, "", url);
+    } else {
+      window.history.pushState({ spotPushed: true }, "", url);
+    }
   };
 
   const handleTiltToggle = () => {
@@ -116,11 +127,29 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
   // Stable identity so the Escape-key effect doesn't re-subscribe per render.
   const handleClose = useCallback(() => {
     setInteraction({ spot: null, tilt: false });
-    // Drop a ?spot= deep-link param so a reload doesn't reopen the panel.
-    if (window.location.search) {
+    if (window.history.state?.spotPushed) {
+      // We pushed this entry on select — pop it, so Back after closing
+      // doesn't replay the selection (Forward reopens it instead).
+      window.history.back();
+    } else if (window.location.search) {
+      // Landed directly on a ?spot= deep link: strip the param in place so a
+      // reload doesn't reopen the panel, without touching outside history.
       window.history.replaceState(null, "", window.location.pathname);
     }
   }, []);
+
+  // Back/Forward: derive the selection from the URL the browser restored.
+  useEffect(() => {
+    const onPopState = () => {
+      const slug = new URLSearchParams(window.location.search).get("spot");
+      const spot = slug ? spots.find((s) => s.slug === slug) : null;
+      setInteraction(
+        spot ? { spot, tilt: prefer3d } : { spot: null, tilt: false }
+      );
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [spots, prefer3d]);
 
   // Escape closes the topmost layer: the spot card first, then the ranked
   // list, then the mobile filter disclosure.
@@ -137,9 +166,9 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
   }, [selected, showRanked, showFilters, handleClose]);
 
   // Switching city closes any open spot panel so the camera flight isn't
-  // fighting the selection zoom.
+  // fighting the selection zoom. handleClose also cleans up the ?spot= URL.
   const handleCityChange = (id: string) => {
-    setInteraction({ spot: null, tilt: false });
+    handleClose();
     setCityId(id);
   };
 
