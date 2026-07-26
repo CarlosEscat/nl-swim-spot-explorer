@@ -16,10 +16,11 @@ export const GRONINGEN_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "De belangrijkste zwemplas van de stad, aan de zuidrand van Groningen naast het Hoornsemeer: zandstranden, grote gazons en speeltuinen; horeca in het seizoen. Vrij toegankelijk, gratis; erg druk op warme dagen. Geen toezicht op het water. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "De belangrijkste zwemplas van de stad, aan de zuidrand van Groningen naast het Hoornsemeer: zandstranden, grote gazons en speeltuinen; horeca in het seizoen. Vrij toegankelijk, gratis; erg druk op warme dagen. Honden: langs de plas alleen toegestaan van 1 oktober tot 1 april (ma–vr los, weekend aangelijnd); van 1 april tot 1 oktober niet, behalve op twee aangewezen uitrenplaatsen die het hele jaar open zijn. Opruimplicht. Geen toezicht op het water. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "The city's main swimming lake, on Groningen's south edge next to the Hoornsemeer: sandy beaches, big lawns and playgrounds; horeca in season. Open access, free; very busy on hot days. No water supervision. Monitored 1 May – 1 Oct.",
+      "The city's main swimming lake, on Groningen's south edge next to the Hoornsemeer: sandy beaches, big lawns and playgrounds; horeca in season. Open access, free; very busy on hot days. Dogs: allowed along the lake only from 1 Oct to 1 Apr (Mon–Fri off-leash, weekends leashed); from 1 Apr to 1 Oct not allowed, except at two designated dog runs open year-round. Clean-up required. No water supervision. Monitored 1 May – 1 Oct.",
   },
   {
     name: "Paterswoldsemeer de Lijte, Haren",
@@ -29,10 +30,11 @@ export const GRONINGEN_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Recreatiestrand De Lijte aan de oostoever van het Paterswoldsemeer (kant Haren): zand, gazons en een speeltuin. Druk vaarwater — blijf binnen de gemarkeerde zwemzone. Gratis. Geen toezicht op het water. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Recreatiestrand De Lijte aan de oostoever van het Paterswoldsemeer (kant Haren): zand, gazons en een speeltuin. Druk vaarwater — blijf binnen de gemarkeerde zwemzone. Gratis. Honden: bij De Lijte toegestaan; let op de borden voor aanlijn- en zwemzones. Geen toezicht op het water. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Recreation beach De Lijte on the east shore of the Paterswoldsemeer (Haren side): sand, lawns and a playground. Busy sailing water — stay inside the marked swim zone. Free. No water supervision. Monitored 1 May – 1 Oct.",
+      "Recreation beach De Lijte on the east shore of the Paterswoldsemeer (Haren side): sand, lawns and a playground. Busy sailing water — stay inside the marked swim zone. Free. Dogs: allowed at De Lijte; check the signs for leash and swim zones. No water supervision. Monitored 1 May – 1 Oct.",
   },
   {
     name: "Recreatieplas Kardinge, Groningen",

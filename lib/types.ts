@@ -48,6 +48,9 @@ export interface SwimSpotDetails {
   has_parking?: boolean | null;
   nude_recreation: boolean | null;
   lounging_area: boolean | null;
+  /** Dogs allowed at the spot. Seasonal nuance (banned in the bathing season,
+   *  often allowed off-season) lives in access_notes; this is the headline. */
+  dogs_allowed?: boolean | null;
   /** Hand-curated access/hours copy, localized per language; null means uncurated. */
   access_notes_nl: string | null;
   access_notes_en: string | null;

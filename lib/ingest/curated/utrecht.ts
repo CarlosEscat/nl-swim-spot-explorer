@@ -54,10 +54,11 @@ export const UTRECHT_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: false,
     access_notes_nl:
-      "Beheerd strandbad aan de Maarsseveense Plassen net ten noorden van Utrecht: zandstrand, gazons, toiletten en horeca in het seizoen; betaald parkeren. Diep, helder water — toezicht alleen op drukke zomerdagen, check de borden ter plaatse. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Beheerd strandbad aan de Maarsseveense Plassen net ten noorden van Utrecht: zandstrand, gazons, toiletten en horeca in het seizoen; betaald parkeren. Diep, helder water — toezicht alleen op drukke zomerdagen, check de borden ter plaatse. Honden zijn niet toegelaten in het strandbad; aan de Grote Plas buiten het strandbad mogen honden wel aangelijnd mee. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Managed strandbad on the Maarsseveense Plassen just north of Utrecht: sandy beach, lawns, toilets and horeca in season; paid parking. Deep, clear water — supervision only on busy summer days, check on-site signs. Monitored 1 May – 1 Oct.",
+      "Managed strandbad on the Maarsseveense Plassen just north of Utrecht: sandy beach, lawns, toilets and horeca in season; paid parking. Deep, clear water — supervision only on busy summer days, check on-site signs. Dogs are not allowed inside the strandbad; on the Grote Plas outside the strandbad leashed dogs are permitted. Monitored 1 May – 1 Oct.",
   },
   {
     name: "Maarsseveense Plassen Zuidhoek",
@@ -67,9 +68,10 @@ export const UTRECHT_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Gratis zuidelijke hoek van de Maarsseveense Plassen, buiten het beheerde strandbad. Natuurlijke oevers en gazons met weinig eigen voorzieningen. Diep water. Geen toezicht op het water. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Gratis zuidelijke hoek van de Maarsseveense Plassen, buiten het beheerde strandbad. Natuurlijke oevers en gazons met weinig eigen voorzieningen. Diep water. Honden: buiten het strandbad aan de Grote Plas aangelijnd toegestaan. Geen toezicht op het water. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Free southern corner of the Maarsseveense Plassen, outside the managed strandbad. Natural banks and lawns with few facilities of its own. Deep water. No water supervision. Monitored 1 May – 1 Oct.",
+      "Free southern corner of the Maarsseveense Plassen, outside the managed strandbad. Natural banks and lawns with few facilities of its own. Deep water. Dogs: outside the strandbad, leashed dogs are allowed on the Grote Plas. No water supervision. Monitored 1 May – 1 Oct.",
   },
 ];

@@ -109,6 +109,9 @@ export async function ingestFacilities(
       lounging_area:
         prev?.lounging_area ??
         (index.hasNear("beach_resort", spot.lat, spot.lng) || null),
+      // Dog access is a tag on the beach feature itself, not a nearby POI,
+      // so OSM can't fill it here — preserve any curated value, else unknown.
+      dogs_allowed: prev?.dogs_allowed ?? null,
       access_notes_nl: prev?.access_notes_nl ?? null,
       access_notes_en: prev?.access_notes_en ?? null,
       facilities_source: prev?.facilities_source ?? (prev ? "manual" : "osm"),

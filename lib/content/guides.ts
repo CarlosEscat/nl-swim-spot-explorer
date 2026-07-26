@@ -358,6 +358,129 @@ export const GUIDES: Guide[] = [
       },
     },
   },
+  {
+    slug: "honden-op-de-zwemplek",
+    content: {
+      nl: {
+        title: "Honden op de zwemplek: mag mijn hond mee?",
+        metaDescription:
+          "Mag je hond mee naar de zwemplek in Nederland? Uitleg over het hondenverbod tijdens het badseizoen, wanneer honden wél mogen, losloop- en opruimregels en blauwalg.",
+        intro:
+          "Je hond mee naar het water klinkt ideaal, maar op veel officiële zwemplekken mogen honden in de zomer juist niet. De regels verschillen per gemeente en per strand, en hangen sterk samen met het badseizoen. Op deze pagina lees je hoe het meestal zit, wanneer je hond wél welkom is en waar je op moet letten.",
+        sections: [
+          {
+            heading: "De hoofdregel: honden en het badseizoen",
+            paragraphs: [
+              "Op de meeste aangewezen zwemlocaties en drukke stranden geldt in het badseizoen — grofweg 1 mei tot 1 oktober, aan de kust vaak 15 mei tot 1 oktober — een hondenverbod overdag. De reden is een combinatie van drukte, hygiëne en de waterkwaliteit die op deze plekken juist wordt gecontroleerd. Buiten het badseizoen zijn honden op veel van diezelfde plekken weer welkom, vaak zelfs los.",
+              "Let op: dit is een algemene lijn, geen garantie. Elke gemeente stelt zijn eigen regels vast en veel plekken hebben eigen borden met tijden en zones. Sommige stranden hebben een hondenverbod het hele jaar, andere juist een aangewezen hondenstrand waar honden altijd mogen. Kijk daarom altijd naar de borden ter plaatse en, bij twijfel, naar de website van de gemeente of de terreinbeheerder.",
+            ],
+          },
+          {
+            heading: "Wanneer mag je hond wél?",
+            paragraphs: [
+              "Er zijn grofweg drie situaties waarin je hond meestal welkom is. Ten eerste buiten het badseizoen: van oktober tot het voorjaar zijn veel stranden en recreatieplassen weer vrij toegankelijk voor honden. Ten tweede op aangewezen hondenstranden en losloopgebieden, die het hele jaar door open zijn — aan de kust vaak herkenbaar aan een strandpaal of strandslag vanaf waar de zone begint. Ten derde in de vroege ochtend of avond, want sommige gemeenten staan honden ook in het hoogseizoen toe buiten de drukke daguren.",
+              "Aanlijnen en opruimen horen er bijna overal bij. In duingebieden en natuurgebieden geldt vrijwel altijd een aanlijnplicht, onder meer vanwege broedende vogels en vee. Een opruimplicht (en het bij je hebben van een zakje) geldt op vrijwel elk strand en elke zwemplek, ook in de losloopgebieden.",
+            ],
+          },
+          {
+            heading: "Blauwalg is extra gevaarlijk voor honden",
+            paragraphs: [
+              "Ook als honden zijn toegestaan, is het water zelf niet altijd veilig. Blauwalg is voor honden gevaarlijker dan voor mensen: ze drinken het water en likken hun vacht schoon, waardoor ze de gifstoffen binnenkrijgen. Dat kan tot ernstige vergiftiging leiden. Laat je hond nooit zwemmen in of drinken uit water met een blauwalgwaarschuwing.",
+              "Op deze site zie je blauwalg-maatregelen als een paars label bij de zwemplek en op de kaart. Meer over herkennen en de risico's lees je in de gids over blauwalg. Check die status dus net zo goed voor je hond als voor jezelf.",
+            ],
+          },
+          {
+            heading: "Hoe deze site hondvriendelijke plekken toont",
+            paragraphs: [
+              "Bij zwemplekken waarvan we het weten, tonen we of honden zijn toegestaan als een voorziening in het paneel en op de detailpagina. De seizoensregels — wanneer honden wel en niet mogen — staan in de toegangsinformatie bij de plek. Met het filter 'Honden welkom' op de kaart laat je alleen de plekken zien die als hondvriendelijk zijn gemarkeerd.",
+              "Deze markering is een hulpmiddel, geen vervanging van de borden. De gemeente kan regels aanpassen en tijden verschillen per seizoen. Beschouw het label als een startpunt en controleer de actuele situatie altijd ter plaatse.",
+            ],
+          },
+        ],
+        faqs: [
+          {
+            question: "Mag mijn hond in de zomer op het strand?",
+            answer:
+              "Op veel drukke stranden en officiële zwemlocaties geldt in het badseizoen (grofweg 1 mei – 1 oktober, aan de kust vaak vanaf 15 mei) overdag een hondenverbod. Er zijn uitzonderingen: aangewezen hondenstranden en de vroege ochtend of avond. Kijk altijd op de borden en de site van de gemeente.",
+          },
+          {
+            question: "Wanneer mag mijn hond wél naar het water?",
+            answer:
+              "Meestal buiten het badseizoen (ruwweg oktober tot mei), op aangewezen hondenstranden en losloopgebieden die het hele jaar open zijn, en in sommige gemeenten in de vroege ochtend of avond. Aanlijnen in de duinen en opruimen zijn vrijwel overal verplicht.",
+          },
+          {
+            question: "Mag mijn hond zwemmen als er blauwalg is?",
+            answer:
+              "Nee. Blauwalg is voor honden extra gevaarlijk omdat ze het water drinken en hun vacht schoonlikken. Laat je hond niet zwemmen of drinken bij een blauwalgwaarschuwing, ook niet op plekken waar honden zijn toegestaan.",
+          },
+          {
+            question: "Waar vind ik hondvriendelijke zwemplekken op deze site?",
+            answer:
+              "Bij plekken waarvan we het weten staat 'Honden toegestaan' bij de voorzieningen, met de seizoensregels in de toegangsinformatie. Op de kaart kun je met het filter 'Honden welkom' alleen die plekken tonen.",
+          },
+        ],
+      },
+      en: {
+        title: "Dogs at the swimming spot: can I bring my dog?",
+        metaDescription:
+          "Can you bring your dog to a swimming spot in the Netherlands? How the bathing-season dog ban works, when dogs are allowed, leash and clean-up rules, and blue-green algae.",
+        intro:
+          "Bringing your dog along to the water sounds perfect, but at many official swimming spots dogs are actually not allowed in summer. The rules vary by municipality and by beach, and are closely tied to the bathing season. This page explains how it usually works, when your dog is welcome, and what to watch for.",
+        sections: [
+          {
+            heading: "The main rule: dogs and the bathing season",
+            paragraphs: [
+              "At most designated swimming locations and busy beaches, a daytime dog ban applies during the bathing season — roughly 1 May to 1 October, and on the coast often 15 May to 1 October. The reason is a mix of crowds, hygiene and the water quality that is specifically monitored at these spots. Outside the bathing season, dogs are welcome again at many of those same places, often off-leash.",
+              "Note that this is a general pattern, not a guarantee. Every municipality sets its own rules and many spots post their own signs with times and zones. Some beaches ban dogs year-round, while others have a designated dog beach where dogs are always allowed. So always read the signs on site and, when in doubt, check the municipality's or the site manager's website.",
+            ],
+          },
+          {
+            heading: "When is your dog allowed?",
+            paragraphs: [
+              "There are roughly three situations where your dog is usually welcome. First, outside the bathing season: from October into spring, many beaches and recreation lakes are open to dogs again. Second, at designated dog beaches and off-leash zones that are open all year — on the coast often marked by a beach post or access point from which the zone begins. Third, in the early morning or evening, as some municipalities allow dogs even in high season outside the busy daytime hours.",
+              "Leashing and cleaning up apply almost everywhere. In dunes and nature reserves a leash requirement is nearly always in force, partly because of nesting birds and grazing livestock. A clean-up obligation (and carrying a bag) applies at virtually every beach and swimming spot, including the off-leash zones.",
+            ],
+          },
+          {
+            heading: "Blue-green algae is extra dangerous for dogs",
+            paragraphs: [
+              "Even where dogs are allowed, the water itself is not always safe. Blue-green algae is more dangerous for dogs than for people: they drink the water and lick their fur clean, ingesting the toxins, which can cause serious poisoning. Never let your dog swim in or drink from water with a blue-green algae warning.",
+              "On this site, algae measures show as a violet label on the spot and on the map. You can read more about recognising it and the risks in the blue-green algae guide. So check that status for your dog just as you would for yourself.",
+            ],
+          },
+          {
+            heading: "How this site shows dog-friendly spots",
+            paragraphs: [
+              "For spots where we know, we show whether dogs are allowed as a facility in the panel and on the detail page. The seasonal rules — when dogs are and are not allowed — are in the access information for the spot. The 'Dog-friendly' filter on the map shows only the spots marked as dog-friendly.",
+              "This marking is an aid, not a substitute for the signs. A municipality can change its rules and times differ by season. Treat the label as a starting point and always check the current situation on site.",
+            ],
+          },
+        ],
+        faqs: [
+          {
+            question: "Can I bring my dog to the beach in summer?",
+            answer:
+              "At many busy beaches and official swimming locations a daytime dog ban applies during the bathing season (roughly 1 May – 1 Oct, on the coast often from 15 May). There are exceptions: designated dog beaches and the early morning or evening. Always check the signs and the municipality's website.",
+          },
+          {
+            question: "When is my dog allowed at the water?",
+            answer:
+              "Usually outside the bathing season (roughly October to May), at designated dog beaches and off-leash zones open all year, and in some municipalities in the early morning or evening. Leashing in the dunes and cleaning up are required almost everywhere.",
+          },
+          {
+            question: "Can my dog swim when there is blue-green algae?",
+            answer:
+              "No. Blue-green algae is extra dangerous for dogs because they drink the water and lick their fur clean. Do not let your dog swim or drink during an algae warning, even at spots where dogs are allowed.",
+          },
+          {
+            question: "Where do I find dog-friendly swimming spots on this site?",
+            answer:
+              "For spots where we know, 'Dogs allowed' appears under facilities, with the seasonal rules in the access information. On the map you can use the 'Dog-friendly' filter to show only those spots.",
+          },
+        ],
+      },
+    },
+  },
 ];
 
 export function getGuide(slug: string): Guide | null {

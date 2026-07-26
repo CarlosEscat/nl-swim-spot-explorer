@@ -17,10 +17,11 @@ export const DEN_HAAG_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Belangrijkste stadsstrand van Scheveningen langs de boulevard: tientallen strandpaviljoens, toiletten en verhuur; erg druk op warme dagen. Reddingsbrigade aanwezig in het hoogseizoen — zwem tussen de vlaggen en let op muistromen bij de pier en havenhoofden. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Belangrijkste stadsstrand van Scheveningen langs de boulevard: tientallen strandpaviljoens, toiletten en verhuur; erg druk op warme dagen. Reddingsbrigade aanwezig in het hoogseizoen — zwem tussen de vlaggen en let op muistromen bij de pier en havenhoofden. Honden: buiten het strandseizoen (1 okt–15 mei) op het hele strand toegestaan; van 15 mei tot 1 oktober alleen op het hondenstrand ten noorden van het Zwarte Pad (vanaf strandpaal 47). Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Main city beach of Scheveningen along the boulevard: dozens of pavilions, toilets and rentals; very busy on hot days. Lifeguard posts in the summer season — swim between the flags and mind rip currents near the pier and harbor heads. Monitored 1 May – 1 Oct.",
+      "Main city beach of Scheveningen along the boulevard: dozens of pavilions, toilets and rentals; very busy on hot days. Lifeguard posts in the summer season — swim between the flags and mind rip currents near the pier and harbor heads. Dogs: allowed on the whole beach off-season (1 Oct–15 May); from 15 May to 1 Oct only on the dog beach north of the Zwarte Pad (from beach post 47). Monitored 1 May – 1 Oct.",
   },
   {
     name: "Scheveningen Zwarte Pad",
@@ -30,10 +31,11 @@ export const DEN_HAAG_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Noordelijk uiteinde van het strand van Scheveningen bij het Zwarte Pad: grote strandclubs en surfscholen. Let op muistromen bij de pier. Bewaakte zones in het seizoen verderop op het hoofdstrand. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Noordelijk uiteinde van het strand van Scheveningen bij het Zwarte Pad: grote strandclubs en surfscholen. Let op muistromen bij de pier. Bewaakte zones in het seizoen verderop op het hoofdstrand. Hondenstrand: vanaf strandpaal 47 richting Wassenaar mogen honden het hele jaar los; opruimplicht. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "North end of Scheveningen beach at the Zwarte Pad: large beach clubs and surf schools. Mind rip currents around the pier. Supervised zones in season on the main beach further south. Monitored 1 May – 1 Oct.",
+      "North end of Scheveningen beach at the Zwarte Pad: large beach clubs and surf schools. Mind rip currents around the pier. Supervised zones in season on the main beach further south. Dog beach: from beach post 47 towards Wassenaar dogs may run off-leash year-round; clean-up required. Monitored 1 May – 1 Oct.",
   },
   {
     name: "Scheveningen Zuiderstrand",
@@ -43,10 +45,11 @@ export const DEN_HAAG_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Rustiger strand ten zuidwesten van de haven van Scheveningen, met duinen op de achtergrond; een handvol paviljoens. Blijf ver bij de haveningang vandaan — scheepvaart en sterke stroming rond het zuiderhavenhoofd. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Rustiger strand ten zuidwesten van de haven van Scheveningen, met duinen op de achtergrond; een handvol paviljoens. Blijf ver bij de haveningang vandaan — scheepvaart en sterke stroming rond het zuiderhavenhoofd. Honden: buiten het strandseizoen (1 okt–15 mei) op het hele strand toegestaan; van 15 mei tot 1 oktober overdag niet. Let op: tussen het Zwarte Pad en de haven zijn honden het hele jaar verboden. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Quieter beach southwest of Scheveningen harbor, backed by dunes; a handful of pavilions. Stay well clear of the harbor entrance — shipping and strong currents around the zuiderhavenhoofd. Monitored 1 May – 1 Oct.",
+      "Quieter beach southwest of Scheveningen harbor, backed by dunes; a handful of pavilions. Stay well clear of the harbor entrance — shipping and strong currents around the zuiderhavenhoofd. Dogs: allowed on the whole beach off-season (1 Oct–15 May); not during the day from 15 May to 1 Oct. Note: between the Zwarte Pad and the harbor dogs are banned year-round. Monitored 1 May – 1 Oct.",
   },
   {
     name: "Den Haag Kijkduin",
@@ -56,10 +59,11 @@ export const DEN_HAAG_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Familiestrand bij Kijkduin met een vernieuwde boulevard en paviljoens; rustiger dan Scheveningen. Reddingsbrigade aanwezig in het hoogseizoen — zwem tussen de vlaggen. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Familiestrand bij Kijkduin met een vernieuwde boulevard en paviljoens; rustiger dan Scheveningen. Reddingsbrigade aanwezig in het hoogseizoen — zwem tussen de vlaggen. Honden: los-loopgebied het hele jaar vanaf strandslag 2 richting Monster; op de rest van het strand buiten het strandseizoen (1 okt–15 mei) toegestaan, in de zomer overdag aangelijnd. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Family beach at Kijkduin with a renovated boulevard and pavilions; calmer than Scheveningen. Lifeguard post in the summer season — swim between the flags. Monitored 1 May – 1 Oct.",
+      "Family beach at Kijkduin with a renovated boulevard and pavilions; calmer than Scheveningen. Lifeguard post in the summer season — swim between the flags. Dogs: year-round off-leash zone from beach access 2 towards Monster; on the rest of the beach allowed off-season (1 Oct–15 May), leashed during the day in summer. Monitored 1 May – 1 Oct.",
   },
   {
     name: "Zandmotor",

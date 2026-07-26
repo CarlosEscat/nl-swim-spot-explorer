@@ -298,6 +298,7 @@ export default function SpotPanel({
                     ["boat_ramp", d.has_boat_ramp],
                     ["lounging_area", d.lounging_area],
                     ["nude_recreation", d.nude_recreation],
+                    ["dogs_allowed", d.dogs_allowed],
                   ] as const
                 ).map(([key, value]) => (
                   <FacilityChip
