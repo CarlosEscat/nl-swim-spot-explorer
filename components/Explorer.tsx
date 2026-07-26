@@ -48,6 +48,7 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
   const { locale, dict } = useI18n();
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [hideAlgae, setHideAlgae] = useState(false);
+  const [dogsOnly, setDogsOnly] = useState(false);
   const [waterType, setWaterType] = useState<WaterType | "">("");
   const [cityId, setCityId] = useState("");
   const [showRanked, setShowRanked] = useState(false);
@@ -173,12 +174,18 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
     setCityId(id);
   };
 
-  const activeFilterCount = [featuredOnly, hideAlgae, waterType !== "", cityId !== ""]
-    .filter(Boolean).length;
+  const activeFilterCount = [
+    featuredOnly,
+    hideAlgae,
+    dogsOnly,
+    waterType !== "",
+    cityId !== "",
+  ].filter(Boolean).length;
 
   const handleClearFilters = () => {
     setFeaturedOnly(false);
     setHideAlgae(false);
+    setDogsOnly(false);
     setWaterType("");
     setCityId("");
   };
@@ -192,9 +199,10 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
           (!city ||
             haversineKm(city.lat, city.lng, s.lat, s.lng) <= CITY_RADIUS_KM) &&
           (!hideAlgae ||
-            parseAdvisory(s.latest_quality?.raw_notes) !== "blue_green_algae")
+            parseAdvisory(s.latest_quality?.raw_notes) !== "blue_green_algae") &&
+          (!dogsOnly || s.details?.dogs_allowed === true)
       ),
-    [spots, featuredOnly, hideAlgae, waterType, city]
+    [spots, featuredOnly, hideAlgae, dogsOnly, waterType, city]
   );
 
   return (
@@ -320,6 +328,17 @@ export default function Explorer({ spots }: { spots: SpotWithData[] }) {
             }`}
           >
             {dict.explorer.hide_algae}
+          </button>
+          <button
+            onClick={() => setDogsOnly((v) => !v)}
+            aria-pressed={dogsOnly}
+            className={`rounded-full px-4 py-2 text-sm font-semibold shadow-lg backdrop-blur ${
+              dogsOnly
+                ? "bg-amber-600 text-white"
+                : "bg-white/95 text-amber-700 hover:bg-amber-50"
+            }`}
+          >
+            {dict.explorer.dogs_only}
           </button>
         </div>
         {/* Result count — always visible, so a filter's effect is never

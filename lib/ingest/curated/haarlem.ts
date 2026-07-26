@@ -17,10 +17,11 @@ export const HAARLEM_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: null,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Groot Noordzeebadstrand, rechtstreeks per trein vanuit Haarlem en Amsterdam (station Zandvoort aan Zee bij de boulevard). Tientallen paviljoens en volledige voorzieningen in het seizoen. Reddingsbrigade aanwezig in het hoogseizoen — zwem tussen de vlaggen en let op muistromen. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Groot Noordzeebadstrand, rechtstreeks per trein vanuit Haarlem en Amsterdam (station Zandvoort aan Zee bij de boulevard). Tientallen paviljoens en volledige voorzieningen in het seizoen. Reddingsbrigade aanwezig in het hoogseizoen — zwem tussen de vlaggen en let op muistromen. Honden: buiten het badseizoen (1 okt–15 apr) de hele dag los op het hele strand; van 15 april tot 1 oktober overdag (9–19 u) niet toegestaan, 's ochtends vroeg en na 19 u wel aangelijnd. Opruimplicht. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Major North Sea resort beach, a direct train ride from Haarlem and Amsterdam (station Zandvoort aan Zee at the boulevard). Dozens of pavilions and full facilities in season. Lifeguard posts in the summer season — swim between the flags and mind rip currents. Monitored 1 May – 1 Oct.",
+      "Major North Sea resort beach, a direct train ride from Haarlem and Amsterdam (station Zandvoort aan Zee at the boulevard). Dozens of pavilions and full facilities in season. Lifeguard posts in the summer season — swim between the flags and mind rip currents. Dogs: off-season (1 Oct–15 Apr) off-leash all day on the whole beach; from 15 Apr to 1 Oct not allowed during the day (09:00–19:00), leashed early morning and after 19:00. Clean-up required. Monitored 1 May – 1 Oct.",
   },
   {
     name: "Bloemendaal",
@@ -30,10 +31,11 @@ export const HAARLEM_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Bloemendaal aan Zee: breed Noordzeestrand bekend om zijn strandclubs, ten noorden van Zandvoort. Reddingsbrigade aanwezig in het hoogseizoen — zwem tussen de vlaggen en let op muistromen. Betaald parkeren achter de duinen. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Bloemendaal aan Zee: breed Noordzeestrand bekend om zijn strandclubs, ten noorden van Zandvoort. Reddingsbrigade aanwezig in het hoogseizoen — zwem tussen de vlaggen en let op muistromen. Betaald parkeren achter de duinen. Honden: losloopgebied het hele jaar vanaf paviljoen Parnassia noordwaarts richting IJmuiderslag. In het laagseizoen (15 sep–15 mei) overal aangelijnd toegestaan; in het hoogseizoen alleen los op het deel Parnassia–naaktstrand. Opruimplicht. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Bloemendaal aan Zee: wide North Sea beach known for its beach clubs, north of Zandvoort. Lifeguard posts in the summer season — swim between the flags and mind rip currents. Paid parking behind the dunes. Monitored 1 May – 1 Oct.",
+      "Bloemendaal aan Zee: wide North Sea beach known for its beach clubs, north of Zandvoort. Lifeguard posts in the summer season — swim between the flags and mind rip currents. Paid parking behind the dunes. Dogs: year-round off-leash zone from the Parnassia pavilion north towards IJmuiderslag. In low season (15 Sep–15 May) leashed everywhere; in high season off-leash only on the Parnassia–naturist-beach stretch. Clean-up required. Monitored 1 May – 1 Oct.",
   },
   {
     name: "'t Wed",
@@ -149,9 +151,10 @@ export const HAARLEM_SEEDS: DetailSeed[] = [
     has_boat_ramp: false,
     nude_recreation: false,
     lounging_area: true,
+    dogs_allowed: true,
     access_notes_nl:
-      "Breed strand bij IJmuiden aan Zee naast de jachthaven, populair bij kite- en windsurfers (aangewezen zones). Paviljoens in het seizoen. Blijf ver bij de havenhoofden vandaan — scheepvaart en sterke stroming. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
+      "Breed strand bij IJmuiden aan Zee naast de jachthaven, populair bij kite- en windsurfers (aangewezen zones). Paviljoens in het seizoen. Blijf ver bij de havenhoofden vandaan — scheepvaart en sterke stroming. Honden: hondenstrand het hele jaar los ten zuiden van strandpaal 57,5 (voorbij de strandhuisjes); de zone loopt door richting Bloemendaal. Elders 1 okt–1 apr los toegestaan, 1 apr–1 okt niet. Opruimplicht. Waterkwaliteit gecontroleerd van 1 mei tot 1 oktober.",
     access_notes_en:
-      "Broad beach at IJmuiden aan Zee by the marina, popular with kite- and windsurfers (designated zones). Pavilions in season. Stay well clear of the harbor piers — shipping and strong currents. Monitored 1 May – 1 Oct.",
+      "Broad beach at IJmuiden aan Zee by the marina, popular with kite- and windsurfers (designated zones). Pavilions in season. Stay well clear of the harbor piers — shipping and strong currents. Dogs: year-round off-leash dog beach south of beach post 57.5 (past the beach huts); the zone continues towards Bloemendaal. Elsewhere off-leash 1 Oct–1 Apr, not 1 Apr–1 Oct. Clean-up required. Monitored 1 May – 1 Oct.",
   },
 ];

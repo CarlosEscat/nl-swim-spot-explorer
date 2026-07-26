@@ -46,6 +46,7 @@ export async function seedCuratedDetails(
       has_boat_ramp: seed.has_boat_ramp ?? prev?.has_boat_ramp ?? null,
       nude_recreation: seed.nude_recreation ?? prev?.nude_recreation ?? null,
       lounging_area: seed.lounging_area ?? prev?.lounging_area ?? null,
+      dogs_allowed: seed.dogs_allowed ?? prev?.dogs_allowed ?? null,
       access_notes_nl: seed.access_notes_nl,
       access_notes_en: seed.access_notes_en,
       facilities_source: "manual",

@@ -394,6 +394,11 @@ export default async function SpotPage({
                   value={facilityText(d.nude_recreation, dict)}
                   positive={d.nude_recreation === true}
                 />
+                <Fact
+                  label={dict.facilities.dogs_allowed}
+                  value={facilityText(d.dogs_allowed, dict)}
+                  positive={d.dogs_allowed === true}
+                />
               </dl>
               {d.facilities_source === "osm" && (
                 <p className="mt-2 text-xs text-gray-400">
