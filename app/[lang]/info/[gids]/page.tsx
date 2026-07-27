@@ -12,8 +12,9 @@ import {
 } from "@/lib/i18n";
 import { breadcrumbJsonLd, faqJsonLd, siteBase } from "@/lib/jsonld";
 
-// Static content; hourly ISR keeps it in line with the rest of the site.
-export const revalidate = 3600;
+// Rendered entirely from lib/content/guides.ts — no database access, so the
+// output can only change on a deploy, which rebuilds these anyway. No timer.
+export const revalidate = false;
 
 export function generateStaticParams() {
   return GUIDES.map((g) => ({ gids: g.slug }));

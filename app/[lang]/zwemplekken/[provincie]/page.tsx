@@ -25,8 +25,9 @@ import {
 } from "@/lib/regions";
 import type { SpotWithData } from "@/lib/types";
 
-// Same ISR cadence as the spot pages; underlying data refreshes via cron.
-export const revalidate = 3600;
+// Same ISR cadence as the spot pages: no timer, revalidated on demand by
+// /api/cron/daily when a job changes the spot data this page lists.
+export const revalidate = false;
 
 export async function generateStaticParams() {
   const store = await getStore();

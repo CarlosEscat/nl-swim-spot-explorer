@@ -21,8 +21,9 @@ import {
   spotsInProvince,
 } from "@/lib/regions";
 
-// Spot/quality data refreshes via cron at most monthly — hourly ISR is generous.
-export const revalidate = 3600;
+// No timer — /api/cron/daily revalidates this on demand when a job actually
+// changes the underlying spot data. See the spot page for the full rationale.
+export const revalidate = false;
 
 export default async function HomePage({
   params,

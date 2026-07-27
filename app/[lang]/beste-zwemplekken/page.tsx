@@ -14,9 +14,11 @@ import {
 import { breadcrumbJsonLd, itemListJsonLd, siteBase } from "@/lib/jsonld";
 import { listProvinces, provinceSlug, spotsInProvince } from "@/lib/regions";
 
-// The featured set itself is re-derived monthly (compute:featured cron);
-// the year in the title rolls over automatically thanks to hourly ISR.
-export const revalidate = 3600;
+// The featured set itself is re-derived monthly (compute:featured cron), and
+// /api/cron/daily revalidates this page when that job runs — so no timer.
+// Caveat: the year in the title now rolls over on the first cron day of
+// January (the 2nd, when the quality job is due) rather than at midnight.
+export const revalidate = false;
 
 export async function generateMetadata({
   params,

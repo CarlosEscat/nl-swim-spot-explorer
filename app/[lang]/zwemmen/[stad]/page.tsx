@@ -16,8 +16,9 @@ import {
 import { breadcrumbJsonLd, itemListJsonLd, siteBase } from "@/lib/jsonld";
 import { cityName, formatKm, provinceSlug, spotsNearCity } from "@/lib/regions";
 
-// Same ISR cadence as the spot pages; underlying data refreshes via cron.
-export const revalidate = 3600;
+// Same ISR cadence as the spot pages: no timer, revalidated on demand by
+// /api/cron/daily when a job changes the spot data this page lists.
+export const revalidate = false;
 
 export function generateStaticParams() {
   return CITIES.map((c) => ({ stad: c.id }));
