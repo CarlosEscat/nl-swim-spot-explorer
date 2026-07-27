@@ -33,8 +33,12 @@ import {
 import { breadcrumbJsonLd, siteBase, spotJsonLd } from "@/lib/jsonld";
 import { cityForSpot, cityName, nearestSpots, provinceSlug } from "@/lib/regions";
 
-// ISR: pages regenerate hourly; quality data itself refreshes monthly via cron.
-export const revalidate = 3600;
+// No timer: everything rendered here is written by /api/cron/daily and by
+// nothing else, so a clock-based interval can only regenerate pages that have
+// not changed. The cron calls revalidatePath for the jobs that actually ran.
+// Live water/weather is client-fetched (SpotLiveClient), so it is not part of
+// this payload and does not need the page to be fresh.
+export const revalidate = false;
 export const dynamicParams = true;
 
 // The lang segment comes from the parent layout's generateStaticParams.
