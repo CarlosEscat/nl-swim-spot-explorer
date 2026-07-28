@@ -26,6 +26,34 @@ function throwIfError<T>(res: { data: T; error: { message: string } | null }): T
   return res.data;
 }
 
+/** PostgREST caps an unbounded select at 1,000 rows and gives no error when it does. */
+const PAGE_SIZE = 1000;
+
+/**
+ * The most recent reading per spot, across the whole table.
+ *
+ * Must paginate: a plain `select("*")` silently stops at 1,000 rows, and since
+ * an all-clear reading is dated today while an advisory keeps the date the
+ * advisory started, the truncated window holds nothing but the last day or two
+ * of all-clears — every spot actually under warning sorts below the cut and
+ * comes back as "no data". See scripts/probe-readings-limit.ts.
+ */
+async function latestQualityBySpot(): Promise<Map<string, WaterQualityReading>> {
+  const latest = new Map<string, WaterQualityReading>();
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const page = throwIfError(
+      await db()
+        .from("water_quality_readings")
+        .select("*")
+        .order("measured_at", { ascending: false })
+        .range(from, from + PAGE_SIZE - 1)
+    ) as WaterQualityReading[];
+    // Descending by date, so the first row seen for a spot is its latest.
+    for (const r of page) if (!latest.has(r.spot_id)) latest.set(r.spot_id, r);
+    if (page.length < PAGE_SIZE) return latest;
+  }
+}
+
 export const supabaseStore: DataStore = {
   name: "Supabase",
 
@@ -174,17 +202,7 @@ export const supabaseStore: DataStore = {
         .order("name")
     ) as (SwimSpot & { swim_spot_details: SwimSpotDetails[] | SwimSpotDetails | null })[];
 
-    // Latest reading per spot; the table stays small enough (~700 spots × monthly) to fetch and reduce.
-    const readings = throwIfError(
-      await db()
-        .from("water_quality_readings")
-        .select("*")
-        .order("measured_at", { ascending: false })
-    ) as WaterQualityReading[];
-    const latestBySpot = new Map<string, WaterQualityReading>();
-    for (const r of readings) {
-      if (!latestBySpot.has(r.spot_id)) latestBySpot.set(r.spot_id, r);
-    }
+    const latestBySpot = await latestQualityBySpot();
 
     return spots.map<SpotWithData>((s) => {
       const { swim_spot_details, ...spot } = s;
