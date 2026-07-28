@@ -10,7 +10,7 @@ import SpotLinkCard from "@/components/SpotLinkCard";
 import I18nProvider from "@/components/I18nProvider";
 import QualityTimeline from "@/components/QualityTimeline";
 import SpotLiveClient from "@/components/SpotLiveClient";
-import { AERIAL_ATTRIBUTION, aerialImageUrl } from "@/lib/aerial";
+import { AERIAL_ATTRIBUTION, aerialSrc } from "@/lib/aerial";
 import { GUIDES } from "@/lib/content/guides";
 import { getStore } from "@/lib/db/store";
 import { generatedAccessNotes, localizedAccessNotes } from "@/lib/describe";
@@ -220,15 +220,12 @@ export default async function SpotPage({
 
         <figure className="mb-6">
           <Image
-            src={aerialImageUrl(spot.lat, spot.lng, {
-              width: 1200,
-              height: 420,
-              spanM: 500,
-            })}
+            src={aerialSrc(spot.slug, "hero")}
             alt={t(dict.panel.aerial_alt, { name: spot.name })}
             width={1200}
             height={420}
-            priority
+            preload
+            unoptimized
             className="w-full rounded-2xl border border-gray-200 object-cover"
           />
           <figcaption className="mt-1.5 text-right text-xs text-gray-400">

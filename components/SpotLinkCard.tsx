@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { aerialImageUrl } from "@/lib/aerial";
+import { aerialSrc } from "@/lib/aerial";
 import { pathFor, t, type Dictionary, type Locale } from "@/lib/i18n";
 import { qualityLabel, qualityStyle } from "@/lib/quality";
 import { formatKm } from "@/lib/regions";
@@ -30,14 +30,11 @@ export default function SpotLinkCard({
       className="group flex gap-3 rounded-xl border border-gray-200 bg-white p-2.5 transition-colors hover:border-indigo-300 hover:bg-indigo-50/40"
     >
       <Image
-        src={aerialImageUrl(spot.lat, spot.lng, {
-          width: 160,
-          height: 120,
-          spanM: 400,
-        })}
+        src={aerialSrc(spot.slug, "card")}
         alt={t(dict.panel.aerial_alt, { name: spot.name })}
         width={80}
         height={60}
+        unoptimized
         className="h-[60px] w-20 shrink-0 rounded-lg border border-gray-100 object-cover"
       />
       <div className="min-w-0">

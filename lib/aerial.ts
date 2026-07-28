@@ -54,4 +54,33 @@ export function aerialImageUrl(
   return `${WMS_BASE}?${params.toString()}`;
 }
 
+/**
+ * The aerial crops the UI renders, one per surface. PDOK already returns an
+ * image at exactly the requested pixel size, so these double as the intrinsic
+ * dimensions served by `/api/aerial` — nothing resizes them afterwards.
+ *
+ * `card` is deliberately 2x its rendered 80x60 box so it stays sharp on
+ * high-DPI screens; `panel` and `hero` render at 1x.
+ */
+export const AERIAL_VARIANTS = {
+  card: { width: 160, height: 120, spanM: 400 },
+  panel: { width: 448, height: 180, spanM: 350 },
+  hero: { width: 1200, height: 420, spanM: 500 },
+} as const satisfies Record<string, AerialImageOptions>;
+
+export type AerialVariant = keyof typeof AERIAL_VARIANTS;
+
+export function isAerialVariant(value: string): value is AerialVariant {
+  return Object.hasOwn(AERIAL_VARIANTS, value);
+}
+
+/**
+ * Same-origin path for a spot's aerial photo. Served by `app/api/aerial`, which
+ * proxies PDOK behind a long CDN cache — going straight to `aerialImageUrl`
+ * from an <Image> would bill a Vercel image transformation per spot per size.
+ */
+export function aerialSrc(slug: string, variant: AerialVariant): string {
+  return `/api/aerial/${slug}/${variant}`;
+}
+
 export const AERIAL_ATTRIBUTION = "Aerial photo: Beeldmateriaal Nederland / PDOK (CC-BY 4.0)";

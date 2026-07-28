@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { SpotLiveData, SpotWithData } from "@/lib/types";
-import { aerialImageUrl } from "@/lib/aerial";
+import { aerialSrc } from "@/lib/aerial";
 import { generatedAccessNotes, localizedAccessNotes } from "@/lib/describe";
 import { formatDate, pathFor, t, weatherLabel } from "@/lib/i18n";
 import {
@@ -83,14 +83,11 @@ export default function SpotPanel({
     <aside className="pointer-events-auto flex h-full w-full flex-col overflow-y-auto bg-white shadow-2xl sm:max-w-md sm:rounded-l-2xl">
       <div className="relative">
         <Image
-          src={aerialImageUrl(spot.lat, spot.lng, {
-            width: 448,
-            height: 180,
-            spanM: 350,
-          })}
+          src={aerialSrc(spot.slug, "panel")}
           alt={t(dict.panel.aerial_alt, { name: spot.name })}
           width={448}
           height={180}
+          unoptimized
           className="h-[180px] w-full object-cover sm:rounded-tl-2xl"
         />
         <span className="absolute bottom-1 right-2 rounded bg-black/40 px-1.5 py-0.5 text-[10px] text-white/90">
