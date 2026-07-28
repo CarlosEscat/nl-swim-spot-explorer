@@ -35,7 +35,9 @@ with:
   alternates wired for SEO
 - **Weather** — current conditions per exact coordinates (Open-Meteo)
 - **Aerial photos** — PDOK Luchtfoto (25 cm orthophoto) hero/thumbnail/OG image
-  per spot, generated deterministically from coordinates (`lib/aerial.ts`)
+  per spot, generated deterministically from coordinates (`lib/aerial.ts`) and
+  served through `/api/aerial/[slug]/[variant]` behind a 30-day CDN cache —
+  never through `next/image` (see [Image delivery](#image-delivery))
 - **Facilities** — toilets/food/parking auto-detected from OpenStreetMap for all
   spots (`ingest:facilities`); hand-curated data for eight city regions
   (`lib/ingest/curated/`) always wins. Spots
@@ -65,9 +67,9 @@ npm run dev        # → http://localhost:3000, fully working
 
 ## Production setup (Supabase)
 
-1. Create a project at [supabase.com](https://supabase.com) and run the files
-   in `supabase/migrations/` (0001 init, 0002 facilities, 0003 EU
-   classification, 0004 water-type categories) in order in the SQL editor.
+1. Create a project at [supabase.com](https://supabase.com) and run **every**
+   file in `supabase/migrations/` in numeric order in the SQL editor. They are
+   cumulative — skipping one leaves columns the app reads missing.
 2. `cp .env.example .env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` (scripts/cron only — never shipped to the client)
@@ -107,7 +109,10 @@ failure in one does not skip the rest; everything is authorized via the
 - **quality** — daily during the bathing season (May–Oct), monthly (2nd) the
   rest of the year: re-ingests the advisory XLSX; readings are append-only per
   `(spot_id, measured_at, source)`, so this builds the per-spot quality history
-  the season timeline renders
+  the season timeline renders. Returns `changedSlugs` — the spots whose status
+  or advisory reason actually moved — which is what drives revalidation below;
+  on a typical in-season day that set is **empty**, because the snapshot
+  re-records the same verdict for all ~744 monitored spots
 - **locations** — weekly (Mon), and first in the run order because its upsert
   may add spots the later jobs need to see: re-pulls PDOK **and** re-probes
   live stations / re-links nearest stations / re-matches zwemwater.nl ids
@@ -130,6 +135,60 @@ Open-Meteo's burst limits) behind the same 30-minute CDN cache. Water-temp
 RWS's period endpoint, aggregated to daily min/avg/max, behind a 6-hour cache;
 `/api/spot/[slug]/quality-history` serves the stored season readings with a
 1-hour cache.
+
+### Page revalidation (ISR)
+
+Every page route exports `revalidate = false`. There is **no timer**: the cron
+is the only thing that refreshes generated pages, via `revalidatePath`. Each
+job declares what its data can change, and `revalidates` receives the job's own
+result so it can narrow that down.
+
+This matters because one ISR revalidation rewrites ~11 artifacts (`.html`,
+`.rsc`, `.meta` and 8 `.segment.rsc` prefetch payloads), and Vercel's Hobby
+plan includes 200,000 ISR write units per month. Regenerating all ~1,570
+generated pages costs ~17k units, so *what* gets marked stale is a budget
+decision:
+
+- **Route patterns** (`/[lang]/spots/[slug]`) invalidate all ~1,500 spot pages
+  at once. Used by jobs that genuinely touch everything — `locations` (weekly),
+  `facilities` and `featured` (monthly), `eu-classification` (yearly).
+- **Concrete paths** (`/nl/spots/foo`, `/en/spots/foo`) are what the daily
+  `quality` job emits, for its `changedSlugs` only. Most days it revalidates
+  nothing at all.
+- **A weekly sweep** on Monday re-renders everything anyway, because the "as
+  of" date and the season timeline advance with each snapshot even when the
+  status does not — without it those two would drift indefinitely. Monday is
+  deliberate: the `locations` job already sweeps that day and the caller
+  de-duplicates, so the sweep is free.
+
+Rehearse the change detection against live data before deploying cron changes —
+read-only, inserts nothing:
+
+```bash
+npx tsx scripts/dry-run-quality-changes.ts
+```
+
+`revalidatePath` patterns must be **internal** route paths (`/[lang]/...`), not
+the URLs in the address bar: `proxy.ts` rewrites unprefixed Dutch URLs to
+`/nl/...`, and `revalidatePath` keys off the route file structure.
+
+### Image delivery
+
+Aerial photos are the only images on the site, and they must never go through
+`next/image` optimization. PDOK's WMS bakes `width`/`height` into the request
+and returns exactly that JPEG, so Vercel's optimizer would be billed to
+re-encode an image the origin already sized correctly — 748 spots × 3 crops ×
+2 `srcSet` variants ≈ 4,488 transformations against a 5,000/month free tier.
+
+Instead, `/api/aerial/[slug]/[variant]` proxies PDOK and re-serves the bytes
+with a long `Cache-Control` (PDOK sends none at all), and the `<Image>` call
+sites pass `unoptimized`. Crops live in `AERIAL_VARIANTS` (`lib/aerial.ts`);
+`aerialSrc(slug, variant)` builds the path. Only known slugs and a fixed set of
+crops resolve, so the route is not a general-purpose open proxy.
+
+`images.remotePatterns` is deliberately **absent** from `next.config.ts`: with
+no pattern configured, any future `<Image src="https://service.pdok.nl/…">`
+fails loudly instead of silently re-billing a transformation per spot per size.
 
 ## Architecture
 
@@ -195,7 +254,10 @@ flowchart LR
 
 Live data (water temp, weather) is never stored — it's fetched on request with
 a 30-minute cache. Aerial imagery is never stored either: `lib/aerial.ts`
-builds a deterministic PDOK WMS URL from each spot's coordinates.
+builds a deterministic PDOK WMS URL from each spot's coordinates, which
+`/api/aerial` fetches and re-serves behind a 30-day CDN cache. The OG image is
+the one exception — it embeds the PDOK URL directly, since `ImageResponse`
+renders server-side and costs no image transformation.
 
 Locale routing happens in `proxy.ts` (Next 16's middleware convention): Dutch
 is an invisible rewrite of unprefixed URLs to `/nl/...`, English is a real
@@ -205,7 +267,7 @@ into the client tree via `I18nProvider`.
 ```mermaid
 flowchart LR
   subgraph pages["Server-rendered pages (app/(lang)/, nl + en)"]
-    HOME["page.tsx<br/>(map, hourly ISR)"]
+    HOME["page.tsx<br/>(map, revalidate=false)"]
     SPOT["spots/(slug)/page.tsx<br/>(744 spots × 2 locales)"]
     OG["opengraph-image.tsx"]
   end
@@ -225,6 +287,7 @@ flowchart LR
     LIVEONE["GET /api/spot/(id)/live<br/>one spot"]
     WH["GET /api/spot/(id)/water-history<br/>daily temps, 14 d"]
     QH["GET /api/spot/(id)/quality-history<br/>stored season readings"]
+    AER["GET /api/aerial/(slug)/(variant)<br/>PDOK proxy, 30 d CDN cache"]
   end
 
   STORE["DataStore"]
@@ -252,8 +315,9 @@ flowchart LR
   LIVEONE --> METEO
   WH --> RWS
   QH --> STORE
-  FOTO --> SPOT
-  FOTO --> PANEL
+  SPOT -- "img src" --> AER
+  PANEL -- "img src" --> AER
+  AER --> FOTO
   FOTO --> OG
 ```
 
@@ -263,14 +327,16 @@ flowchart LR
 proxy.ts                    # locale routing: nl unprefixed (rewrite), /en real segment
 dictionaries/               # nl.json + en.json (all UI strings, weather codes, labels)
 app/
-  [lang]/page.tsx           # map home (ISR 1h) → I18nProvider → Explorer
+  [lang]/page.tsx           # map home (revalidate=false) → I18nProvider → Explorer
   [lang]/layout.tsx         # <html lang>, header, NL|EN switcher, per-locale metadata
   [lang]/spots/[slug]/      # static page per spot per locale + opengraph-image.tsx
   api/live/route.ts         # batch live snapshot (CDN-cached 30 min)
   api/spot/[id]/live/       # per-spot live data
   api/spot/[id]/water-history/    # daily water temps (14 d) + week delta (6 h cache)
   api/spot/[id]/quality-history/  # stored season readings (1 h cache)
+  api/aerial/[slug]/[variant]/    # PDOK aerial proxy (30 d CDN cache, no next/image)
   api/cron/daily            # the one scheduled route; dispatches what's due
+                            #   + revalidatePath for the jobs that actually ran
   api/cron/refresh-*        # per-job routes, manual trigger only
 components/
   Explorer.tsx              # client state hub: map + ranked list + panel + filters
@@ -283,10 +349,13 @@ lib/
   db/store.ts               # DataStore interface → supabase-store | local-store
   data-sources/             # one adapter per external API (incl. eea-bwd.ts)
   ingest/                   # write pipelines (shared by scripts/ and cron)
-  aerial.ts  score.ts  geo.ts  quality.ts  slug.ts  types.ts  cron-auth.ts
+  aerial.ts                 # PDOK WMS URLs + AERIAL_VARIANTS + aerialSrc()
+  score.ts  geo.ts  quality.ts  slug.ts  types.ts  cron-auth.ts
 scripts/                    # CLI wrappers: ingest:*, seed:* (npm run)
+  dry-run-quality-changes.ts  # read-only: what the cron would revalidate today
+  probe-readings-limit.ts     # read-only: PostgREST 1000-row truncation check
 data/local/                 # pre-ingested JSON snapshot (no-DB quick start)
-supabase/migrations/        # schema (0001 init, 0002 facilities, 0003 EU classification)
+supabase/migrations/        # cumulative schema, 0001…N — run all of them, in order
 ```
 
 ## Data sources & credits
@@ -326,6 +395,21 @@ spots today.
   readings; history accumulates one snapshot per `refresh-quality` cron run
   (daily in-season, monthly off-season), so first seasons look sparse by
   design.
-- **Deploying the EU-classification feature to prod**: run
-  `supabase/migrations/0003_eu_classification.sql`, then `npm run ingest:eu`
-  once (the yearly cron takes over afterwards).
+- **Never use an unbounded `select()` on `water_quality_readings`.** PostgREST
+  silently caps at 1,000 rows and reports no error. `getSpotsWithData()` did
+  exactly that, and because an all-clear reading is dated *today* while an
+  advisory keeps the date it *started*, the truncated window held only the last
+  ~1.3 days of all-clears — so every spot under active advisory came back as
+  `latest_quality: null` and rendered as "Geen gegevens" on all listing pages
+  (87 spots, including a swim ban). Fixed by paginating with `.range()`;
+  `scripts/probe-readings-limit.ts` reproduces the failure. Spot pages were
+  never affected — `getSpotBySlug` scopes its own query with `.limit(1)`.
+- **Follow-up — stop inserting no-op readings.** The in-season `quality` job
+  appends ~744 rows per day even when nothing changed. That is what forces the
+  weekly ISR sweep to exist (the "as of" date advances daily) and what makes
+  the pagination above cost one extra round-trip per 1,000 rows on every
+  listing render — 6 today, growing indefinitely. Inserting only on an actual
+  status change fixes both: `measured_at` becomes "since when this status
+  holds", and the table stops growing. Needs one adjustment to
+  `QualityTimeline`, which bails at `readings.length < 2` and would otherwise
+  hide the timeline for always-good spots.
