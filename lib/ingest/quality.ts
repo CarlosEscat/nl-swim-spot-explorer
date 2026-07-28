@@ -13,6 +13,13 @@ export interface IngestQualityResult {
   allClear: number;
   inserted: number;
   unmatched: string[];
+  /**
+   * Slugs whose rendered status actually moved this run, i.e. the only spot
+   * pages whose quality section can look different afterwards. In season this
+   * is usually a handful out of ~700 — the snapshot re-records "good" for
+   * everything else, which changes the row but not the verdict.
+   */
+  changedSlugs: string[];
 }
 
 /**
@@ -30,7 +37,9 @@ export async function ingestQuality(
   const store = await getStore();
   log(`Store: ${store.name}`);
 
-  const spots = await store.getSpots();
+  // Spots *with* their current reading: the previous status is what tells us
+  // which pages the cron actually has to revalidate afterwards.
+  const spots = await store.getSpotsWithData();
   if (spots.length === 0) {
     throw new Error("No spots in store — run ingest-locations first.");
   }
@@ -80,7 +89,26 @@ export async function ingestQuality(
     };
   });
 
+  // Compare against the reading each spot is currently rendered with. The
+  // advisory reason counts too: the spot page prints it next to the badge, so
+  // "warning: blauwalg" → "warning: e-coli" is a visible change at equal status.
+  const spotById = new Map(spots.map((s) => [s.id, s]));
+  const changedSlugs = readings
+    .filter((r) => {
+      const previous = spotById.get(r.spot_id)?.latest_quality;
+      return (
+        !previous ||
+        previous.status !== r.status ||
+        previous.raw_notes !== r.raw_notes
+      );
+    })
+    .map((r) => spotById.get(r.spot_id)?.slug)
+    .filter((slug): slug is string => Boolean(slug));
+
   const inserted = await store.insertQualityReadings(readings);
+  log(
+    `Status changed for ${changedSlugs.length} of ${readings.length} monitored spots.`
+  );
   log(
     `Snapshot: ${worstBySpotId.size} spots with active advisories, ` +
       `${monitored.length - worstBySpotId.size} all-clear ` +
@@ -99,5 +127,6 @@ export async function ingestQuality(
     allClear: monitored.length - worstBySpotId.size,
     inserted,
     unmatched: [...unmatched],
+    changedSlugs,
   };
 }
