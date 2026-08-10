@@ -34,6 +34,15 @@ export function proxy(request: NextRequest) {
     return NextResponse.next({ request: { headers } });
   }
 
+  // /en/nl/... — the language switcher used to build these from the rewritten
+  // Dutch pathname (fixed in LanguageSwitcher), but they were crawled and
+  // shared while the bug was live, so collapse them onto the English URL.
+  if (pathname === "/en/nl" || pathname.startsWith("/en/nl/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/en\/nl/, "/en");
+    return NextResponse.redirect(url, 308);
+  }
+
   // English is a real route segment — pass through.
   if (pathname === "/en" || pathname.startsWith("/en/")) return;
 

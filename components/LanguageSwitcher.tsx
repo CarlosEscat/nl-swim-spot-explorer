@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { Locale } from "@/lib/i18n";
+import { stripLocale, type Locale } from "@/lib/i18n";
 
 /**
  * NL | EN toggle. Dutch is served on unprefixed URLs and English under /en
@@ -10,8 +10,7 @@ import type { Locale } from "@/lib/i18n";
  */
 export default function LanguageSwitcher({ locale }: { locale: Locale }) {
   const pathname = usePathname() ?? "/";
-  const basePath =
-    locale === "en" ? pathname.replace(/^\/en(?=\/|$)/, "") || "/" : pathname;
+  const basePath = stripLocale(pathname);
 
   const linkCls = (active: boolean) =>
     active

@@ -37,6 +37,18 @@ export function pathFor(locale: Locale, path: string): string {
   return path === "/" ? "/en" : `/en${path}`;
 }
 
+/**
+ * Inverse of `pathFor`: the unprefixed path for any locale variant.
+ *
+ * Strips a leading "/nl" as well as "/en" because usePathname() reports the
+ * REWRITTEN path on the Dutch pages — the browser shows /spots/x while the
+ * proxy resolved it to /nl/spots/x — so a caller that only strips "/en" would
+ * build /en/nl/spots/x and 404.
+ */
+export function stripLocale(pathname: string): string {
+  return pathname.replace(/^\/(nl|en)(?=\/|$)/, "") || "/";
+}
+
 const INTL_LOCALE: Record<Locale, string> = { nl: "nl-NL", en: "en-GB" };
 
 export function formatDate(
