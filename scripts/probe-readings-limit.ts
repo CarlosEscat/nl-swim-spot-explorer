@@ -13,7 +13,9 @@ async function main() {
     .select("*", { count: "exact", head: true });
   console.log(`Total readings in table: ${count}`);
 
-  // Exactly the query getSpotsWithData() runs.
+  // The unbounded select this script exists to demonstrate. getSpotsWithData()
+  // used to run exactly this; it now reads the latest_quality_by_spot view
+  // instead (migration 0008), but the cap below still applies to any select.
   const { data } = await db
     .from("water_quality_readings")
     .select("*")

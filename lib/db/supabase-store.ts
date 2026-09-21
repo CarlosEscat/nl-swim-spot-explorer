@@ -30,26 +30,31 @@ function throwIfError<T>(res: { data: T; error: { message: string } | null }): T
 const PAGE_SIZE = 1000;
 
 /**
- * The most recent reading per spot, across the whole table.
+ * The most recent reading per spot.
  *
- * Must paginate: a plain `select("*")` silently stops at 1,000 rows, and since
- * an all-clear reading is dated today while an advisory keeps the date the
- * advisory started, the truncated window holds nothing but the last day or two
- * of all-clears — every spot actually under warning sorts below the cut and
- * comes back as "no data". See scripts/probe-readings-limit.ts.
+ * Reads the `latest_quality_by_spot` view (migration 0008), which does the
+ * per-spot collapse in Postgres: one row per spot (~170 kB) instead of the
+ * whole 41k-row table (~8.9 MB over 42 requests) that this used to page
+ * through on every call. getSpotsWithData() runs once per rendered page, so
+ * that difference is most of the project's egress bill.
+ *
+ * Still paginated: the view returns a row per spot, which is already close
+ * enough to PostgREST's silent 1,000-row cap to matter, and truncation here is
+ * invisible — the spots past the cut render as "no data" rather than erroring.
+ * See scripts/probe-readings-limit.ts.
  */
 async function latestQualityBySpot(): Promise<Map<string, WaterQualityReading>> {
   const latest = new Map<string, WaterQualityReading>();
   for (let from = 0; ; from += PAGE_SIZE) {
     const page = throwIfError(
       await db()
-        .from("water_quality_readings")
+        .from("latest_quality_by_spot")
         .select("*")
-        .order("measured_at", { ascending: false })
+        // spot_id is unique in the view, so it is a stable pagination key.
+        .order("spot_id")
         .range(from, from + PAGE_SIZE - 1)
     ) as WaterQualityReading[];
-    // Descending by date, so the first row seen for a spot is its latest.
-    for (const r of page) if (!latest.has(r.spot_id)) latest.set(r.spot_id, r);
+    for (const r of page) latest.set(r.spot_id, r);
     if (page.length < PAGE_SIZE) return latest;
   }
 }
