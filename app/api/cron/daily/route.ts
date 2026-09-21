@@ -48,10 +48,33 @@ const spotPaths = (slug: string) => locales.map((l) => `/${l}/spots/${slug}`);
  */
 const SWEEP_WEEKDAY = 1;
 
+/**
+ * Off-season kill switch: set `CRON_SEASON_PAUSED=1` on the Vercel project to
+ * park every `seasonal` job until the next bathing season, and unset it in May.
+ *
+ * Deliberately a switch rather than a date range. The bathing season has a
+ * nominal end (1 October) but the useful end is a judgement call — advisories
+ * can outlive the season, and a warm September is worth keeping fresh — so the
+ * call of when to stop and restart stays a human one.
+ *
+ * Only affects this scheduled dispatcher. The per-job /api/cron/refresh-*
+ * routes stay manually triggerable while paused, which is how you'd force a
+ * mid-winter refresh without flipping the switch.
+ */
+function seasonPaused(): boolean {
+  return process.env.CRON_SEASON_PAUSED === "1";
+}
+
 type Job = {
   name: string;
   /** Is this job due on the given (UTC) day? */
   due: (d: Date) => boolean;
+  /**
+   * Only worth running while people are swimming. These are the daily/weekly
+   * jobs, and they are the ones `CRON_SEASON_PAUSED` parks; the monthly and
+   * yearly jobs are cheap enough to keep their schedule year-round.
+   */
+  seasonal?: true;
   run: () => Promise<object>;
   /**
    * Page routes whose output this job's data can change. A route *pattern*
@@ -67,6 +90,7 @@ const JOBS: Job[] = [
   {
     name: "locations",
     due: (d) => d.getUTCDay() === 1,
+    seasonal: true,
     run: async () => {
       const locations = await ingestLocations(console.log);
       const stations = await refreshStationsAndLinks(console.log);
@@ -84,6 +108,7 @@ const JOBS: Job[] = [
       const month = d.getUTCMonth() + 1;
       return month >= 5 && month <= 10 ? true : d.getUTCDate() === 2;
     },
+    seasonal: true,
     run: () => ingestQuality(console.log),
     /**
      * In season this runs daily and re-records a status for all ~700 monitored
@@ -144,10 +169,17 @@ export async function GET(req: Request) {
   }
 
   const now = new Date();
-  const due = JOBS.filter((job) => job.due(now));
+  const paused = seasonPaused();
+  const scheduled = JOBS.filter((job) => job.due(now));
+  const parked = paused ? scheduled.filter((job) => job.seasonal) : [];
+  const due = scheduled.filter((job) => !parked.includes(job));
   console.log(
     `cron/daily ${now.toISOString()} — due: ${
       due.map((j) => j.name).join(", ") || "(none)"
+    }${
+      parked.length > 0
+        ? ` — parked by CRON_SEASON_PAUSED: ${parked.map((j) => j.name).join(", ")}`
+        : ""
     }`
   );
 
@@ -195,6 +227,10 @@ export async function GET(req: Request) {
     {
       ok: !failed,
       ran: due.map((j) => j.name),
+      // Without this, a paused winter run and a genuinely idle day are the
+      // same empty `ran: []` response.
+      seasonPaused: paused,
+      parked: parked.map((j) => j.name),
       // Count plus a sample — the full list is unbounded on a sweep day.
       revalidatedCount: revalidated.length,
       revalidated: revalidated.slice(0, 12),

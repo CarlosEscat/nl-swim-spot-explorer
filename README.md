@@ -77,6 +77,8 @@ npm run dev        # → http://localhost:3000, fully working
    - `NEXT_PUBLIC_SITE_URL` (production URL, for sitemap/metadata)
    - `NEXT_PUBLIC_MAPTILER_KEY` (map tiles; restrict it to your domain in the
      [MapTiler dashboard](https://cloud.maptiler.com/account/keys) since it ships in the client bundle)
+   - `CRON_SEASON_PAUSED` (optional; `1` parks the in-season refreshes over the
+     winter — see [Off-season pause](#off-season-pause))
 3. Ingest everything:
 
 ```bash
@@ -122,9 +124,26 @@ failure in one does not skip the rest; everything is authorized via the
 - **eu-classification** — yearly (June 20, after the EEA publishes):
   re-ingests the annual EU classification + water categories
 
+### Off-season pause
+
+`quality` and `locations` are the two in-season jobs (daily and weekly) and are
+marked `seasonal` in the `JOBS` table. Setting **`CRON_SEASON_PAUSED=1`** on the
+Vercel project parks both of them entirely until it is unset — **do that in
+May**, or the site's advisories and spot list stay frozen at their October
+state. The monthly (`facilities`, `featured`) and yearly (`eu-classification`)
+jobs are unaffected and keep running through the winter.
+
+Pausing also stops the Monday `SPOT_PAGES` sweep, since that is emitted by
+`quality`'s `revalidates` — which is most of the point: over the winter there is
+no new quality data, so the sweep would rewrite ~1,500 pages a week to change an
+"as of" date. `/api/cron/daily` reports `seasonPaused` and `parked` so a paused
+run is distinguishable from a genuinely idle day.
+
 The per-job `/api/cron/refresh-*` routes are kept for manual triggering
 (`curl -H "Authorization: Bearer $CRON_SECRET" …`) — they are no longer
-scheduled. Note that Hobby cron triggers are approximate (within the hour).
+scheduled, and they ignore `CRON_SEASON_PAUSED`, so a one-off mid-winter
+refresh does not need the switch flipped. Note that Hobby cron triggers are
+approximate (within the hour).
 
 Live data (weather + water temp) is deliberately **not** cron-ingested: the
 `/api/spot/[slug]/live` route fetches it on request with a 30-minute cache, and
